@@ -27,10 +27,10 @@ class Home extends Component {
     };
   }
   componentDidMount() {
-    fetch('https://www.pinterest.com/yawetse/bespoke-aesthetic.rss')
+    fetch('https://api.github.com/users/typesettin/repos')
       .then((response) => response.json())
       .then((responseData) => {
-        this.setState({ repositories:responseData, });
+        this.setState({ repositories:responseData.length, });
       });
   }
   render() {
