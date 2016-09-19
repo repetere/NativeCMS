@@ -1,0 +1,40 @@
+{
+  "standard" : [{
+    "name":"home",
+    "icon":{
+      "selected":"ios-paper",
+      "initial":"ios-paper-outline"
+    }
+  },{
+    "name":"notifications",
+    "icon":{
+      "selected":"ios-alert",
+      "initial":"ios-alert-outline"
+    }
+  },{
+    "name":"profile",
+    "icon":{
+      "selected":"ios-contact",
+      "initial":"ios-contact-outline"
+    }
+  },{
+    "name":"settings",
+    "icon":{
+      "selected":"ios-settings",
+      "initial":"ios-settings-outline"
+    }
+  },{
+    "name":"apps",
+    "icon":{
+      "selected":"ios-apps",
+      "initial":"ios-apps-outline"
+    }
+  }],
+  "more":{
+    "name":"more",
+    "icon":{
+      "selected":"ios-more",
+      "initial":"ios-more-outline"
+    }
+  }
+}
