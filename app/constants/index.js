@@ -1,6 +1,6 @@
 export default {
   pages:{
-    LOAD_PAGE_ACTION:'load page',
+    LOAD_PAGE_ACTION:'load page component',
   },
   tabBarExtensions:{
     SET_EXTENSIONS_ACTION:'set tabBarExtensions',

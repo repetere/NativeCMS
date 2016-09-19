@@ -1,18 +1,9 @@
-import constants from '../constants';
-// import Immutable from 'immutable';
+import pages from './pages';
+import fetchData from './fetchData';
 
 const actionCreators = {
-  pages:{
-    /**
-     * @param {string} location name of extension to load
-     */
-    changePage(location) {
-      return {
-        type: constants.pages.LOAD_PAGE_ACTION,
-        payload: { location, },
-      };
-    },
-  },
+  pages,
+  fetchData,
 };
 
 export default actionCreators;

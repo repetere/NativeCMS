@@ -21,6 +21,9 @@
     "react-web": "0.3.2",
     "redux": "^3.6.0",
     "redux-immutable": "^3.0.8",
+    "redux-logger": "^2.6.1",
+    "redux-promise": "^0.5.3",
+    "redux-thunk": "^2.1.0",
     "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
