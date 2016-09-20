@@ -4,7 +4,7 @@
  * @flow
  */
 
-import React, { Component } from 'react';
+import React, { Component, PropTypes, } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,57 +14,75 @@ import {
 import styles from '../../components/Styles/shared';
 import 'whatwg-fetch';
 import 'babel-polyfill';
-// import {
-//   Button,Card, SocialIcon, List, ListItem, ListView, PricingCard
-// } from 'react-native-elements';
-//https://api.flickr.com/services/feeds/photos_public.gne?format=json&tags=roosevelt%20island
+import {
+  Button,
+  // Card, SocialIcon, List, ListItem, ListView, PricingCard
+} from 'react-native-elements';
 
 class Home extends Component {
-  constructor(){
-    super(...arguments);
-    let initialRepos = (this.props.fetchData && this.props.fetchData.response && this.props.fetchData.response.json) ? this.props.fetchData.response.json.length+'num of items' : false;
+  constructor(props) {
+    super(props);
     this.state = {
-      repositories: initialRepos,
+      fetchData: props.fetchData,
     };
   }
   componentDidMount() {
-    // fetch('https://api.github.com/users/typesettin/repos')
-    //   .then((response) => response.json())
-    //   .then((responseData) => {
-    //     this.setState({ repositories:responseData.length, });
-    //   });
-    this.props.requestData('https://api.github.com/users/typesettin/repos',
-      // {},
-      // function (response) {
-      //    return response.json();
-      // }
-    );
+    this.props.requestData('https://api.github.com/users/janbialostok/repos');
   }
   componentWillReceiveProps(nextProps) {
-    console.log('updating componet props in HOM')
     this.setState({
-      repositories: nextProps.fetchData.response.json.length+' num of length items'
+      fetchData: nextProps.fetchData,
     });
   }
-  componentWillUpdate(nextProps, nextState){
-    console.log('componentWillUpdate nextProps',nextProps, 'NextState', nextState)
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    console.log('shouldComponentUpdate nextProps',nextProps, 'NextState', nextState)
-    // return a boolean value
-    return true;
-  }
   render() {
-    // console.log('RENDERING HOME');
-    console.log('rendering Home','this.state',this.state,'this.props',this.props)
-    let repodata = (!this.state.repositories) ? <Text style={styles.welcome}>Loading...</Text> :
-      <Text style={styles.welcome}>{"Repos: "}{JSON.stringify(this.state.repositories) }</Text>;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Now Home to React Native in app/extensions/home ?!
         </Text>
-        {repodata}
+        <Text style={styles.instructions}>
+          URL: {this.state.fetchData.url}
+        </Text>
+        <Text style={styles.instructions}>
+          Data length: {(this.state.fetchData.json) ? this.state.fetchData.json.length : 0}
+        </Text>
+        <Button
+          onPress={() => {
+            this.props.requestData('https://api.github.com/users/typesettin/repos');
+          } }
+          small
+          iconRight
+          icon={{ name: 'code', }}
+          backgroundColor="slategray"
+          title="Refresh Data TS" />
+        
+        <Button
+          onPress={() => {
+            this.props.requestData('https://api.github.com/users/yawetse/repos');
+          } }
+          small
+          iconRight
+          icon={{ name: 'code', }}
+          backgroundColor="green"
+          title="Refresh Data YE" />
+        <Button
+          onPress={() => {
+            this.props.requestData('http://registry.npmjs.org/periodicjs.ext.cache');
+          } }
+          small
+          iconRight
+          icon={{ name: 'code', }}
+          backgroundColor="green"
+          title="Cache ext" />
+        <Button
+          onPress={() => {
+            this.props.requestData('http://registry.npmjs.org/formie');
+          } }
+          small
+          iconRight
+          icon={{ name: 'code', }}
+          backgroundColor="green"
+          title="formie" />
       </View>
     );
   }

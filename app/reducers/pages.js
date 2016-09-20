@@ -7,7 +7,8 @@ const initialState = {
 
 const pageReducer = (state = initialState, action) => {
   switch (action.type) {
-  case constants.pages.LOAD_PAGE_ACTION:
+    case constants.pages.LOAD_PAGE_ACTION:
+      console.log('updating page state');    
     var location = action.payload.location;
     return Object.assign(state, { location, });
   default:

@@ -25,16 +25,9 @@ import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/
 const history = getHistory(historySettings, AppConfigSettings, store);
 
 class MainApp extends Component{
-  // constructor(props) {
-  //   console.log('MainApp props', props);
-  //   super(props);
-  //   // let tabs = AppConfigExtensions.standard.concat();//.splice(3, 0, AppConfigExtensions.more);
-  //   // tabs.splice(4, 0, AppConfigExtensions.more).slice(0, 4);
-  //   // this.state = { 
-  //   //   page: getTabFromLocation(AppExtensions, getComponentFromRouterLocation(props.location.pathname)),
-  //   //   tabBarExtensions: tabs.slice(0,5),
-  //   // };
-  // }
+  constructor(props) {
+    super(props);
+  }
   componentWillMount() {
     /**
      *THIS IS FOR LANDING ON A DIFFERENT PAGE
@@ -85,7 +78,9 @@ class MainApp extends Component{
 MainApp.contextTypes = {
   router: PropTypes.object.isRequired,
 };
-
+// MainApp.childContextTypes = {
+//   fetchData: PropTypes.object.isRequired,  
+// };
 const mapStateToProps = (state) => {
   return {
     page: state.page,

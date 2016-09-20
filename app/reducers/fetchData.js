@@ -5,6 +5,7 @@ const initialState = {
   isFetching:false,
   didInvalidate: false,
   updatedAt: null,
+  timestamp: null,
   url: null,
   response: null,
   responseFormatter: null,
@@ -14,26 +15,27 @@ const initialState = {
   fetchedDataNextPageUrl: null,
 };
 
-const fetchDataReducer = (state = initialState, action) => {
+const fetchDataReducer = (state, action) => {
   switch (action.type) {
   case constants.fetchData.FETCH_DATA_REQUEST:
-    let requestPayload = action.payload;
+    var requestPayload = action.payload;
     return Object.assign(state, {
       isFetching: true,
       url: requestPayload.url,
       options: requestPayload.options,
     });
   case constants.fetchData.FETCH_DATA_SUCCESS:
-    let successPayload = action.payload;
-    return Object.assign(state, {
+    var successPayload = action.payload;
+    return Object.assign({
       isFetching: false,
+      url: successPayload.url,
       error: null,
       response: successPayload.response,
       json: successPayload.json,
       updatedAt: successPayload.updatedAt,
     });
   case constants.fetchData.FETCH_DATA_FAILURE:
-    let failurePayload = action.payload;
+    var failurePayload = action.payload;
     return Object.assign(state, {
       isFetching: false,
       url: failurePayload.url,
@@ -41,7 +43,7 @@ const fetchDataReducer = (state = initialState, action) => {
       updatedAt: failurePayload.updatedAt,
     });
   default:
-    return state;
+    return Object.assign(initialState, state);
   }
 };
 
