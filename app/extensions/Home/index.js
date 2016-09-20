@@ -60,7 +60,7 @@ class Home extends Component {
   }
   render() {
     console.log('this.state.fetchData.json ',this.state.fetchData.json );
-    let repoGrid = (this.state.fetchData.json && this.state.fetchData.json.length>0)?<GridView items={this.state.fetchData.json} itemsPerRow={3} renderItem={this.renderItem}  style={gridStyles.listView}/>:<Text>No repos</Text>;
+    let repoGrid = (this.state.fetchData.json && this.state.fetchData.json.length > 0) ? <GridView items={this.state.fetchData.json} itemsPerRow={3} renderItem={this.renderItem} contentContainerStyle={{ position:'relative',flex:1}}  style={gridStyles.listView}/>:<Text>No repos</Text>;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -92,6 +92,7 @@ class Home extends Component {
           backgroundColor="green"
           title="Refresh Data YE" />
         
+
         <View style={styles.container}>
           {repoGrid}
         </View>
