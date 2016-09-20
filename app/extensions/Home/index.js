@@ -9,15 +9,39 @@ import {
   StyleSheet,
   Text,
   View,
-  Platform
+  Platform,
+  Image,
 } from 'react-native';
 import styles from '../../components/Styles/shared';
+import gridStyles from '../../components/Styles/gridView';
 import 'whatwg-fetch';
 import 'babel-polyfill';
 import {
   Button,
   // Card, SocialIcon, List, ListItem, ListView, PricingCard
 } from 'react-native-elements';
+import GridView from 'react-native-grid-view';
+
+class RepoItem extends Component {
+  render() {
+    console.log('rendering RepoItem props', this.props);
+     // /*this.props.owner.avatar_url*/
+    return (
+      <View style={gridStyles.gridItem} key={this.props.id}>
+        <Image
+          source={{ uri: 'http://lorempixel.com/400/400', }}
+          style={gridStyles.thumbnail}
+        />
+        <View >
+          <Text 
+          style={gridStyles.title}
+          numberOfLines={3}>{this.props.clone_url}</Text>
+          <Text style={gridStyles.year}>year: {this.props.description}</Text>
+        </View>
+      </View>
+    );
+  }
+}
 
 class Home extends Component {
   constructor(props) {
@@ -35,6 +59,8 @@ class Home extends Component {
     });
   }
   render() {
+    console.log('this.state.fetchData.json ',this.state.fetchData.json );
+    let repoGrid = (this.state.fetchData.json && this.state.fetchData.json.length>0)?<GridView items={this.state.fetchData.json} itemsPerRow={3} renderItem={this.renderItem}  style={gridStyles.listView}/>:<Text>No repos</Text>;
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -65,26 +91,15 @@ class Home extends Component {
           icon={{ name: 'code', }}
           backgroundColor="green"
           title="Refresh Data YE" />
-        <Button
-          onPress={() => {
-            this.props.requestData('http://registry.npmjs.org/periodicjs.ext.cache');
-          } }
-          small
-          iconRight
-          icon={{ name: 'code', }}
-          backgroundColor="green"
-          title="Cache ext" />
-        <Button
-          onPress={() => {
-            this.props.requestData('http://registry.npmjs.org/formie');
-          } }
-          small
-          iconRight
-          icon={{ name: 'code', }}
-          backgroundColor="green"
-          title="formie" />
+        
+        <View style={styles.container}>
+          {repoGrid}
+        </View>
       </View>
     );
+  }
+  renderItem(item) {
+    return <RepoItem {...item} key={item.id} />;
   }
 }
 

@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   tabBarText:{
     fontSize:12,
-  }
+  },
 });
 
 export default styles;

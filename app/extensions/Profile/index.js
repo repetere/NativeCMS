@@ -10,7 +10,8 @@ import ReactNative, {
   ScrollView,
   View,
   Text,
-  Platform
+  Platform,
+  ListView,
 } from 'react-native';
 import styles from '../../components/Styles/shared';
 import {
@@ -24,34 +25,22 @@ import {
 class Profile extends Component {
   constructor(){
     super(...arguments);
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
+      dataSource: ds.cloneWithRows(['row 1', 'row 2']),
       ranattr:'ok',
     };
   }
   render() {
+      console.log('profile list view',this.state.dataSource)
     return (
       <View style={styles.container}>
-      {/* <ScrollView animation="bounceInLeft" duration={800} delay={0} style={[styles.container]}> */}
-        <Text style={ styles.heading }>In the Profile app About to ANimiate</Text>		
-        {/* <Animatable.Text animation="zoomInUp">Zoom me up, Scotty</Animatable.Text> */}
-        <Button
-        onPress={()=>{console.log('pressing button in profile')}}
-          small
-          iconRight
-          icon={{ name: 'code', }}
-          backgroundColor="slategray"
-          title="Code" />
-        <Button
-          small
-          iconRight
-          icon={{ name: 'share-apple',  type: 'evilicon', }}
-          title="Share Apple" />
-        <Button
-          small
-          iconRight
-          icon={{ name: 'battery-full',  type: 'foundation', }}
-          title="Battery Full" />
-      {/* </ScrollView> */}
+        <Text>list view</Text>  
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={(rowData) => <Text>{rowData}</Text>}
+          />
+        <Text>after list view</Text>  
       </View>
     );
   }
