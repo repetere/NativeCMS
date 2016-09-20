@@ -90,14 +90,14 @@ const mapStateToProps = (state) => {
   return {
     page: state.page,
     tabBarExtensions: state.tabBarExtensions,
+    fetchData: state.fetchData,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
-    // onWithdraw:(amount) => bankStore.dispatch(bankActionCreators.withdrawFromAccount(amount)),
-    // onToggle:() => bankStore.dispatch(bankActionCreators.toggleInfo()),
+    requestData:(url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
   };
 };
 

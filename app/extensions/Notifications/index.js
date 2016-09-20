@@ -31,9 +31,9 @@ class Notifications extends Component {
         <Text style={ styles.heading }>In the Notifications app</Text>		
         <Button
           small
-          iconRight
-          icon={{ name: 'code', }}
-          title="Code" />
+          icon={{name: 'envira', type: 'font-awesome'}}
+          title='SMALL WITH RIGHT ICON' />
+
         <Button
           small
           iconRight

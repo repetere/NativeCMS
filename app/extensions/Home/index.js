@@ -22,20 +22,41 @@ import 'babel-polyfill';
 class Home extends Component {
   constructor(){
     super(...arguments);
+    let initialRepos = (this.props.fetchData && this.props.fetchData.response && this.props.fetchData.response.json) ? this.props.fetchData.response.json.length+'num of items' : false;
     this.state = {
-      repositories: false,
+      repositories: initialRepos,
     };
   }
   componentDidMount() {
-    fetch('https://api.github.com/users/typesettin/repos')
-      .then((response) => response.json())
-      .then((responseData) => {
-        this.setState({ repositories:responseData.length, });
-      });
+    // fetch('https://api.github.com/users/typesettin/repos')
+    //   .then((response) => response.json())
+    //   .then((responseData) => {
+    //     this.setState({ repositories:responseData.length, });
+    //   });
+    this.props.requestData('https://api.github.com/users/typesettin/repos',
+      // {},
+      // function (response) {
+      //    return response.json();
+      // }
+    );
+  }
+  componentWillReceiveProps(nextProps) {
+    console.log('updating componet props in HOM')
+    this.setState({
+      repositories: nextProps.fetchData.response.json.length+' num of length items'
+    });
+  }
+  componentWillUpdate(nextProps, nextState){
+    console.log('componentWillUpdate nextProps',nextProps, 'NextState', nextState)
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('shouldComponentUpdate nextProps',nextProps, 'NextState', nextState)
+    // return a boolean value
+    return true;
   }
   render() {
     // console.log('RENDERING HOME');
-    // console.log('rendering Home','this.state',this.state,'this.props',this.props)
+    console.log('rendering Home','this.state',this.state,'this.props',this.props)
     let repodata = (!this.state.repositories) ? <Text style={styles.welcome}>Loading...</Text> :
       <Text style={styles.welcome}>{"Repos: "}{JSON.stringify(this.state.repositories) }</Text>;
     return (

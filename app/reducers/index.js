@@ -1,6 +1,6 @@
 import { combineReducers, } from 'redux';
 import pageReducer from './pages';
-import fetchDataReducer from './pages';
+import fetchDataReducer from './fetchData';
 import clientCacheDataReducer from './pages';
 import tabBarExtensionReducer from './tabBarExtensions';
 import { routerReducer, } from 'react-router-redux';

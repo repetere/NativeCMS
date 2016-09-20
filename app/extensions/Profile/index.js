@@ -17,7 +17,7 @@ import {
   Button,
   // Card, SocialIcon, List, ListItem, ListView, PricingCard
 } from 'react-native-elements';
-import * as Animatable from 'react-native-animatable';
+// import * as Animatable from 'react-native-animatable';
 // const ScrollView = Animatable.createAnimatableComponent(ReactNative.ScrollView);
 
 
@@ -30,7 +30,7 @@ class Profile extends Component {
   }
   render() {
     return (
-      <View animation="bounceInLeft" style={styles.container}>
+      <View style={styles.container}>
       {/* <ScrollView animation="bounceInLeft" duration={800} delay={0} style={[styles.container]}> */}
         <Text style={ styles.heading }>In the Profile app About to ANimiate</Text>		
         {/* <Animatable.Text animation="zoomInUp">Zoom me up, Scotty</Animatable.Text> */}
@@ -39,6 +39,7 @@ class Profile extends Component {
           small
           iconRight
           icon={{ name: 'code', }}
+          backgroundColor="slategray"
           title="Code" />
         <Button
           small
