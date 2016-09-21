@@ -10,51 +10,117 @@ import {
   Text,
   View,
   ListView,
+  Image,
   Platform
 } from 'react-native';
-import styles from '../../components/Styles/shared';
+// import styles from '../../components/Styles/shared';
 import {
   Button,
   // Card, SocialIcon, List, ListItem, ListView, PricingCard
 } from 'react-native-elements';
+import GridView from 'react-native-grid-view'
+import in_theaters from './in_theaters.json'
 
+console.log('in_theaters',in_theaters)
 
-
-var More = React.createClass({
-    getInitialState: function() {
-      var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-      var data = [Array.apply(null, {length: 30}).map(Number.call, Number)];
-      return {
-        dataSource: ds.cloneWithRows(data),
-      };
-    },
-
-    render: function() {
+var PAGE_SIZE = 25;
+var MOVIES_PER_ROW = 3;
+class Movie extends Component {
+  render() {
       return (
-        <ListView contentContainerStyle={inlineStyles.list}
-          dataSource={this.state.dataSource}
-          renderRow={(rowData) => <Text style={inlineStyles.item}>{rowData}</Text>}
-        />
+        <View style={styles.movie} >
+          <Image
+            source={{uri: this.props.movie.posters.thumbnail}}
+            style={styles.thumbnail}
+          />
+          <View >
+            <Text 
+            style={styles.title}
+            numberOfLines={3}>{this.props.movie.title}</Text>
+            <Text style={styles.year}>{this.props.movie.year}</Text>
+          </View>
+        </View>
       );
+  }
+}
+
+class More extends Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: null,
+      loaded: false,
     }
-});
+  }
 
-var inlineStyles = StyleSheet.create({
-    list: {
-        flexDirection: 'row',
-        flexWrap: 'wrap'
-    },
-    item: {
-        backgroundColor: 'red',
-        margin: 3,
-        width: 100,
+  componentDidMount() {
+    this.fetchData();
+  }
 
+  fetchData() {
+    this.setState({
+      dataSource: in_theaters.movies,
+      loaded: true,
+    });
+  }
+
+  render() {
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return (
+      <GridView
+        items={this.state.dataSource}
+        itemsPerRow={MOVIES_PER_ROW}
+        renderItem={this.renderItem}
+        style={styles.listView}
+      />
+    );
+  }
+
+  renderLoadingView() {
+    return (
+      <View>
+        <Text>
+          Loading movies...
+        </Text>
+      </View>
+    );
+  }
+
+  renderItem(item) {
+      return <Movie movie={item} key={item.id} />
+  }
+};
+
+var styles = StyleSheet.create({
+  movie: {
+    height: 150,
     flex: 1,
-    marginTop: 5,
-    fontWeight: 'bold'
-    }
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  title: {
+    fontSize: 10,
+    marginBottom: 8,
+    width: 90,
+    textAlign: 'center',
+  },
+  year: {
+    textAlign: 'center',
+  },
+  thumbnail: {
+    width: 53,
+    height: 81,
+  },
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+    position: 'relative',
+    flex:1
+  },
 });
-
 // class More extends Component {
 //   constructor(){
 //     super(...arguments);

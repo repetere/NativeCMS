@@ -22,6 +22,7 @@ import {
 } from 'react-native-elements';
 // http://browniefed.com/blog/react-native-layout-examples/
 // https://medium.com/the-react-native-log/understanding-react-native-flexbox-layout-7a528200afd4#.noes46i4m
+// https://css-tricks.com/snippets/css/a-guide-to-flexbox/
 
 var loginStyles = StyleSheet.create({
     container: {
