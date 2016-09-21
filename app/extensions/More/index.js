@@ -3,7 +3,7 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-
+//TO DO: https://github.com/clh161/react-native-easy-grid-view
 import React, { Component } from 'react';
 import {
   StyleSheet,
