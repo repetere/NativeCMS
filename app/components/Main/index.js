@@ -54,8 +54,8 @@ class MainApp extends Component{
     let self = this;
     let CurrentApp = AppExtensions[ capitalize(this.props.page.location) ] || AppExtensions.Home;
     return (
-      <View style={styles.container}>
-        <CurrentApp {...this.props} />
+      <View style={[styles.container]}>
+        <CurrentApp {...this.props}  />
         <Tabs selected={this.props.page.location} 
           style={styles.tabBar}
           onSelect={this.onChangePage.bind(this)}>
@@ -78,9 +78,7 @@ class MainApp extends Component{
 MainApp.contextTypes = {
   router: PropTypes.object.isRequired,
 };
-// MainApp.childContextTypes = {
-//   fetchData: PropTypes.object.isRequired,  
-// };
+
 const mapStateToProps = (state) => {
   return {
     page: state.page,

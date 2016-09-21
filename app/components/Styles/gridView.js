@@ -11,15 +11,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 10,
     marginBottom: 8,
-    width: 90,
+    // width: 90,
     textAlign: 'center',
   },
   year: {
     textAlign: 'center',
   },
   thumbnail: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
   },
   listView: {
     paddingTop: 20,

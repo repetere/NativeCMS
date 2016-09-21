@@ -1,10 +1,39 @@
 import {
   StyleSheet,
+  Platform,
 } from 'react-native';
 
-const styles = StyleSheet.create({
+let webFixes = (Platform.OS === 'web') ? {
+  scrollViewWrapperContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    overflow: 'auto',
+    display: 'block',
+  }
+} : {};
+
+const styles = StyleSheet.create(Object.assign({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  scrollViewWrapperContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginBottom: 60,
+  },
+  statusBarPadding: {
+    paddingTop:20
+  },
+  appContainer: {
+    flex: 1,
+    paddingTop:20,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -44,6 +73,6 @@ const styles = StyleSheet.create({
   tabBarText:{
     fontSize:12,
   },
-});
+},webFixes));
 
 export default styles;
