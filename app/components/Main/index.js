@@ -53,7 +53,7 @@ class MainApp extends Component{
   render() {
     let self = this;
     let CurrentApp = AppExtensions[ capitalize(this.props.page.location) ] || AppExtensions.Home;
-    return (
+    let displayContent = (
       <View style={[styles.container]}>
         <CurrentApp {...this.props}  />
         <Tabs selected={this.props.page.location} 
@@ -73,6 +73,13 @@ class MainApp extends Component{
         </Tabs>
       </View>
     );
+    let displayLogin = (
+      <View style={[styles.container]}>
+        <AppExtensions.Login {...this.props}  />
+      </View>
+    );
+    
+    return displayContent;
   }
 }
 MainApp.contextTypes = {

@@ -78,7 +78,7 @@ class Home extends Component {
     
     // let repoGrid = (this.state.fetchData.json && this.state.fetchData.json.length>0)?<GridView items={this.state.fetchData.json} itemsPerRow={3} renderItem={this.renderItem}  style={gridStyles.listView}/>:<Text>No repos</Text>;
     return (
-      <View style={[styles.scrollViewWrapperContainer,{paddingTop:20,marginBottom:60}]}>
+      <View style={[styles.scrollViewWrapperContainer,styles.statusBarPadding]}>
         {/* */}      
         <ScrollView style={{flex:1}} contentContainerStyle={ { paddingVertical: 20,position:'relative' }}>
           {/**/}
