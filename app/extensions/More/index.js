@@ -18,109 +18,77 @@ import {
   Button,
   // Card, SocialIcon, List, ListItem, ListView, PricingCard
 } from 'react-native-elements';
-import GridView from 'react-native-grid-view'
-import in_theaters from './in_theaters.json'
+import GridView from "react-native-easy-grid-view";
 
-console.log('in_theaters',in_theaters)
+class Example extends Component {
+    constructor(props) {
+        super(props);
+        var ds = new GridView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        this.state = {
+            dataSource: ds.cloneWithCells([
+                {
+                    text: 1,
+                    backgroundColor:'#f00'
+                }
+                , {
+                    text: 2,
+                    backgroundColor:'#0f0'
 
-var PAGE_SIZE = 25;
-var MOVIES_PER_ROW = 3;
-class Movie extends Component {
-  render() {
-      return (
-        <View style={styles.movie} >
-          <Image
-            source={{uri: this.props.movie.posters.thumbnail}}
-            style={styles.thumbnail}
-          />
-          <View >
-            <Text 
-            style={styles.title}
-            numberOfLines={3}>{this.props.movie.title}</Text>
-            <Text style={styles.year}>{this.props.movie.year}</Text>
-          </View>
+                }, {
+                    text: 3,
+                    backgroundColor:'#00f'
+
+                }, {
+                    text: 4,
+                    backgroundColor:'#f0f'
+
+                }, {
+                    text: 5,
+                    backgroundColor:'#fff'
+
+                }, {
+                    text: 6,
+                    backgroundColor:'#000'
+
+                }], 2),
+            cellWidth: 0,
+            cellHeight: 0
+        };
+    }
+
+    _renderCell(cell) {
+        return <View onLayout={event => {
+          var width = event.nativeEvent.layout.width;
+         if(this.state.cellWidth!=width){
+         this.setState({cellWidth:width})
+         }
+         if(this.state.cellHeight!=width){
+         this.setState({cellHeight:width})
+         }
+        }}>
+            <View style={{width:this.state.cellWidth,height:this.state.cellHeight,justifyContent:'center',backgroundColor:cell.backgroundColor}}
+                   resizeMode={Image.resizeMode.stretch} source={cell.image}>
+                <Text style={{backgroundColor:'#0004',textAlign:'center',color:'#fff',fontSize:24}}>{cell.text}</Text>
+            </View>
         </View>
-      );
-  }
+    }
+
+    render() {
+      return <View style={{
+      flex: 1,
+      alignSelf: 'stretch',
+      
+      }}>
+        <Text>grid view</Text>  
+            <GridView dataSource={this.state.dataSource}
+                      spacing={8}
+                      style={{padding:16}}
+                      renderCell={this._renderCell.bind(this)}
+
+            />
+        </View>
+    }
 }
-
-class More extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {
-      dataSource: null,
-      loaded: false,
-    }
-  }
-
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData() {
-    this.setState({
-      dataSource: in_theaters.movies,
-      loaded: true,
-    });
-  }
-
-  render() {
-    if (!this.state.loaded) {
-      return this.renderLoadingView();
-    }
-
-    return (
-      <GridView
-        items={this.state.dataSource}
-        itemsPerRow={MOVIES_PER_ROW}
-        renderItem={this.renderItem}
-        style={styles.listView}
-      />
-    );
-  }
-
-  renderLoadingView() {
-    return (
-      <View>
-        <Text>
-          Loading movies...
-        </Text>
-      </View>
-    );
-  }
-
-  renderItem(item) {
-      return <Movie movie={item} key={item.id} />
-  }
-};
-
-var styles = StyleSheet.create({
-  movie: {
-    height: 150,
-    flex: 1,
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  title: {
-    fontSize: 10,
-    marginBottom: 8,
-    width: 90,
-    textAlign: 'center',
-  },
-  year: {
-    textAlign: 'center',
-  },
-  thumbnail: {
-    width: 53,
-    height: 81,
-  },
-  listView: {
-    paddingTop: 20,
-    backgroundColor: '#F5FCFF',
-    position: 'relative',
-    flex:1
-  },
-});
 // class More extends Component {
 //   constructor(){
 //     super(...arguments);
@@ -152,4 +120,4 @@ var styles = StyleSheet.create({
 //   }
 // }
 
-export default More;
+export default Example;
