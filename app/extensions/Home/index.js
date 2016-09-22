@@ -71,7 +71,7 @@ class Home extends Component {
   }
   render() {
     let repoGrid = (this.state.fetchData.json && this.state.fetchData.json.length > 0) ?
-      <List containerStyle={{ marginBottom: 20 }}>{this.state.fetchData.json.map((l, i) => (
+      <List containerStyle={{ marginBottom: 20,padding:0 }}>{this.state.fetchData.json.map((l, i) => (
       <RepoItem {...l} key={l.id}
       />
       )) }</List> : <Text>No repos</Text>;
