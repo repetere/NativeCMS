@@ -1,4 +1,5 @@
 {
+  "name":"NativeCMS",
   "routerHistory":"browserHistory",
   "allHistoryOptions":"browserHistory|hashHistory|createMemoryHistory"
 }

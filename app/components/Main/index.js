@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, } from 'react-native';
+import { View, Platform, AsyncStorage, } from 'react-native';
 import Tabs from 'react-native-tabs';
 import AppConfigExtensions from '../../../content/config/extensions.json';
 import AppConfigSettings from '../../../content/config/settings.json';
@@ -27,6 +27,7 @@ const history = getHistory(historySettings, AppConfigSettings, store);
 class MainApp extends Component{
   constructor(props) {
     super(props);
+    this.state = {};
   }
   componentWillMount() {
     /**
@@ -45,6 +46,28 @@ class MainApp extends Component{
     if (incomingAppFromLocation !== this.props.page.location) {
       this.props.onChangePage(incomingAppFromLocation);
     }
+  }
+  componentDidMount() {
+    let stored_jwt_token;
+    AsyncStorage.getItem(`${AppConfigSettings.name}_jwt_token`)
+      .then((jwt_token) => {
+        this.setState({
+          jwt_token,
+        });
+        stored_jwt_token = jwt_token;
+        return AsyncStorage.getItem(`${AppConfigSettings.name}_saved_user`);
+      })
+      .then((saved_user) => {
+        if (saved_user) {
+          this.props.setLoginStatus(true);
+        }
+        if (stored_jwt_token) {
+          this.props.getUserProfile(stored_jwt_token);
+        }
+      })
+      .catch((error) => {
+        console.error('JWT USER Login Error', error);
+      });
   }
   onChangePage(el) {
     this.context.router.push(`/${el.props.name}`);
@@ -78,8 +101,11 @@ class MainApp extends Component{
         <AppExtensions.Login {...this.props}  />
       </View>
     );
-    
-    return displayContent;
+    if (this.props.user.isLoggedIn) {
+      return displayContent;
+    } else{
+      return displayLogin;      
+    }
   }
 }
 MainApp.contextTypes = {
@@ -89,6 +115,7 @@ MainApp.contextTypes = {
 const mapStateToProps = (state) => {
   return {
     page: state.page,
+    user: state.user,
     tabBarExtensions: state.tabBarExtensions,
     fetchData: state.fetchData,
   };
@@ -97,7 +124,11 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
-    requestData:(url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
+    requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
+    setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),
+    getUserProfile: (jwt_token) => store.dispatch(actions.user.getUserProfile(jwt_token)),
+    // loginUser: (stored_jwt_token) => store.dispatch(actions.user.request(url, options, responseFormatter)),
+    logoutUser: () => store.dispatch(actions.user.logoutUser()),
   };
 };
 
