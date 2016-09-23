@@ -66,7 +66,7 @@ class MainApp extends Component{
         }
       })
       .catch((error) => {
-        console.error('JWT USER Login Error', error);
+        console.log('JWT USER Login Error', error);
       });
   }
   onChangePage(el) {

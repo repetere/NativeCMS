@@ -13,7 +13,9 @@ export default {
   user:{
     LOGIN_DATA_REQUEST:'user logining data request',
     USER_DATA_FAILURE:'user fetching data failed',
-    LOGIN_DATA_SUCCESS:'user login fetching data succeeded',
+    LOGIN_DATA_SUCCESS: 'user login fetching data succeeded',
+    SAVE_DATA_SUCCESS: 'user profile saving data succeeded',
+    
   },
   clientCacheData:{
     CLIENT_CACHE_DATA_REQUEST:'client cache data save request',

@@ -63,7 +63,7 @@ class Login extends Component {
     super(...arguments);
   }
   render() {
-    console.log('this.props.loginUser',this.props.loginUser);
+    // console.log('this.props.loginUser',this.props.loginUser);
     return (
       <View style={[loginStyles.container, { flexDirection: 'column', }]}>
         <View style={[loginStyles.halfHeight, loginStyles.blueBackground, ]}>

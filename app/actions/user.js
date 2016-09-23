@@ -42,6 +42,22 @@ const user = {
       },
     };
   },
+    /**
+   * @param {string} location name of extension to load
+   * @param {object} options what-wg fetch options
+   */
+  saveUserProfile(url, response, json) {
+    return {
+      type: constants.user.SAVE_DATA_SUCCESS,
+      payload: {
+        url,
+        response,
+        json,
+        updatedAt: new Date(),
+        timestamp: Date.now(),
+      },
+    };
+  },
   /**
   * @param {string} location name of extension to load
   */
@@ -56,6 +72,47 @@ const user = {
       },
     };
   },
+  getUserProfile(jwt_token, responseFormatter) {
+    return (dispatch) => {
+      let fetchResponse;
+      let url = LoginSettings.userprofile.url;
+      dispatch(this.loginRequest(url));
+      fetch(url, {
+        method: LoginSettings.userprofile.method || 'POST',
+        headers: Object.assign({
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }, LoginSettings.userprofile.options.headers, {
+          'x-access-token': jwt_token,
+        }),
+        // body: JSON.stringify({
+        //   username: loginData.username,
+        //   password: loginData.password,
+        // })
+      })
+        .then(checkStatus)
+        .then((response) => {
+          fetchResponse = response;
+          if (responseFormatter) {
+            let formatterPromise = responseFormatter(response);
+            if (formatterPromise instanceof Promise) {
+              return formatterPromise;
+            } else {
+              throw new Error('responseFormatter must return a Promise');
+            }
+          } else {
+            return response.json();
+          }
+        })
+        .then((responseData) => {
+          AsyncStorage.setItem(`${AppConfigSettings.name}_jwt_profile`, JSON.stringify(responseData.user));
+          dispatch(this.saveUserProfile(url, fetchResponse, responseData));
+        })
+        .catch((error) => {
+          dispatch(this.failedUserRequest(url, error));
+        });
+    }
+  },
   /**
   * @param {string} url url for fetch request
   * @param {object} options what-wg fetch options
@@ -64,14 +121,14 @@ const user = {
   loginUser(loginData,responseFormatter) {
     return (dispatch, getState) => {
       let fetchResponse;
-      let url = LoginSettings.url;
+      let url = LoginSettings.login.url;
       dispatch(this.loginRequest(url));
       fetch(url, {
-        method: LoginSettings.method || 'POST',
+        method: LoginSettings.login.method || 'POST',
         headers: Object.assign({
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-        }, LoginSettings.headers, {
+        }, LoginSettings.login.options.headers, {
           username: loginData.username,
           password: loginData.password,
         }),

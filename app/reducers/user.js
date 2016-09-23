@@ -28,6 +28,7 @@ const userReducer = (state, action) => {
       updatedAt: new Date(),
     });
   case constants.user.LOGIN_DATA_SUCCESS:
+  case constants.user.SAVE_DATA_SUCCESS:
     var successPayload = action.payload;
     return Object.assign({
       isFetching: false,

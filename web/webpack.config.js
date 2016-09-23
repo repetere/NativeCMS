@@ -41,12 +41,15 @@ module.exports = {
   ],
   devServer: {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': 'https://pas-dev.promisefinancial.net:8885',
+      'customheaderyaw':'etse',
       // "Access-Control-Allow-Origin": "http://localhost:4000",
-      'Access-Control-Allow-Credentials': 'true',
+      // 'Access-Control-Allow-Credentials': 'true',
     },
 
   },
+    headers: { "X-Custom-Header": "yes" },
+
   output: {
     path: path.join(__dirname, '../../public/web/output'),
     filename: 'bundle.js',
