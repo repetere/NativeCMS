@@ -1,4 +1,7 @@
 import constants from '../constants';
+import LoginSettings from '../../content/config/login.json';
+import AppConfigSettings from '../../content/config/settings.json';
+import { AsyncStorage, } from 'react-native';
 // import Immutable from 'immutable';
 
 const checkStatus = function (response) {
@@ -15,12 +18,11 @@ const user = {
   /**
    * @param {string} url restful resource
    */
-  requestuser(url, options) {
+  loginRequest(url) {
     return {
-      type: constants.user.FETCH_DATA_REQUEST,
+      type: constants.user.LOGIN_DATA_REQUEST,
       payload: {
         url,
-        options,
       },
     };
   },
@@ -28,9 +30,9 @@ const user = {
    * @param {string} location name of extension to load
    * @param {object} options what-wg fetch options
    */
-  recieveduser(url, response, json) {
+  recievedLoginUser(url, response, json) {
     return {
-      type: constants.user.FETCH_DATA_SUCCESS,
+      type: constants.user.LOGIN_DATA_SUCCESS,
       payload: {
         url,
         response,
@@ -43,9 +45,9 @@ const user = {
   /**
   * @param {string} location name of extension to load
   */
-  faileduser(url, error) {
+  failedUserRequest(url, error) {
     return {
-      type: constants.user.FETCH_DATA_FAILURE,
+      type: constants.user.USER_DATA_FAILURE,
       payload: {
         url,
         error,
@@ -59,11 +61,25 @@ const user = {
   * @param {object} options what-wg fetch options
   * @param {function} responseFormatter custom reponse formatter, must be a function that returns a promise that resolves to json/javascript object
   */
-  request(url, options, responseFormatter) {
+  loginUser(loginData,responseFormatter) {
     return (dispatch, getState) => {
       let fetchResponse;
-      dispatch(this.requestuser(url, Object.assign({}, options)));
-      fetch(url, options)
+      let url = LoginSettings.url;
+      dispatch(this.loginRequest(url));
+      fetch(url, {
+        method: LoginSettings.method || 'POST',
+        headers: Object.assign({
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }, LoginSettings.headers, {
+          username: loginData.username,
+          password: loginData.password,
+        }),
+        // body: JSON.stringify({
+        //   username: loginData.username,
+        //   password: loginData.password,
+        // })
+      })
         .then(checkStatus)
         .then((response) => {
           fetchResponse = response;
@@ -79,10 +95,11 @@ const user = {
           }
         })
         .then((responseData) => {
-          dispatch(this.recieveduser(url, fetchResponse, responseData));
+          AsyncStorage.setItem(`${AppConfigSettings.name}_jwt_token`, responseData.token);
+          dispatch(this.recievedLoginUser(url, fetchResponse, responseData));
         })
         .catch((error) => {
-          dispatch(this.faileduser(url, error));
+          dispatch(this.failedUserRequest(url, error));
         });
     };
   },

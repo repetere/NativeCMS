@@ -127,7 +127,7 @@ const mapDispatchToProps = (dispatch) => {
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
     setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),
     getUserProfile: (jwt_token) => store.dispatch(actions.user.getUserProfile(jwt_token)),
-    // loginUser: (stored_jwt_token) => store.dispatch(actions.user.request(url, options, responseFormatter)),
+    loginUser: (formdata) => store.dispatch(actions.user.loginUser(formdata)),
     logoutUser: () => store.dispatch(actions.user.logoutUser()),
   };
 };

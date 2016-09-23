@@ -15,6 +15,7 @@ import ReactNative, {
   Switch,
 } from 'react-native';
 import styles from '../../components/Styles/shared';
+import Form from '../../components/Form';
 import {
   Button,
   List,
@@ -57,88 +58,30 @@ var loginStyles = StyleSheet.create({
 });
 
 
-class Form extends Component{
-  constructor() {
-    super(...arguments);
-    this.state = {
-    };
-    console.log('this.props', this.props);
-  }
-  onSubmit() {
-    console.log('submitting form props', this.props);
-    console.log('form this.state', this.state);
-  }
-  onChangeText(name, text) {
-    // console.log('name, text', name, text);
-    this.setState((previousState, currentProps) => {
-      let newState = previousState;
-      newState[ name ] = text;
-      return newState;
-    });    
-  }
-  onValueChange(name, value) {
-    console.log('name, value', name, value);
-    this.setState((previousState, currentProps) => {
-      let newState = previousState;
-      newState[ name ] = value;
-      return newState;
-    });    
-  }
-  render() {
-    let FormData = this.props.formElements.map((formElement, i) => {
-      console.log('formElement', formElement);
-      let formDataProps = { key: i, };
-      if (formElement.props.submitOnPress) {
-        formDataProps.onPress = this.onSubmit.bind(this);
-      }
-      if (formElement.props.formTextChange) {
-        formDataProps.onChangeText = this.onChangeText.bind(this, formElement.props.name);
-      }
-      if (formElement.props.formSwitchChange) {
-        formDataProps.onValueChange = this.onValueChange.bind(this, formElement.props.name);
-        formDataProps.value = this.state[ formElement.props.name ];
-      }
-      let bindedElement = cloneElement(formElement, formDataProps);
-      return (bindedElement);
-    });
-    console.log('this.state', this.state );
-    return (
-      <View style={[{
-        flex: 1,
-        alignSelf: 'stretch',
-      }, this.props.formStyle,
-      ]}>
-        <Text>Form</Text>
-        {FormData}
-      </View>
-    );
-  }
-}
-
 class Login extends Component {
   constructor(){
     super(...arguments);
   }
   render() {
-    // console.log('Login list view');
+    console.log('this.props.loginUser',this.props.loginUser);
     return (
       <View style={[loginStyles.container, { flexDirection: 'column', }]}>
         <View style={[loginStyles.halfHeight, loginStyles.blueBackground, ]}>
           <Text>login</Text>
         </View>
         <View style={[ loginStyles.halfHeight, loginStyles.bluelightBackground, ]}>
-          <Form formElements={[
+          <Form submitFunction={this.props.loginUser} formElements={[
             <FormLabel>Email / Username</FormLabel>,
             <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus="true" formTextChange="true" />,
             <FormLabel>Password</FormLabel>,
             <FormInput name="password" placeholder="Please enter your Password" secureTextEntry="true"  formTextChange="true"/>,
-            <Switch
-              // onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
-              formSwitchChange="true"
-              name="rememberme"
-              // style={{marginBottom: 10}}
-              value={false}
-              />,
+            // <Switch
+            //   // onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
+            //   formSwitchChange="true"
+            //   name="rememberme"
+            //   // style={{marginBottom: 10}}
+            //   value={false}
+            //   />,
             <Button title="Login" submitOnPress="true" />,
           ]}/>
         </View>

@@ -40,7 +40,12 @@ module.exports = {
     config.paths.index,
   ],
   devServer: {
-    headers: { 'Access-Control-Allow-Origin': '*', },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      // "Access-Control-Allow-Origin": "http://localhost:4000",
+      'Access-Control-Allow-Credentials': 'true',
+    },
+
   },
   output: {
     path: path.join(__dirname, '../../public/web/output'),

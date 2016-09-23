@@ -11,9 +11,9 @@ export default {
     FETCH_DATA_SUCCESS:'fetching data succeeded',
   },
   user:{
-    FETCH_DATA_REQUEST:'fetching data request',
-    FETCH_DATA_FAILURE:'fetching data failed',
-    FETCH_DATA_SUCCESS:'fetching data succeeded',
+    LOGIN_DATA_REQUEST:'user logining data request',
+    USER_DATA_FAILURE:'user fetching data failed',
+    LOGIN_DATA_SUCCESS:'user login fetching data succeeded',
   },
   clientCacheData:{
     CLIENT_CACHE_DATA_REQUEST:'client cache data save request',
