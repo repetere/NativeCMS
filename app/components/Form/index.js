@@ -6,6 +6,7 @@
 import React, { cloneElement, Component } from 'react';
 import { StyleSheet, View, Text, } from 'react-native';
 // import {} from 'react-native-elements';
+import * as Animatable from 'react-native-animatable';
 
 class Form extends Component{
   constructor() {
@@ -18,6 +19,7 @@ class Form extends Component{
     console.log('submitting form props', this.props);
     console.log('form this.state', this.state);
     this.props.submitFunction(this.state);
+    this.refs.view.bounce(800);
   }
   onChangeText(name, text) {
     // console.log('name, text', name, text);
@@ -54,15 +56,27 @@ class Form extends Component{
     });
     // console.log('this.state', this.state );
     return (
-      <View style={[{
+      <Animatable.View ref="view" style={[{
         flex: 1,
         alignSelf: 'stretch',
       }, this.props.formStyle,
       ]}>
         {/*<Text>Form</Text>*/}
         {FormData}
-      </View>
+      </Animatable.View>
     );
+  }
+  componentDidUpdate() {
+    console.log('componentDidUpdate this.refs', this.refs);
+    if (this.props.error) {
+      switch (this.props.errorNotification) {
+        case 'bounce':
+          return this.refs.view.bounce(800);
+        default:
+          return this.refs.view.tada(800);
+      }
+    }
+
   }
 }
 export default Form;

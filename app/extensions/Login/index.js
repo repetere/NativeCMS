@@ -63,14 +63,14 @@ class Login extends Component {
     super(...arguments);
   }
   render() {
-    // console.log('this.props.loginUser',this.props.loginUser);
+    console.log('LOGIN this.props',this.props);
     return (
       <View style={[loginStyles.container, { flexDirection: 'column', }]}>
         <View style={[loginStyles.halfHeight, loginStyles.blueBackground, ]}>
           <Text>login</Text>
         </View>
         <View style={[ loginStyles.halfHeight, loginStyles.bluelightBackground, ]}>
-          <Form submitFunction={this.props.loginUser} formElements={[
+          <Form error={this.props.user.error} submitFunction={this.props.loginUser} formElements={[
             <FormLabel>Email / Username</FormLabel>,
             <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus="true" formTextChange="true" />,
             <FormLabel>Password</FormLabel>,
