@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, AsyncStorage, } from 'react-native';
+import { View, Platform, AsyncStorage, ActivityIndicator, } from 'react-native';
 import Tabs from 'react-native-tabs';
 import AppConfigExtensions from '../../../content/config/extensions.json';
 import AppConfigSettings from '../../../content/config/settings.json';
@@ -64,6 +64,7 @@ class MainApp extends Component{
         if (stored_jwt_token) {
           this.props.getUserProfile(stored_jwt_token);
         }
+        this.props.initialAppLoaded();
       })
       .catch((error) => {
         console.log('JWT USER Login Error', error);
@@ -101,7 +102,24 @@ class MainApp extends Component{
         <AppExtensions.Login {...this.props}  />
       </View>
     );
-    if (this.props.user.isLoggedIn) {
+    let displayLoading = (
+      <View style={[styles.container]}>
+        <ActivityIndicator
+          animating={this.state.animating}
+          style={[{
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 8,
+          }, {
+            height: 80,
+          }]}
+          size="large"
+        />
+      </View>
+    );
+    if (this.props.page.initial_app_state_loaded === false) {
+      return displayLoading;
+    } else if (this.props.user.isLoggedIn) {
       return displayContent;
     } else{
       return displayLogin;      
@@ -123,6 +141,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    initialAppLoaded:()=>store.dispatch(actions.pages.initialAppLoaded()),
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
     setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),

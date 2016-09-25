@@ -20,6 +20,8 @@ import {
 import {
   Button, PricingCard
 } from 'react-native-elements';
+import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
+
 import GridView from 'react-native-easy-grid-view';
 class Example extends Component {
   constructor(props) {
@@ -116,6 +118,13 @@ class Example extends Component {
           flex: 1,
           alignSelf: 'stretch',
         }}>
+          
+          <Button
+            title="Open Dialog"
+            onPress={() => {
+              this.popupDialog.openDialog();
+            }}
+          />
           <PricingCard
             color='#4f9deb'
             title='Free'
@@ -142,6 +151,16 @@ class Example extends Component {
             }}
             renderCell={this._renderCell.bind(this) } />
         </View>
+
+
+          <PopupDialog
+            ref={(popupDialog) => { this.popupDialog = popupDialog; }}
+            dialogAnimation = { new SlideAnimation({ slideFrom: 'bottom' }) }
+          >
+            <View>
+              <Text>Hello</Text>
+            </View>
+          </PopupDialog>
       </ScrollView>
     );
   }

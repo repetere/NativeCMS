@@ -12,3 +12,7 @@ built in helpers
 -react-native-tabs (tab bar)
 -html/markdown
 -notification
+-accordian
+
+TODO - add loader before data loaded from state/async storage
+TODO - add basic SVG logo

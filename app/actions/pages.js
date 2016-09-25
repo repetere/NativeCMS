@@ -11,6 +11,15 @@ const pages = {
       payload: { location, },
     };
   },
+  /**
+   * once initial check of user login status, then set app state to loaded
+   */
+  initialAppLoaded() {
+    return {
+      type: constants.pages.INITIAL_APP_LOADED,
+      payload: { },
+    };
+  },
 };
 
 export default pages;
