@@ -10,9 +10,13 @@ built in helpers
 -react-native-easy-grid-view (layout)
 -react-native-vector-icons (icons)
 -react-native-tabs (tab bar)
--html/markdown
--notification
--accordian
-
+-html/markdown (https://github.com/siuying/react-native-htmltext)
+-notification (make custom https://github.com/KBLNY/react-native-message-bar)
+-accordian (https://github.com/naoufal/react-native-accordion)
+-picker
+-keychain (https://github.com/oblador/react-native-keychain)
+- https://github.com/deanmcpherson/react-native-sortable-listview 
+- https://github.com/sunnylqm/react-native-swiper2
+https://github.com/l-urence/react-native-autocomplete-input
 TODO - add loader before data loaded from state/async storage
 TODO - add basic SVG logo

@@ -105,6 +105,7 @@ const user = {
           }
         })
         .then((responseData) => {
+          console.log('getUserProfile responseData',responseData)
           AsyncStorage.setItem(`${AppConfigSettings.name}_jwt_profile`, JSON.stringify(responseData.user));
           dispatch(this.saveUserProfile(url, fetchResponse, responseData));
         })

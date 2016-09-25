@@ -28,9 +28,25 @@ const userReducer = (state, action) => {
       updatedAt: new Date(),
     });
   case constants.user.LOGIN_DATA_SUCCESS:
+    var loginSuccessPayload = action.payload;
+    return Object.assign(state, {
+      isFetching: false,
+      loginURL: loginSuccessPayload.url,
+      isLoggedIn: true,
+      error: null,
+      email: loginSuccessPayload.json.user.email,
+      firstname: loginSuccessPayload.json.user.firstname,
+      lastname: loginSuccessPayload.json.user.lastname,
+      profile_image_preview: loginSuccessPayload.json.user.primaryasset.attributes.location,
+      jwt_token: loginSuccessPayload.json.token,
+      jwt_token_expires: loginSuccessPayload.json.expires,
+      jwt_token_timeout: loginSuccessPayload.json.timeout,
+      userdata: loginSuccessPayload.json.user,
+      updatedAt: loginSuccessPayload.updatedAt,
+    });
   case constants.user.SAVE_DATA_SUCCESS:
     var successPayload = action.payload;
-    return Object.assign({
+    return {
       isFetching: false,
       loginURL: successPayload.url,
       isLoggedIn: true,
@@ -44,7 +60,7 @@ const userReducer = (state, action) => {
       jwt_token_timeout: successPayload.json.timeout,
       userdata: successPayload.json.user,
       updatedAt: successPayload.updatedAt,
-    });
+    };
   case constants.user.USER_DATA_FAILURE:
     var failurePayload = action.payload;
     return Object.assign(state, {

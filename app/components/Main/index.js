@@ -55,9 +55,11 @@ class MainApp extends Component{
           jwt_token,
         });
         stored_jwt_token = jwt_token;
+        console.log('stored_jwt_token', stored_jwt_token);
         return AsyncStorage.getItem(`${AppConfigSettings.name}_saved_user`);
       })
       .then((saved_user) => {
+        console.log('saved_user', saved_user);
         if (saved_user) {
           this.props.setLoginStatus(true);
         }

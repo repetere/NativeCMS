@@ -27,15 +27,14 @@ import GridView from 'react-native-grid-view';
 
 class RepoItem extends Component {
   render() {
-    // console.log('rendering RepoItem props', this.props);
-     // /*this.props.owner.avatar_url*/
+    console.log('rendering RepoItem props', this.props);
+     /*this.props.owner.avatar_url*/
     return (
-      <ListItem
-        roundAvatar
-        avatar={'http://lorempixel.com/400/400'}
+      <View
         key={this.props.id}
-        title={this.props.full_name}
-      />
+        >
+      <Text>item</Text>  
+      </View>
     );
     // return (
     //   <View style={gridStyles.gridItem} key={this.props.id}>
@@ -60,9 +59,10 @@ class Home extends Component {
     this.state = {
       fetchData: props.fetchData,
     };
+    console.log('CUSTOM HOME this.props', this.props);
   }
   componentDidMount() {
-    this.props.requestData('https://api.github.com/users/janbialostok/repos');
+    this.props.requestData('https://pas-development.promisefinancial.net/pas/data/v2');
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
@@ -91,15 +91,7 @@ class Home extends Component {
           <Text style={styles.instructions}>
             Data length: {(this.state.fetchData.json) ? this.state.fetchData.json.length : 0}
           </Text>
-          <Button
-            onPress={() => {
-              this.props.requestData('https://api.github.com/users/typesettin/repos');
-            } }
-            small
-            iconRight
-            icon={{ name: 'code', }}
-            backgroundColor="slategray"
-            title="Refresh Data TS" />
+
           
           <Button
             onPress={() => {
