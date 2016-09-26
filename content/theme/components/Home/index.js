@@ -33,14 +33,24 @@ class Home extends Component {
     console.log('CUSTOM HOME this.props', this.props);
   }
   componentDidMount() {
+    // let requestHeaders = new Headers();
+    // requestHeaders.set('Accept', 'application/json');
+    // requestHeaders.set('Content-Type', 'application/json');
+    // requestHeaders.set('X-Access-Token',  this.props.user.jwt_token);
+    // requestHeaders.set('x-access-token',  this.props.user.jwt_token);
+
     this.props.requestData('https://pas-dev.promisefinancial.net:8885/pas/data/v2', {
-      method:'GET',
+      method:'POST',
       headers: {
         'Accept':'application/json',
         'Content-Type':'application/json',
+        'X-Access-Token': this.props.user.jwt_token,
         'x-access-token': this.props.user.jwt_token,
-        'Access-Control-Allow-Origin':'*',
+        // 'Access-Control-Allow-Origin':'*',
       },
+      body: JSON.stringify({
+        access_token: this.props.user.jwt_token,
+      }),
     });
   }
   componentWillReceiveProps(nextProps) {

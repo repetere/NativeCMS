@@ -61,8 +61,6 @@ const fetchData = {
   * @param {function} responseFormatter custom reponse formatter, must be a function that returns a promise that resolves to json/javascript object
   */
   request(url, options, responseFormatter) {
-    console.log('request url',url)
-    console.log('request options',options)
     return (dispatch, getState) => {
       let fetchResponse;
       dispatch(this.requestFetchData(url, Object.assign({}, options)));
