@@ -72,6 +72,42 @@ const user = {
       },
     };
   },
+  logoutUserSuccess() { 
+    return {
+      type: constants.user.LOGOUT_SUCCESS,
+      payload: {
+        updatedAt: new Date(),
+        timestamp: Date.now(),
+      },
+    };
+  },
+  failedLogoutRequest(error) { 
+    return {
+      type: constants.user.LOGOUT_FAILURE,
+      payload: {
+        error,
+        updatedAt: new Date(),
+        timestamp: Date.now(),
+      },
+    };
+  },
+  logoutUser() {
+    return (dispatch) => {
+      dispatch(this.logoutUserRequest);
+      Promise.all([
+        AsyncStorage.removeItem(constants.jwt_token.TOKEN_NAME),
+        AsyncStorage.removeItem(constants.jwt_token.TOKEN_DATA),
+        AsyncStorage.removeItem(constants.jwt_token.PROFILE_JSON),
+      ])
+        .then(results => {
+          console.log('logout user results', results);
+          dispatch(this.logoutUserSuccess());
+        })
+        .catch(error => { 
+          dispatch(this.failedLogoutRequest(error));
+        });
+    };
+  },
   getUserProfile(jwt_token, responseFormatter) {
     return (dispatch) => {
       let fetchResponse;
@@ -105,8 +141,8 @@ const user = {
           }
         })
         .then((responseData) => {
-          console.log('getUserProfile responseData',responseData)
-          AsyncStorage.setItem(`${AppConfigSettings.name}_jwt_profile`, JSON.stringify(responseData.user));
+          console.log('getUserProfile responseData', responseData);
+          AsyncStorage.setItem(constants.jwt_token.PROFILE_JSON, JSON.stringify(responseData.user));
           dispatch(this.saveUserProfile(url, fetchResponse, responseData));
         })
         .catch((error) => {
@@ -153,7 +189,7 @@ const user = {
           }
         })
         .then((responseData) => {
-          AsyncStorage.setItem(`${AppConfigSettings.name}_jwt_token`, responseData.token);
+          AsyncStorage.setItem(constants.jwt_token.TOKEN_NAME, responseData.token);
           dispatch(this.recievedLoginUser(url, fetchResponse, responseData));
         })
         .catch((error) => {

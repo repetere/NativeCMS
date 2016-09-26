@@ -20,6 +20,31 @@ const initialState = {
 
 const userReducer = (state, action) => {
   switch (action.type) {
+  case constants.user.LOGOUT_FAILURE:
+    var logoutFailurePayload = action.payload;
+    return Object.assign(state, {
+      isFetching: false,
+      error: logoutFailurePayload.error,
+      timestamp: logoutFailurePayload.timestamp,
+      updatedAt: logoutFailurePayload.updatedAt,
+    });
+  case constants.user.LOGOUT_SUCCESS:
+    var logoutSuccessPayload = action.payload;
+    return Object.assign(state, {
+      isFetching: false,
+      isLoggedIn: false,
+      error: null,
+      email: null,
+      firstname: null,
+      lastname: null,
+      profile_image_preview: null,
+      jwt_token: null,
+      jwt_token_expires: null,
+      jwt_token_timeout: null,
+      userdata: false,
+      timestamp: logoutSuccessPayload.timestamp,
+      updatedAt: logoutSuccessPayload.updatedAt,
+    });
   case constants.user.LOGIN_DATA_REQUEST:
     // var requestPayload = action.payload;
     return Object.assign(state, {

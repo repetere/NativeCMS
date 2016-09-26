@@ -18,6 +18,7 @@ import { Provider, connect, } from 'react-redux';
 import combinedReducers from '../../reducers';
 import store from '../../stores';
 import actions from '../../actions';
+import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
 import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } from 'react-router';
 import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/location';
@@ -49,14 +50,14 @@ class MainApp extends Component{
   }
   componentDidMount() {
     let stored_jwt_token;
-    AsyncStorage.getItem(`${AppConfigSettings.name}_jwt_token`)
+    AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME)
       .then((jwt_token) => {
         this.setState({
           jwt_token,
         });
         stored_jwt_token = jwt_token;
         console.log('stored_jwt_token', stored_jwt_token);
-        return AsyncStorage.getItem(`${AppConfigSettings.name}_saved_user`);
+        return AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA);
       })
       .then((saved_user) => {
         console.log('saved_user', saved_user);

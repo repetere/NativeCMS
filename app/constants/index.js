@@ -1,3 +1,5 @@
+import AppConfigSettings from '../../content/config/settings.json';
+
 export default {
   pages:{
     LOAD_PAGE_ACTION: 'load page component',
@@ -16,11 +18,18 @@ export default {
     USER_DATA_FAILURE:'user fetching data failed',
     LOGIN_DATA_SUCCESS: 'user login fetching data succeeded',
     SAVE_DATA_SUCCESS: 'user profile saving data succeeded',
-    
+    LOGOUT_REQUEST:'user logout request',
+    LOGOUT_SUCCESS:'user logout succeeded',    
+    LOGOUT_FAILURE:'user logout failed',    
   },
   clientCacheData:{
     CLIENT_CACHE_DATA_REQUEST:'client cache data save request',
     CLIENT_CACHE_DATA_FAILURE:'client cache data failed',
     CLIENT_CACHE_DATA_SUCCESS:'client cache data succeeded',
+  },
+  jwt_token: {
+    TOKEN_NAME: `${AppConfigSettings.name}_jwt_token`,
+    TOKEN_DATA: `${AppConfigSettings.name}_jwt_token_data`,
+    PROFILE_JSON: `${AppConfigSettings.name}_jwt_profile`,
   },
 };
