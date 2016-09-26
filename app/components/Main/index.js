@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, AsyncStorage, ActivityIndicator, } from 'react-native';
+import { View, Platform, AsyncStorage, ActivityIndicator,ActivityIndicatorIOS } from 'react-native';
 import Tabs from 'react-native-tabs';
 import AppConfigExtensions from '../../../content/config/extensions.json';
 import AppConfigSettings from '../../../content/config/settings.json';
@@ -25,6 +25,7 @@ import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } 
 import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/location';
 
 const history = getHistory(historySettings, AppConfigSettings, store);
+const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
 
 class MainApp extends Component{
   constructor(props) {
@@ -123,7 +124,7 @@ class MainApp extends Component{
     );
     let displayLoading = (
       <View style={[styles.container]}>
-        <ActivityIndicator
+        <LoadingIndicators
           animating={this.state.animating}
           style={[{
             alignItems: 'center',

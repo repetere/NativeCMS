@@ -48,7 +48,7 @@ module.exports = {
     },
 
   },
-    headers: { "X-Custom-Header": "yes" },
+  headers: { "X-Custom-Header": "yes" },
 
   output: {
     path: path.join(__dirname, '../../public/web/output'),
@@ -66,7 +66,14 @@ module.exports = {
     }),
     isProd? new webpack.ProvidePlugin({
       React: 'react',
-    }): new webpack.HotModuleReplacementPlugin(),
+    }) : new webpack.HotModuleReplacementPlugin({
+      headers: {
+        'Access-Control-Allow-Origin': 'https://pas-dev.promisefinancial.net:8885',
+        'customheaderyaw':'etse',
+        // "Access-Control-Allow-Origin": "http://localhost:4000",
+        // 'Access-Control-Allow-Credentials': 'true',
+      },
+    }),
     new webpack.NoErrorsPlugin(),
     new HtmlPlugin(),
   ],

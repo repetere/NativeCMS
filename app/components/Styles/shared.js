@@ -11,7 +11,15 @@ let webFixes = (Platform.OS === 'web') ? {
     backgroundColor: '#fff',
     overflow: 'auto',
     display: 'block',
-  }
+  },
+  scrollViewStandardContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
+    flexDirection: 'column',
+    padding: 8,
+    overflow: 'auto',
+    display: 'block',
+  },
 } : {};
 
 const styles = StyleSheet.create(Object.assign({
@@ -20,6 +28,17 @@ const styles = StyleSheet.create(Object.assign({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  scrollViewStandardContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
+    flexDirection: 'column',
+    padding: 8,
+  },
+  scrollViewStandardContentContainer: {
+    paddingVertical: 20,
+    position: 'relative',
+    marginBottom: 60,
   },
   scrollViewWrapperContainer: {
     flex: 1,
