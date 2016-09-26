@@ -4,6 +4,8 @@ export default {
   pages:{
     LOAD_PAGE_ACTION: 'load page component',
     INITIAL_APP_LOADED: 'loaded initial app state',
+    RESET_APP_LOADED: 'resetting initial app state',
+    ASYNCSTORAGE_KEY: 'current_view',
   },
   tabBarExtensions:{
     SET_EXTENSIONS_ACTION:'set tabBarExtensions',

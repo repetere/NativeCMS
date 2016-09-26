@@ -43,16 +43,22 @@ class Profile extends Component {
       AsyncStorage.getItem(constants.jwt_token.PROFILE_JSON),
     ])
     .then(results_asyncstorage => {
-      this.setState({ results_asyncstorage, user_props: this.props.user })
+      this.setState({ results_asyncstorage, user_props: this.props.user, });
     })
     .catch(err => { console.log('profile err', err); });  
   }
   render() {
-      console.log('profile list view',this.state.dataSource)
+    console.log('profile list view', this.state.dataSource);
     return (
       <View style={[ styles.scrollViewWrapperContainer, styles.statusBarPadding, ]}>
         <ScrollView style={{flex:1}} contentContainerStyle={ { paddingVertical: 20,position:'relative' }}>
-
+          <Button
+            title="Log out"
+            onPress={() => {
+              console.log('pressed button')
+              this.props.logoutUser()
+            }}
+            />
         <List containerStyle={{ marginBottom: 20, flex:1, }}>
           {
             list.map((l, i) => (

@@ -13,7 +13,7 @@ class Form extends Component{
     super(...arguments);
     this.state = {
     };
-    console.log('this.props', this.props);
+    // console.log('this.props', this.props);
   }
   onSubmit() {
     console.log('submitting form props', this.props);
@@ -67,7 +67,7 @@ class Form extends Component{
     );
   }
   componentDidUpdate() {
-    console.log('componentDidUpdate this.refs', this.refs);
+    // console.log('componentDidUpdate this.refs', this.refs);
     if (this.props.error) {
       switch (this.props.errorNotification) {
         case 'bounce':

@@ -64,7 +64,7 @@ class Login extends Component {
     super(...arguments);
   }
   render() {
-    console.log('LOGIN this.props',this.props);
+    // console.log('LOGIN this.props',this.props);
     return (
       <View style={[loginStyles.container, { flexDirection: 'column', }]}>
         <View style={[loginStyles.halfHeight, loginStyles.blueBackground, ]}>
@@ -73,9 +73,9 @@ class Login extends Component {
         <View style={[ loginStyles.halfHeight, loginStyles.bluelightBackground, ]}>
           <Form error={this.props.user.error} submitFunction={this.props.loginUser} formElements={[
             <FormLabel>Email / Username</FormLabel>,
-            <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus="true" formTextChange="true" />,
+            <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus={true} autoCapitalize="none" formTextChange={true} returnKeyType="next" />,
             <FormLabel>Password</FormLabel>,
-            <FormInput name="password" placeholder="Please enter your Password" secureTextEntry="true"  formTextChange="true"/>,
+            <FormInput name="password" placeholder="Please enter your Password" secureTextEntry={true}  formTextChange={true} returnKeyType="next"/>,
             // <Switch
             //   // onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
             //   formSwitchChange="true"

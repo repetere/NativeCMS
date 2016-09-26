@@ -2,6 +2,8 @@ import constants from '../constants';
 import LoginSettings from '../../content/config/login.json';
 import AppConfigSettings from '../../content/config/settings.json';
 import { AsyncStorage, } from 'react-native';
+import pageActions from './pages';
+import 'whatwg-fetch';
 // import Immutable from 'immutable';
 
 const checkStatus = function (response) {
@@ -93,7 +95,7 @@ const user = {
   },
   logoutUser() {
     return (dispatch) => {
-      dispatch(this.logoutUserRequest);
+      dispatch(pageActions.resetAppLoadedState());
       Promise.all([
         AsyncStorage.removeItem(constants.jwt_token.TOKEN_NAME),
         AsyncStorage.removeItem(constants.jwt_token.TOKEN_DATA),
@@ -102,9 +104,11 @@ const user = {
         .then(results => {
           console.log('logout user results', results);
           dispatch(this.logoutUserSuccess());
+          dispatch(pageActions.initialAppLoaded());
         })
         .catch(error => { 
           dispatch(this.failedLogoutRequest(error));
+          dispatch(pageActions.initialAppLoaded());
         });
     };
   },
@@ -158,6 +162,7 @@ const user = {
   loginUser(loginData,responseFormatter) {
     return (dispatch, getState) => {
       let fetchResponse;
+      let cachedResponseData;
       let url = LoginSettings.login.url;
       dispatch(this.loginRequest(url));
       fetch(url, {
@@ -189,8 +194,21 @@ const user = {
           }
         })
         .then((responseData) => {
-          AsyncStorage.setItem(constants.jwt_token.TOKEN_NAME, responseData.token);
-          dispatch(this.recievedLoginUser(url, fetchResponse, responseData));
+          cachedResponseData = responseData;
+          return Promise.all([
+            AsyncStorage.setItem(constants.jwt_token.TOKEN_NAME, responseData.token),
+            AsyncStorage.setItem(constants.jwt_token.TOKEN_DATA, JSON.stringify({
+              expires: responseData.expires,
+              timeout: responseData.timeout,
+              token: responseData.token,
+            })),
+            AsyncStorage.setItem(constants.jwt_token.PROFILE_JSON, JSON.stringify(responseData.user)),
+          ]);
+          console.log('login USER responseData',responseData)
+        })
+        .then(() => {
+          dispatch(this.recievedLoginUser(url, fetchResponse, cachedResponseData));
+          
         })
         .catch((error) => {
           dispatch(this.failedUserRequest(url, error));

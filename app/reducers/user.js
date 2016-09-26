@@ -54,7 +54,7 @@ const userReducer = (state, action) => {
     });
   case constants.user.LOGIN_DATA_SUCCESS:
     var loginSuccessPayload = action.payload;
-    return Object.assign(state, {
+    return {
       isFetching: false,
       loginURL: loginSuccessPayload.url,
       isLoggedIn: true,
@@ -68,7 +68,7 @@ const userReducer = (state, action) => {
       jwt_token_timeout: loginSuccessPayload.json.timeout,
       userdata: loginSuccessPayload.json.user,
       updatedAt: loginSuccessPayload.updatedAt,
-    });
+    };
   case constants.user.SAVE_DATA_SUCCESS:
     var successPayload = action.payload;
     return {

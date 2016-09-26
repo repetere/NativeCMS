@@ -8,6 +8,7 @@ import { View, Platform, AsyncStorage, ActivityIndicator, } from 'react-native';
 import Tabs from 'react-native-tabs';
 import AppConfigExtensions from '../../../content/config/extensions.json';
 import AppConfigSettings from '../../../content/config/settings.json';
+import AppLoginSettings from '../../../content/config/login.json';
 import AppExtensions from './extensions';
 import styles from '../Styles/shared';
 import TabIcon from '../AppTabs/TabIcon';
@@ -49,28 +50,43 @@ class MainApp extends Component{
     }
   }
   componentDidMount() {
-    let stored_jwt_token;
-    AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME)
-      .then((jwt_token) => {
+    Promise.all([
+      AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME),
+      AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA),
+      AsyncStorage.getItem(constants.jwt_token.PROFILE_JSON),
+    ])
+      .then((results) => {
+        let jwt_token = results[ 0 ];
+        let jwt_token_data = JSON.parse(results[ 1 ]);
+        let jwt_user_profile = JSON.parse(results[ 2 ]);
+
+        // console.log('MAIN componentDidMount jwt_token', jwt_token);
+        // console.log('MAIN componentDidMount jwt_token_data', jwt_token_data);
+        // console.log('MAIN componentDidMount jwt_user_profile', jwt_user_profile);
+        if (jwt_token_data && jwt_user_profile) {
+          let url = AppLoginSettings.login.url;
+          let response = {};
+          let json = {
+            token: jwt_token_data.token,
+            expires: jwt_token_data.expires,
+            timeout: jwt_token_data.timeout,
+            user: jwt_user_profile,
+          };
+          this.props.saveUserProfile(url, response, json);
+        } else if(jwt_token) {
+          this.props.getUserProfile(jwt_token);
+        }
+        else {
+          console.log('MAIN componentDidMount USER IS NOT LOGGED IN');
+        }
         this.setState({
           jwt_token,
-        });
-        stored_jwt_token = jwt_token;
-        console.log('stored_jwt_token', stored_jwt_token);
-        return AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA);
-      })
-      .then((saved_user) => {
-        console.log('saved_user', saved_user);
-        if (saved_user) {
-          this.props.setLoginStatus(true);
-        }
-        if (stored_jwt_token) {
-          this.props.getUserProfile(stored_jwt_token);
-        }
+        });        
         this.props.initialAppLoaded();
       })
       .catch((error) => {
-        console.log('JWT USER Login Error', error);
+        console.log('MAIN componentDidMount: JWT USER Login Error.', error);
+        this.props.logoutUser();
       });
   }
   onChangePage(el) {
@@ -120,11 +136,15 @@ class MainApp extends Component{
         />
       </View>
     );
+    // console.log('MAIN APP: this.props', this.props);
     if (this.props.page.initial_app_state_loaded === false) {
+      // console.log('MAIN APP: this.props.page.initial_app_state_loaded', this.props.page.initial_app_state_loaded);
       return displayLoading;
     } else if (this.props.user.isLoggedIn) {
+      // console.log('MAIN APP: this.props.user.isLoggedIn', this.props.user.isLoggedIn);
       return displayContent;
-    } else{
+    } else {
+      // console.log('MAIN APP: displayLogin');
       return displayLogin;      
     }
   }
@@ -149,6 +169,7 @@ const mapDispatchToProps = (dispatch) => {
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
     setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),
     getUserProfile: (jwt_token) => store.dispatch(actions.user.getUserProfile(jwt_token)),
+    saveUserProfile: (url, response, json) => store.dispatch(actions.user.saveUserProfile(url, response, json)),
     loginUser: (formdata) => store.dispatch(actions.user.loginUser(formdata)),
     logoutUser: () => store.dispatch(actions.user.logoutUser()),
   };

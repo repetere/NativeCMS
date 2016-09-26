@@ -1,4 +1,5 @@
 import constants from '../constants';
+import 'whatwg-fetch';
 // import Immutable from 'immutable';
 
 const checkStatus = function (response) {
