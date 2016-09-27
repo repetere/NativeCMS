@@ -1,4 +1,4 @@
-import React, { Component, } from 'react';
+import React, { cloneElement, Component, } from 'react';
 import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, } from 'react-native';
 import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
@@ -13,9 +13,9 @@ class Layout extends Component {
       tabs: this.props.layoutData.tabs || false,
       selectedTab: this.props.layoutData.selectedTab || null,
     };
-    console.log('Layout this.props', this.props);
   }
   render() {
+    let LocalLayoutTabComponent = this.state.tabs[ this.state.selectedTab ].component;
     return (
       <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
         <View style={layoutStyles.layoutContentContainer}>
@@ -28,7 +28,8 @@ class Layout extends Component {
                   selectedStyle={[layoutStyles.layoutTabSelectedStyle, colorStyles.active, ]}
                   style={layoutStyles.layoutTab}
                   iconStyle={layoutStyles.layoutTabIconStyle}
-                  onSelect={el => this.setState({ selectedTab: el.props.name, }) } >{this.props.layoutData.tabs.map((tabData) => {
+                  onSelect={el => this.setState({ selectedTab: el.props.name, }) } >{Object.keys(this.state.tabs).map((tabname) => {
+                    let tabData = this.state.tabs[ tabname ];
                     return (
                       <Text
                         key={tabData.name}
@@ -41,16 +42,12 @@ class Layout extends Component {
             </View>
           <View style={layoutStyles.hr}></View>
         </View>
+        <LocalLayoutTabComponent {...this.props}/>
         <Button
           small
           iconRight
           icon={{ name: 'code', }}
           title="Code" />
-        <Button
-          small
-          iconRight
-          icon={{ name: 'share-apple',  type: 'evilicon', }}
-          title="Share Apple" />
         <Button
           small
           iconRight

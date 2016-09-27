@@ -12,6 +12,8 @@ let webFixes = (Platform.OS === 'web') ? {
   },
 } : {};
 
+
+
 const styles = StyleSheet.create(Object.assign({
   h1: {
     color: 'black',

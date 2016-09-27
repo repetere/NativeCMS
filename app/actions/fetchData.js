@@ -1,5 +1,6 @@
 import constants from '../constants';
 import 'whatwg-fetch';
+import 'babel-polyfill';
 // import Immutable from 'immutable';
 
 const checkStatus = function (response) {
