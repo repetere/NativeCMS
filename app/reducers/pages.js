@@ -1,10 +1,13 @@
 import constants from '../constants';
+import customSettings from '../../content/config/settings.json';
 // import Immutable from 'immutable';
 
+console.log('customSettings', customSettings);
 const initialState = {
-  location: 'home',
+  location: customSettings.defaultExtensionRoute || 'home',
   initial_app_state_loaded: false,
 };
+console.log('initialState', initialState);
 
 const pageReducer = (state = initialState, action) => {
   switch (action.type) {

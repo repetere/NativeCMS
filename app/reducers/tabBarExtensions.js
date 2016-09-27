@@ -1,4 +1,5 @@
-import AppConfigExtensions from '../../content/config/extensions.json';
+import AppConfigExtensions from './extensions.json';
+import CustomExtensions from '../../content/config/extensions.json';
 import constants from '../constants';
 // import Immutable from 'immutable';
 

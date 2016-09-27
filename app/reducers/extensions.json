@@ -1,0 +1,47 @@
+{
+  "standard" : [{
+    "name":"pipelines",
+    "icon":{
+      "selected":"ios-git-network",
+      "initial":"ios-git-network-outline"
+    }
+  },{
+    "name":"stats",
+    "icon":{
+      "selected":"ios-pulse",
+      "initial":"ios-pulse-outline"
+    }
+  },{
+    "name":"credit parser",
+    "icon":{
+      "selected":"flash",
+      "initial":"flash",
+      "type":"FontAwesome"
+    }
+  },{
+    "name":"profile",
+    "icon":{
+      "selected":"ios-contact",
+      "initial":"ios-contact-outline"
+    }
+  },{
+    "name":"settings",
+    "icon":{
+      "selected":"ios-settings",
+      "initial":"ios-settings-outline"
+    }
+  },{
+    "name":"csv output",
+    "icon":{
+      "selected":"ios-settings",
+      "initial":"ios-settings-outline"
+    }
+  }],
+  "more":{
+    "name":"more",
+    "icon":{
+      "selected":"ios-more",
+      "initial":"ios-more-outline"
+    }
+  }
+}

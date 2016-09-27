@@ -100,6 +100,7 @@ const user = {
         AsyncStorage.removeItem(constants.jwt_token.TOKEN_NAME),
         AsyncStorage.removeItem(constants.jwt_token.TOKEN_DATA),
         AsyncStorage.removeItem(constants.jwt_token.PROFILE_JSON),
+        AsyncStorage.removeItem(constants.pages.ASYNCSTORAGE_KEY),
       ])
         .then(results => {
           console.log('logout user results', results);

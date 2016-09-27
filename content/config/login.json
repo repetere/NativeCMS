@@ -24,5 +24,19 @@
         "entitytype":"account"
       }
     }
+  },
+  "login_extension":{
+    "logo_dimensions":{
+      "height":200,
+      "width":200
+    },
+    "styles":{
+      "appNameBackground": {
+        "backgroundColor":"gainsboro"
+      },
+      "formBackground": {
+        "backgroundColor":"white"
+      }
+    }
   }
 }

@@ -1,4 +1,5 @@
 import capitalize from 'capitalize';
+import customSettings from '../../content/config/settings.json';
 
 export function getComponentFromRouterLocation(location) {
   let locationArray = location.split('/');
@@ -8,10 +9,10 @@ export function getComponentFromRouterLocation(location) {
 
 export function getTabFromLocation (extensions, location) {
   if (!location) {
-    return 'home';
+    return customSettings.defaultExtensionRoute || 'home';
   } else if (extensions[ location ]) {
     return location.toLowerCase();
   } else {
-    return 'home';
+    return customSettings.defaultExtensionRoute || 'home';
   }
 }

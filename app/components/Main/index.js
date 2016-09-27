@@ -26,6 +26,8 @@ import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/
 
 const history = getHistory(historySettings, AppConfigSettings, store);
 const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
+const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || 'home';
+const defaultExtensionComponent = AppConfigSettings.defaultExtensionComponent || 'Home';
 
 class MainApp extends Component{
   constructor(props) {
@@ -37,7 +39,7 @@ class MainApp extends Component{
      *THIS IS FOR LANDING ON A DIFFERENT PAGE
     */
     let pageLocation = getTabFromLocation(AppExtensions, getComponentFromRouterLocation(this.props.location.pathname));
-    if (pageLocation !== 'home') {
+    if (pageLocation !== defaultExtensionRoute) {
       this.props.onChangePage(pageLocation);
     }
   }
@@ -96,7 +98,7 @@ class MainApp extends Component{
   }
   render() {
     let self = this;
-    let CurrentApp = AppExtensions[ capitalize(this.props.page.location) ] || AppExtensions.Home;
+    let CurrentApp = AppExtensions[ capitalize(this.props.page.location) ] || AppExtensions[defaultExtensionComponent];
     let displayContent = (
       <View style={[styles.container]}>
         <CurrentApp {...this.props}  />

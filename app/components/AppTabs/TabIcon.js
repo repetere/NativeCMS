@@ -29,7 +29,7 @@ class TabIcon extends Component{
           this.props.onSelect({ props:this.props, });
         }}>
         <View style={styles.centerBox}>
-          <Icon name={iconName} size={30} color={iconColor.color} style={iconColor} icontype="Ionicons"/>
+          <Icon name={iconName} size={30} color={iconColor.color} style={iconColor} icontype={this.props.icon.type || 'Ionicons'}/>
           {/* <IconComponent name={iconName} size={30} color={iconColor.color} style={iconColor}/> */}
           <Text style={[
             iconColor, styles.tabBarText,
