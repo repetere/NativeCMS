@@ -5,7 +5,34 @@ import ActivityIndicator from '../../../../app/components/LoadingIndicator';
 import Layout from '../../../../app/components/Layout';
 import 'babel-polyfill';
 import { Button, } from 'react-native-elements';
+import pipelineComponent from './pipes';
 
+let layoutData = {
+  extensionTitle: 'Process Engine',
+  layoutType: 'tabs',
+  selectedTab:'pipelines',
+  tabs: [{
+    name: 'pipelines',
+    title: 'Pipelines',
+    component: pipelineComponent, 
+    props:{},
+  }, {
+    name: 'resources',
+    title: 'Resources',
+    component: pipelineComponent, 
+    props:{},
+  }, {
+    name: 'parsers',
+    title: 'Parsers',
+    component: pipelineComponent, 
+    props:{},
+  }, {
+    name: 'segments',
+    title: 'Segments',
+    component: pipelineComponent, 
+    props:{},
+  }],
+};
 
 class Pipelines extends Component {
   constructor(props) {
@@ -35,7 +62,7 @@ class Pipelines extends Component {
     });
   }
   render() {
-    return (<Layout/>);
+    return (<Layout {...this.props} layoutData={layoutData} />);
   }
 }
 

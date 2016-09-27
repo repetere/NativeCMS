@@ -16,7 +16,7 @@ let webFixes = (Platform.OS === 'web') ? {
     flex: 1,
     alignSelf: 'stretch',
     flexDirection: 'column',
-    padding: 8,
+    // padding: 8,
     overflow: 'auto',
     display: 'block',
   },
@@ -33,7 +33,7 @@ const styles = StyleSheet.create(Object.assign({
     flex: 1,
     alignSelf: 'stretch',
     flexDirection: 'column',
-    padding: 8,
+    // padding: 8,
   },
   scrollViewStandardContentContainer: {
     paddingVertical: 20,
@@ -48,7 +48,7 @@ const styles = StyleSheet.create(Object.assign({
     marginBottom: 60,
   },
   statusBarPadding: {
-    paddingTop:20
+    paddingTop:20,
   },
   appContainer: {
     flex: 1,
