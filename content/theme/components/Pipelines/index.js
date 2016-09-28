@@ -3,11 +3,14 @@ import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, } from '
 import styles from '../../../../app/components/Styles/shared';
 import ActivityIndicator from '../../../../app/components/LoadingIndicator';
 import Layout from '../../../../app/components/Layout';
-import 'babel-polyfill';
 import { Button, } from 'react-native-elements';
 import PipelineComponent from './pipes';
 import ResourcesComponent from './resources';
-
+import ParsersComponent from './parsers';
+import SegmentsComponent from './segments';
+if (Platform.OS === 'web') {
+  require('babel-polyfill');
+}
 let layoutData = {
   extensionTitle: 'Process Engine',
   layoutType: 'tabs',
@@ -28,13 +31,13 @@ let layoutData = {
     parsers: {
       name: 'parsers',
       title: 'Parsers',
-      component: PipelineComponent, 
+      component: ParsersComponent, 
       props:{},
     }, 
     segments: {
       name: 'segments',
       title: 'Segments',
-      component: PipelineComponent, 
+      component: SegmentsComponent, 
       props:{},
     },
   },

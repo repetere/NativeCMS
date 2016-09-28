@@ -1,6 +1,9 @@
 import constants from '../constants';
-import 'whatwg-fetch';
-import 'babel-polyfill';
+import { Platform, } from 'react-native';
+if (Platform.OS === 'web') {
+  require('whatwg-fetch');
+  require('babel-polyfill');
+}
 // import Immutable from 'immutable';
 
 const checkStatus = function (response) {
@@ -65,27 +68,32 @@ const fetchData = {
     return (dispatch, getState) => {
       let fetchResponse;
       dispatch(this.requestFetchData(url, Object.assign({}, options)));
-      fetch(url, options)
-        .then(checkStatus)
-        .then((response) => {
-          fetchResponse = response;
-          if (responseFormatter) {
-            let formatterPromise = responseFormatter(response);
-            if (formatterPromise instanceof Promise) {
-              return formatterPromise;
+      try {
+        fetch(url, options)
+          .then(checkStatus)
+          .then((response) => {
+            fetchResponse = response;
+            if (responseFormatter) {
+              let formatterPromise = responseFormatter(response);
+              if (formatterPromise instanceof Promise) {
+                return formatterPromise;
+              } else {
+                throw new Error('responseFormatter must return a Promise');
+              }
             } else {
-              throw new Error('responseFormatter must return a Promise');
+              return response.json();
             }
-          } else {
-            return response.json();
-          }
-        })
-        .then((responseData) => {
-          dispatch(this.recievedFetchData(url, fetchResponse, responseData));
-        })
-        .catch((error) => {
-          dispatch(this.failedFetchData(url, error));
-        });
+          })
+          .then((responseData) => {
+            dispatch(this.recievedFetchData(url, fetchResponse, responseData));
+          })
+          .catch((error) => {
+            dispatch(this.failedFetchData(url, error));
+          });
+      }
+      catch (e) {
+        dispatch(this.failedFetchData(url, e));
+      }
     };
   },
 };

@@ -1,10 +1,11 @@
 import {
   StyleSheet,
+  Platform,
 } from 'react-native';
 
 const styles = StyleSheet.create({
   active:{
-    color:'crimson', //'crimson',
+    color: (Platform.OS ==='web') ? '#dc143c':'crimson', //'crimson',
   },
   active_bright:{
     color:'deeppink',

@@ -5,10 +5,12 @@ import {
 
 let webFixes = (Platform.OS === 'web') ? {
   heading: {
-   
   },
   scrollViewStandardContainer: {
-   
+  },
+} : {};
+let iosFixes = (Platform.OS === 'ios') ? {
+  layoutTabIconStyle: {
   },
 } : {};
 
@@ -34,7 +36,13 @@ const styles = StyleSheet.create(Object.assign({
     padding:10,
   },
   layoutTab: {
-    flex:1, flexDirection: 'row', justifyContent:'flex-start', position:'relative', bottom:0, left:0, height:35,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    position: 'relative',
+    bottom: 0,
+    left: 0,
+    height: 35,
   },
   layoutTabIconStyle: {
     alignSelf: 'flex-start',
@@ -42,11 +50,13 @@ const styles = StyleSheet.create(Object.assign({
     bottom: -7,
     paddingLeft: 10,
     paddingRight: 10,
-    fontSize: 20,
     height:35,
   },
+  layoutTabTextStyle: {
+    fontSize:20,
+  },
   layoutTabSelectedIconStyle: {
-    color: 'red',
+    // color: 'red',
     // borderBottomColor: 'red', lineHeight: 10, borderBottomWidth: 5, bottom: 3, 
   },
 }, webFixes));

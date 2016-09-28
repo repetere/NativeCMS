@@ -15,7 +15,7 @@ class Layout extends Component {
     };
   }
   render() {
-    let LocalLayoutTabComponent = this.state.tabs[ this.state.selectedTab ].component;
+    let selectedIconStyle = (Platform.OS === 'web') ?[layoutStyles.layoutTabSelectedIconStyle, layoutStyles.layoutTabTextStyle, colorStyles.active]:[];
     return (
       <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
         <View style={layoutStyles.layoutContentContainer}>
@@ -24,37 +24,39 @@ class Layout extends Component {
               <ScrollView style={layoutStyles.layoutContentTitleContainer} horizontal={true}>
                 <Tabs
                   selected={ this.state.selectedTab }
-                  selectedIconStyle={[layoutStyles.layoutTabSelectedIconStyle, colorStyles.active, ]}
-                  selectedStyle={[layoutStyles.layoutTabSelectedStyle, colorStyles.active, ]}
+                  selectedIconStyle={selectedIconStyle}
+                  selectedStyle={[layoutStyles.layoutTabSelectedStyle,colorStyles.active ]}
                   style={layoutStyles.layoutTab}
                   iconStyle={layoutStyles.layoutTabIconStyle}
-                  onSelect={el => this.setState({ selectedTab: el.props.name, }) } >{Object.keys(this.state.tabs).map((tabname) => {
-                    let tabData = this.state.tabs[ tabname ];
-                    return (
-                      <Text
-                        key={tabData.name}
-                        name={tabData.name}>
-                      {tabData.title}
-                    </Text>);
-                  })}
+                  onSelect={el => this.setState({ selectedTab: el.props.name, }) } >
+                {this.renderTabs()}
                 </Tabs>		
               </ScrollView>
             </View>
           <View style={layoutStyles.hr}></View>
         </View>
-        <LocalLayoutTabComponent {...this.props}/>
-        <Button
-          small
-          iconRight
-          icon={{ name: 'code', }}
-          title="Code" />
-        <Button
-          small
-          iconRight
-          icon={{ name: 'battery-full',  type: 'foundation', }}
-          title="Battery Full" />
+        {this.renderLayoutComponent()}
       </ScrollView>
     );
+  }
+  renderTabs() {
+    let tabs = Object.keys(this.state.tabs).map((tabname,i) => {
+      let tabData = this.state.tabs[ tabname ];
+      return (
+        <Text
+          key={i}
+          name={tabData.name}
+          style={layoutStyles.layoutTabTextStyle }>
+          {tabData.title}
+        </Text>);
+    });
+    return tabs;
+  }
+  renderLayoutComponent() {
+    let LocalLayoutTabComponent = this.state.tabs[ this.state.selectedTab ].component;
+    // let bindedElement = cloneElement(LocalLayoutTabComponent, this.props);
+    // return bindedElement;
+    return (<LocalLayoutTabComponent {...this.props}/>);
   }
 }
 export default Layout;
