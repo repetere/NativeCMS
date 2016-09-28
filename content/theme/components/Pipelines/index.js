@@ -4,7 +4,7 @@ import styles from '../../../../app/components/Styles/shared';
 import ActivityIndicator from '../../../../app/components/LoadingIndicator';
 import Layout from '../../../../app/components/Layout';
 import { Button, } from 'react-native-elements';
-import PipelineComponent from './pipes';
+import EngineComponent from './engines';
 import ResourcesComponent from './resources';
 import ParsersComponent from './parsers';
 import SegmentsComponent from './segments';
@@ -12,14 +12,14 @@ if (Platform.OS === 'web') {
   require('babel-polyfill');
 }
 let layoutData = {
-  extensionTitle: 'Process Engine',
+  extensionTitle: 'Pipelines',
   layoutType: 'tabs',
-  selectedTab:'pipelines',
+  selectedTab:'engines',
   tabs: {
-    pipelines:{
-      name: 'pipelines',
-      title: 'Pipelines',
-      component: PipelineComponent, 
+    engines:{
+      name: 'engines',
+      title: 'Engines',
+      component: EngineComponent, 
       props:{},
     }, 
     resources: {
@@ -51,19 +51,19 @@ class Pipelines extends Component {
     };
   }
   componentDidMount() {
-    this.props.requestData('https://pas-dev.promisefinancial.net:8885/pas/data/v2', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Access-Token': this.props.user.jwt_token,
-        'x-access-token': this.props.user.jwt_token,
-        // 'Access-Control-Allow-Origin':'*',
-      },
-      body: JSON.stringify({
-        access_token: this.props.user.jwt_token,
-      }),
-    });
+    // this.props.requestData('https://pas-dev.promisefinancial.net:8885/pas/data/v2', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'X-Access-Token': this.props.user.jwt_token,
+    //     'x-access-token': this.props.user.jwt_token,
+    //     // 'Access-Control-Allow-Origin':'*',
+    //   },
+    //   body: JSON.stringify({
+    //     access_token: this.props.user.jwt_token,
+    //   }),
+    // });
   }
   componentWillReceiveProps(nextProps) {
     this.setState({

@@ -7,7 +7,7 @@ class Indicator extends Component{
     super(props);
   }
   render() {
-    <LoadingIndicators {...this.props} />;
+    return <LoadingIndicators {...this.props} />;
   }
 }
 

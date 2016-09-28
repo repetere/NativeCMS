@@ -27,19 +27,19 @@ class Resources extends Component {
     // requestHeaders.set('X-Access-Token',  this.props.user.jwt_token);
     // requestHeaders.set('x-access-token',  this.props.user.jwt_token);
 
-    this.props.requestData('https://pas-dev.promisefinancial.net:8885/pas/data/v2', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Access-Token': this.props.user.jwt_token,
-        'x-access-token': this.props.user.jwt_token,
-        // 'Access-Control-Allow-Origin':'*',
-      },
-      body: JSON.stringify({
-        access_token: this.props.user.jwt_token,
-      }),
-    });
+    // this.props.requestData('https://pas-dev.promisefinancial.net:8885/pas/data/v2', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'X-Access-Token': this.props.user.jwt_token,
+    //     'x-access-token': this.props.user.jwt_token,
+    //     // 'Access-Control-Allow-Origin':'*',
+    //   },
+    //   body: JSON.stringify({
+    //     access_token: this.props.user.jwt_token,
+    //   }),
+    // });
   }
   componentWillReceiveProps(nextProps) {
     console.log('HOME componentWillRecieveProps nextProps', nextProps);

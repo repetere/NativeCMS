@@ -20,3 +20,5 @@ TODO - https://github.com/sunnylqm/react-native-swiper2
 TODO - https://github.com/l-urence/react-native-autocomplete-input
 TODO - add basic SVG logo
 TODO - https://github.com/FaridSafi/react-native-gifted-chat
+TODO - https://github.com/Purii/react-native-tableview-simple 
+https://github.com/syrusakbary/react-native-refresher 

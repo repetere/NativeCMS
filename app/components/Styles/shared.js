@@ -92,6 +92,12 @@ const styles = StyleSheet.create(Object.assign({
   tabBarText:{
     fontSize:12,
   },
-},webFixes));
+  viewIndicator: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+    height: 80,
+  },
+}, webFixes));
 
 export default styles;

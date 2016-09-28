@@ -33,7 +33,7 @@ class TabIcon extends Component{
           {/* <IconComponent name={iconName} size={30} color={iconColor.color} style={iconColor}/> */}
           <Text style={[
             iconColor, styles.tabBarText,
-          ]}>{capitalize(this.props.name) }</Text>
+          ]}>{capitalize(this.props. title || this.props.name) }</Text>
         </View>
       </TouchableOpacity>
     );

@@ -10,7 +10,7 @@ const initialState = {
   response: null,
   responseFormatter: null,
   json: null,
-  error: null,
+  error: false,
   fetchedDataPageCount: 0,
   fetchedDataNextPageUrl: null,
 };
@@ -29,7 +29,7 @@ const fetchDataReducer = (state, action) => {
     return Object.assign({
       isFetching: false,
       url: successPayload.url,
-      error: null,
+      error: false,
       response: successPayload.response,
       json: successPayload.json,
       updatedAt: successPayload.updatedAt,

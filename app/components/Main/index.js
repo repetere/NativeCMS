@@ -4,28 +4,29 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, AsyncStorage, ActivityIndicator,ActivityIndicatorIOS } from 'react-native';
+import { View, Platform, AsyncStorage, } from 'react-native';
+import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } from 'react-router';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Tabs from 'react-native-tabs';
+import { createStore, } from 'redux';
+import { Provider, connect, } from 'react-redux';
+import capitalize from 'capitalize';
 import AppConfigExtensions from '../../../content/config/extensions.json';
 import AppConfigSettings from '../../../content/config/settings.json';
 import AppLoginSettings from '../../../content/config/login.json';
 import AppExtensions from './extensions';
 import styles from '../Styles/shared';
 import TabIcon from '../AppTabs/TabIcon';
-import Icon from 'react-native-vector-icons/Ionicons';
-import capitalize from 'capitalize';
-import { createStore, } from 'redux';
-import { Provider, connect, } from 'react-redux';
+import LoadingView from '../LoadingIndicator/LoadingView';
 import combinedReducers from '../../reducers';
 import store from '../../stores';
 import actions from '../../actions';
 import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
-import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } from 'react-router';
 import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/location';
 
 const history = getHistory(historySettings, AppConfigSettings, store);
-const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
+// const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
 const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || 'home';
 const defaultExtensionComponent = AppConfigSettings.defaultExtensionComponent || 'Home';
 
@@ -110,6 +111,7 @@ class MainApp extends Component{
               key={ext.name} 
               ext={ext}  
               name={ext.name} 
+              title={ext.title} 
               icon={ext.icon}
               location={this.props.location}
               changePage={this.onChangePage.bind(this)}
@@ -125,19 +127,7 @@ class MainApp extends Component{
       </View>
     );
     let displayLoading = (
-      <View style={[styles.container]}>
-        <LoadingIndicators
-          animating={this.state.animating}
-          style={[{
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 8,
-          }, {
-            height: 80,
-          }]}
-          size="large"
-        />
-      </View>
+      <LoadingView/>
     );
     // console.log('MAIN APP: this.props', this.props);
     if (this.props.page.initial_app_state_loaded === false) {

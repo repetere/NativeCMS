@@ -4,9 +4,11 @@ import {
 } from 'react-native';
 
 let webFixes = (Platform.OS === 'web') ? {
-  heading: {
-  },
-  scrollViewStandardContainer: {
+  listText: {
+    fontSize: 18,
+    borderBottomColor: 'lightgrey',
+    alignSelf:'center',
+    justifyContent: 'center',
   },
 } : {};
 let iosFixes = (Platform.OS === 'ios') ? {
@@ -58,6 +60,52 @@ const styles = StyleSheet.create(Object.assign({
   layoutTabSelectedIconStyle: {
     // color: 'red',
     // borderBottomColor: 'red', lineHeight: 10, borderBottomWidth: 5, bottom: 3, 
+  },
+  listContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    minHeight:60,
+  },
+  listText: {
+    fontSize: 18,
+    borderBottomColor: 'lightgrey',
+    alignSelf:'center',
+    justifyContent: 'center',
+    flex: 0,
+    maxWidth:300,
+  },
+  listImageWrapper: {
+    height: 50,
+    width: 50,
+    marginRight: 10,
+    // borderRadius: 3,
+  },
+  listImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 6,  
+  },
+  listTextWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    height: 50,
+    justifyContent: 'flex-start',
+    borderBottomColor: 'lightgrey',
+    borderBottomWidth: StyleSheet.hairlineWidth || 1,
+  },
+  listItemIconWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignSelf: 'center',
+    alignItems: 'flex-end',
+  },
+  listItemIcon: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    textAlign: 'right',
+    alignSelf: 'center',
   },
 }, webFixes));
 

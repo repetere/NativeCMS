@@ -15,29 +15,38 @@ class Layout extends Component {
     };
   }
   render() {
-    let selectedIconStyle = (Platform.OS === 'web') ?[layoutStyles.layoutTabSelectedIconStyle, layoutStyles.layoutTabTextStyle, colorStyles.active]:[];
-    return (
-      <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
-        <View style={layoutStyles.layoutContentContainer}>
-            <View style={layoutStyles.layoutContentTitleContainer}>
-              <Text style={ [layoutStyles.h1, { paddingRight:5, } ]}>{this.props.layoutData.extensionTitle}</Text>		
-              <ScrollView style={layoutStyles.layoutContentTitleContainer} horizontal={true}>
-                <Tabs
-                  selected={ this.state.selectedTab }
-                  selectedIconStyle={selectedIconStyle}
-                  selectedStyle={[layoutStyles.layoutTabSelectedStyle,colorStyles.active ]}
-                  style={layoutStyles.layoutTab}
-                  iconStyle={layoutStyles.layoutTabIconStyle}
-                  onSelect={el => this.setState({ selectedTab: el.props.name, }) } >
-                {this.renderTabs()}
-                </Tabs>		
-              </ScrollView>
-            </View>
-          <View style={layoutStyles.hr}></View>
+    if (this.props.layoutData.tabs) {
+      let selectedIconStyle = (Platform.OS === 'web') ?[layoutStyles.layoutTabSelectedIconStyle, layoutStyles.layoutTabTextStyle, colorStyles.active]:[];
+      return (
+        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
+          <View style={layoutStyles.layoutContentContainer}>
+              <View style={layoutStyles.layoutContentTitleContainer}>
+                <Text style={ [layoutStyles.h1, { paddingRight:5, } ]}>{this.props.layoutData.extensionTitle}</Text>		
+                <ScrollView style={layoutStyles.layoutContentTitleContainer} horizontal={true}>
+                  <Tabs
+                    selected={ this.state.selectedTab }
+                    selectedIconStyle={selectedIconStyle}
+                    selectedStyle={[layoutStyles.layoutTabSelectedStyle,colorStyles.active ]}
+                    style={layoutStyles.layoutTab}
+                    iconStyle={layoutStyles.layoutTabIconStyle}
+                    onSelect={el => this.setState({ selectedTab: el.props.name, }) } >
+                  {this.renderTabs()}
+                  </Tabs>		
+                </ScrollView>
+              </View>
+            <View style={layoutStyles.hr}></View>
+          </View>
+          {this.renderLayoutComponent()}
+        </ScrollView>
+      );
+    } else {
+      return (
+        <View style= {[styles.container]}>
+          <Text>Unknown Layout</Text>
         </View>
-        {this.renderLayoutComponent()}
-      </ScrollView>
-    );
+      );  
+    }
+    
   }
   renderTabs() {
     let tabs = Object.keys(this.state.tabs).map((tabname,i) => {

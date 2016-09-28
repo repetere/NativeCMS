@@ -1,11 +1,12 @@
 import AppConfigExtensions from './extensions.json';
 import CustomExtensions from '../../content/config/extensions.json';
 import constants from '../constants';
+const EXTENSIONS = Object.assign(AppConfigExtensions, CustomExtensions);
 // import Immutable from 'immutable';
 
 const getIntialTabs = () =>{
-  let tabs = AppConfigExtensions.standard.concat();//.splice(3, 0, AppConfigExtensions.more);
-  tabs.splice(4, 0, AppConfigExtensions.more).slice(0, 4);
+  let tabs = EXTENSIONS.standard.concat();//.splice(3, 0, EXTENSIONS.more);
+  tabs.splice(4, 0, EXTENSIONS.more).slice(0, 4);
   return tabs.slice(0, 5);
 };
 

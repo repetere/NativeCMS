@@ -1,15 +1,23 @@
 {
   "standard" : [{
-    "name":"home",
+    "name":"pipelines",
     "icon":{
-      "selected":"ios-paper",
-      "initial":"ios-paper-outline"
+      "selected":"ios-git-network",
+      "initial":"ios-git-network-outline"
     }
   },{
-    "name":"notifications",
+    "name":"stats",
     "icon":{
-      "selected":"ios-alert",
-      "initial":"ios-alert-outline"
+      "selected":"ios-pulse",
+      "initial":"ios-pulse-outline"
+    }
+  },{
+    "name":"credit",
+    "title":"Credit Parser",
+    "icon":{
+      "selected":"flash",
+      "initial":"flash",
+      "type":"FontAwesome"
     }
   },{
     "name":"profile",
@@ -24,10 +32,10 @@
       "initial":"ios-settings-outline"
     }
   },{
-    "name":"apps",
+    "name":"csv output",
     "icon":{
-      "selected":"ios-apps",
-      "initial":"ios-apps-outline"
+      "selected":"ios-settings",
+      "initial":"ios-settings-outline"
     }
   }],
   "more":{
