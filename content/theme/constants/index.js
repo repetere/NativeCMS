@@ -22,5 +22,8 @@ export default {
     applications: {
       GET_INDEX:'applications?format=json',
     },
+    items: {
+      GET_INDEX:'items?format=json',
+    },
   },
 };

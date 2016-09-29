@@ -6,18 +6,25 @@ import Layout from '../../../../app/components/Layout';
 import { Button, } from 'react-native-elements';
 import ApplicationComponent from './applications';
 import CustomerComponent from './customers';
+import ItemComponent from './items';
 if (Platform.OS === 'web') {
   require('babel-polyfill');
 }
 let layoutData = {
-  extensionTitle: 'Promise Data Service',
+  extensionTitle: 'PAS Data',
   layoutType: 'tabs',
-  selectedTab:'applications',
+  selectedTab:'items',
   tabs: {
     applications:{
       name: 'applications',
       title: 'Applications',
       component: ApplicationComponent, 
+      props:{},
+    }, 
+    items:{
+      name: 'items',
+      title: 'Items',
+      component: ItemComponent, 
       props:{},
     }, 
     customers: {

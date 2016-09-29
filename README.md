@@ -10,8 +10,9 @@ built in helpers
 -react-native-easy-grid-view (layout)
 -react-native-vector-icons (icons)
 -react-native-tabs (tab bar)
+TODO - https://github.com/d-a-n/react-native-modal-picker
 TODO - html/markdown (https://github.com/siuying/react-native-htmltext)
-TODO - notification (make custom https://github.com/KBLNY/react-native-message-bar)
+TODO - notification https://github.com/devBrian/react-native-dropdownalert  | (make custom https://github.com/KBLNY/react-native-message-bar)
 TODO - accordian (https://github.com/naoufal/react-native-accordion)
 TODO - picker
 TODO - keychain (https://github.com/oblador/react-native-keychain)
@@ -22,3 +23,4 @@ TODO - add basic SVG logo
 TODO - https://github.com/FaridSafi/react-native-gifted-chat
 TODO - https://github.com/Purii/react-native-tableview-simple 
 https://github.com/syrusakbary/react-native-refresher 
+https://github.com/oblador/react-native-collapsible 

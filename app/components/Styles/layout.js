@@ -110,6 +110,34 @@ const styles = StyleSheet.create(Object.assign({
     textAlign: 'right',
     alignSelf: 'center',
   },
+  tableHeaderContainer:{
+    marginBottom: 5,
+    minHeight:30,
+    height: 30,
+    // backgroundColor: 'whitesmoke',
+    borderTopColor: 'lightgrey',
+    borderTopWidth: StyleSheet.hairlineWidth || 1,
+    borderBottomColor: 'lightgrey',
+    borderBottomWidth: StyleSheet.hairlineWidth || 1,
+  },
+  tableHeaderImageContainer: {
+    height: 10,
+  },
+  tableHeaderTextWrapper:{
+    height:30,
+    borderBottomWidth:0,
+    borderBottomColor: 'transparent',
+  },
+  tableHeaderText:{
+    color: 'dimgray',
+    fontWeight: 'bold',
+    fontSize: 12,
+  },
+  listTextContainer:{
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  
 }, webFixes));
 
 export default styles;

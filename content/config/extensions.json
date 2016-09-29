@@ -15,9 +15,8 @@
     "name":"credit",
     "title":"Credit Parser",
     "icon":{
-      "selected":"flash",
-      "initial":"flash",
-      "type":"FontAwesome"
+      "selected":"logo-snapchat",
+      "initial":"logo-snapchat"
     }
   },{
     "name":"profile",
@@ -34,8 +33,9 @@
   },{
     "name":"csv output",
     "icon":{
-      "selected":"ios-settings",
-      "initial":"ios-settings-outline"
+      "selected":"flash",
+      "initial":"flash",
+      "type":"FontAwesome"
     }
   }],
   "more":{
