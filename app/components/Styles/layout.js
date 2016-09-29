@@ -5,7 +5,7 @@ import {
 
 let webFixes = (Platform.OS === 'web') ? {
   listText: {
-    fontSize: 18,
+    fontSize: 14,
     borderBottomColor: 'lightgrey',
     alignSelf:'center',
     justifyContent: 'center',
@@ -68,12 +68,13 @@ const styles = StyleSheet.create(Object.assign({
     minHeight:60,
   },
   listText: {
-    fontSize: 18,
+    fontSize: 14,
     borderBottomColor: 'lightgrey',
     alignSelf:'center',
     justifyContent: 'center',
     flex: 0,
-    maxWidth:300,
+    maxWidth: 300,
+    paddingRight: 10,
   },
   listImageWrapper: {
     height: 50,
@@ -100,6 +101,8 @@ const styles = StyleSheet.create(Object.assign({
     justifyContent: 'flex-end',
     alignSelf: 'center',
     alignItems: 'flex-end',
+    paddingRight:10,
+    paddingLeft:10,
   },
   listItemIcon: {
     flex: 1,

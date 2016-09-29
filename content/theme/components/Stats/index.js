@@ -1,9 +1,33 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, Platform, } from 'react-native';
+import React, { Component, } from 'react';
+import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, } from 'react-native';
 import styles from '../../../../app/components/Styles/shared';
-import LoadingView from '../../../../app/components/LoadingIndicator/LoadingView';
+import ActivityIndicator from '../../../../app/components/LoadingIndicator';
+import Layout from '../../../../app/components/Layout';
 import { Button, } from 'react-native-elements';
-import constants from '../../constants';
+import ApplicationComponent from './applications';
+import CustomerComponent from './customers';
+if (Platform.OS === 'web') {
+  require('babel-polyfill');
+}
+let layoutData = {
+  extensionTitle: 'Promise Data Service',
+  layoutType: 'tabs',
+  selectedTab:'applications',
+  tabs: {
+    applications:{
+      name: 'applications',
+      title: 'Applications',
+      component: ApplicationComponent, 
+      props:{},
+    }, 
+    customers: {
+      name: 'customers',
+      title: 'Customers',
+      component: CustomerComponent, 
+      props:{},
+    }, 
+  },
+};
 
 class Stats extends Component {
   constructor(props){
@@ -12,53 +36,8 @@ class Stats extends Component {
       fetchData: props.fetchData,
     };
   }
-  // componentDidMount() { 
-  //   this.getPipelineIndex(); 
-  // }
-  // getPipelineIndex() {
-  //   this.props.requestData(constants.pipelines.all.BASE_URL+constants.pipelines.Stats.GET_INDEX, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json',
-  //       'X-Access-Token': this.props.user.jwt_token,
-  //       // 'x-access-token': this.props.user.jwt_token,
-  //       // 'Access-Control-Allow-Origin':'*',
-  //     },
-  //     // body: JSON.stringify({
-  //     //   access_token: this.props.user.jwt_token,
-  //     // }),
-  //   });
-  // }
-  // componentWillReceiveProps(nextProps) {
-  //   console.log('Parsers componentWillRecieveProps nextProps', nextProps);
-  //   this.setState({
-  //     fetchData: nextProps.fetchData,
-  //   });
-  // }
   render() {
-    console.log('Stats this.state.fetchData', this.state.fetchData);
-    let loadingView = (<LoadingView/>);
-    let loadedDataView = (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Stats</Text>		
-      </View>
-    );
-    let errorView = (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>ERROR</Text>		
-      </View>
-    );
-    // if (this.state.fetchData.url === constants.pipelines.all.BASE_URL + constants.pipelines.Stats.GET_INDEX) { 
-    //   if (this.state.fetchData.error) {
-    //     return errorView;
-    //   } else {
-    //     return loadedDataView; 
-    //   }
-    // } else {
-    //   return loadingView;
-    // }
-    return loadedDataView;     
+    return (<Layout {...this.props} layoutData={layoutData} />);
   }
 }
 

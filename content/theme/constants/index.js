@@ -16,5 +16,11 @@ export default {
     segments: {
       GET_INDEX:'segments?format=json',
     },
+    customers: {
+      GET_INDEX:'customers?format=json',
+    },
+    applications: {
+      GET_INDEX:'applications?format=json',
+    },
   },
 };
