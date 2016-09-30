@@ -111,35 +111,37 @@ class MainApp extends Component{
     console.log('loadExtensionRoute this.refs', this.refs,'this.state',this.state,this.props);
 
     if (!this.props.location || this.props.location.pathname !== path || ( this.refs&& this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length===0)) {
-      
-    let location = path || '/home';//'/stats/items/3423242';
-    let matchedRoute = false;
-    Object.keys(AppRoutes).every((route) => {
-      if (matchedRoute!==false){
-        return false;
-      } else {
-        let pathKeys = [];
-        let pathRegex = pathToRegexp(route, pathKeys);
-        if (pathRegex.test(location)){
-          matchedRoute = {
-            matchedRouteLocation: location,
-            matchedRoutePathRegex: pathRegex,
-            matchedRouteParams:pathKeys,
-          };
-        }
-        return true;
-      }
-    });
-    if (this.refs.AppNavigator) {
-      this.refs.AppNavigator.goto(matchedRoute.matchedRouteLocation, {
-        props: this.props,
-        opts: {
-          side: Side.R,
-          clearHistory: true,
+        
+      let location = path || '/home';//'/stats/items/3423242';
+      let matchedRoute = false;
+      Object.keys(AppRoutes).every((route) => {
+        if (matchedRoute!==false){
+          return false;
+        } else {
+          let pathKeys = [];
+          let pathRegex = pathToRegexp(route, pathKeys);
+          if (pathRegex.test(location)){
+            matchedRoute = {
+              matchedRouteLocation: location,
+              matchedRoutePathRegex: pathRegex,
+              matchedRouteParams:pathKeys,
+            };
+          }
+          return true;
         }
       });
+      if (this.refs.AppNavigator) {
+        this.refs.AppNavigator.goto(matchedRoute.matchedRouteLocation, {
+          props: this.props,
+          opts: {
+            side: Side.R,
+            clearHistory: true,
+          }
+        });
+      }
+    } else {
+      console.log('skipping componet update')
     }
-    }    
   }
   // _configureScene(route, routeStack) {
   //   console.log('CALLED _configureScene');
