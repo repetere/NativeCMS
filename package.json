@@ -11,7 +11,7 @@
     "immutable": "^3.8.1",
     "moment": "^2.15.1",
     "numeral": "^1.5.3",
-    "parse5": "^2.2.2",
+    "parse5": "^1.4.1",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-native": "0.33.0",

@@ -1,10 +1,10 @@
 import parse5 from 'parse5';
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View,  Image,  } from 'react-native';
+import { StyleSheet, Text, View,  Image, Platform, Dimensions } from 'react-native';
 var BLOCK_ELEMENTS = ["blockquote", "div", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "ol", "p", "pre", "ul", "li"]
 
-var INLINE_ELEMENTS = ["b", "code", "i", "em", "strong", "a", "br", "q", "span", "sub", "sup"]
+var INLINE_ELEMENTS = ["b", "code", "i", "em", "strong", "a", "br", "q", "span", "sub", "sup","img"]
 
 var DEFAULT_STYLES = StyleSheet.create({
   a: {
@@ -51,6 +51,10 @@ var DEFAULT_STYLES = StyleSheet.create({
   },
   i: {
     fontStyle: 'italic'
+  },
+  img: {
+    marginBottom: 6,
+    flex:1,
   },
   p: {
     marginBottom: 12,
@@ -105,8 +109,9 @@ function styleForTag(tagName) {
   return style
 }
 
-function processNode(node, parentKey) {
-  var nodeName = node.nodeName
+function processNode(node, parentKey, htmlProps,width,height) {
+  let nodeName = node.nodeName
+  let src = (node.attrs) ? node.attrs.filter((attr) => attr.name === 'src')[ 0 ] : false;
 
   if (isText(nodeName)) {
     if (isEmpty(node)) {
@@ -117,6 +122,18 @@ function processNode(node, parentKey) {
     return (<Text key={key}>{node.value}</Text>)
   }
 
+  if (isInlineElement(nodeName) && src && src.value) {
+    let key = `${parentKey}_${nodeName}`;
+    let imageUri = src.value;
+    let imageStyle = htmlProps.imageStyle || {width, height:height/2.5 }; 
+    console.log({imageUri})
+    let defaultImageStyle = styleForTag(nodeName);
+    let styleForImage =  {
+      style: Object.assign(defaultImageStyle,imageStyle)
+    };
+    console.log({ styleForImage });
+    return (<Image key={key} source={{ uri: imageUri }} {...styleForImage} resizeMode="cover"  >{children}</Image>)
+  }  
   if (isInlineElement(nodeName)) {
     var key = `${parentKey}_${nodeName}`
     var children = []
@@ -127,6 +144,7 @@ function processNode(node, parentKey) {
         console.error(`Inline element ${nodeName} can only have inline children, ${child} is invalid!`)
       }
     })
+ 
     return (<Text key={key} style={styleForTag(nodeName)}>{children}</Text>)
   }
 
@@ -165,25 +183,30 @@ function processNode(node, parentKey) {
 
 class HtmlText extends Component {
   parse(html) {
-    // var parser = new parse5.Parser()
-    // var fragment = parser.parseFragment(html)
+    var parser = new parse5.Parser()
+    var fragment = parser.parseFragment(html)
+    // console.log({ fragment });
+    return fragment;
+    /*
+    //parse5 >2
     var fragment = parse5.parse(html)
-    console.log({ fragment });
-    return fragment
+    return fragment.childNodes[ 0 ].childNodes[ 1 ];//fragment(html)[head,body][1]{body}
+    */
   }
 
 
   render() {
+    let {width, height} = Dimensions.get('window');
     var html = this.props.html
     var fragment = this.parse(html)
     var rootKey = "ht_"
 
     var children = []
     fragment.childNodes.forEach((node, index) => {
-      children.push(processNode(node, `${rootKey}_${index}`))
+      children.push(processNode(node, `${rootKey}_${index}`,this.props,width,height))
     })
 
-    console.log(children)
+    // console.log(children)
     return (
       <View style={this.props.style}>
         {children}

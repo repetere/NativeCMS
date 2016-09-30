@@ -121,28 +121,21 @@ class Table extends Component {
     let detailProps = (this.state.detailData) ? Object.assign({}, this.props, { detailData: this.state.detailData, detailRowData: this.state.detailRowData, }) : {};
     let detailAnimationProps = Object.assign({}, this.state.detailAnimation);
     let DetailComponent = this.props.detailView || View;
-    if (this.props.detailView && this.state.detailAnimation && this.state.detailAnimation.animation) {
-      
-    }
+
     // console.log('TABLE this',{this})
     return (
-      <ScrollView style={[styles.scrollViewStandardContainer,{flexDirection:'row',flex:1}]} contentContainerStyle={styles.scrollViewStandardContentContainer} horizontal={true}>
-        
-        <Animatable.View ref="table" style={[styles.flexBox,{flex:1}]} {...this.state.tableAnimation} >
-          <ListView
-            style={[ styles.flexBox, { paddingLeft:6, paddingRight:6, } ]}
-            contentContainerStyle={{ position:'relative', }}
-            dataSource={this.state.rows}
-            renderRow={this.renderRow.bind(this, this.getRenderRowData) }
-            renderHeader={this.renderHeader.bind(this) }
-            initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
-            >
-          </ListView>
-        </Animatable.View>
-        <Animatable.View ref="tableDetail" {...detailAnimationProps} style={[{flex:1}]}>
-          <DetailComponent {...detailProps}/>
-        </Animatable.View>
-      </ScrollView>
+      <View style={[styles.scrollViewStandardContainer,{flex:1}]}  >
+        <ListView
+          style={[ styles.flexBox, { paddingLeft:6, paddingRight:6, } ]}
+          contentContainerStyle={{ position:'relative', }}
+          dataSource={this.state.rows}
+          renderRow={this.renderRow.bind(this, this.getRenderRowData) }
+          renderHeader={this.renderHeader.bind(this) }
+          initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
+          >
+        </ListView>
+        <DetailComponent {...detailProps}/>
+      </View>
     );
   }
   renderHeader() {
