@@ -19,7 +19,7 @@ class Form extends Component{
     console.log('submitting form props', this.props);
     console.log('form this.state', this.state);
     this.props.submitFunction(this.state);
-    this.refs.view.bounce(800);
+    // this.refs.view.bounce(800);
   }
   onChangeText(name, text) {
     // console.log('name, text', name, text);
@@ -67,7 +67,7 @@ class Form extends Component{
     );
   }
   componentDidUpdate() {
-    // console.log('componentDidUpdate this.refs', this.refs);
+    console.log('componentDidUpdate this.props.error', this.props.error);
     if (this.props.error) {
       switch (this.props.errorNotification) {
         case 'bounce':

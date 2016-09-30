@@ -4,17 +4,17 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, AsyncStorage, } from 'react-native';
+import { View, Platform, AsyncStorage, Navigator, } from 'react-native';
 import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } from 'react-router';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Tabs from 'react-native-tabs';
 import { createStore, } from 'redux';
 import { Provider, connect, } from 'react-redux';
 import capitalize from 'capitalize';
-import AppConfigExtensions from '../../../content/config/extensions.json';
+// import AppConfigExtensions from '../../../content/config/extensions.json';
 import AppConfigSettings from '../../../content/config/settings.json';
 import AppLoginSettings from '../../../content/config/login.json';
-import AppExtensions from './extensions';
+import { AppExtensions, AppRoutes, } from './extensions';
 import styles from '../Styles/shared';
 import TabIcon from '../AppTabs/TabIcon';
 import LoadingView from '../LoadingIndicator/LoadingView';
@@ -24,6 +24,8 @@ import actions from '../../actions';
 import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
 import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/location';
+import pathToRegexp from 'path-to-regexp';
+import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 
 const history = getHistory(historySettings, AppConfigSettings, store);
 // const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
@@ -45,13 +47,15 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
+    console.log('nextProps', nextProps);
     /**
      *THIS WILL HANDLE BROWSER NAVIGATION
     */
-    let incomingAppFromLocation = getTabFromLocation(AppExtensions, getComponentFromRouterLocation(nextProps.location.pathname));
-    if (incomingAppFromLocation !== this.props.page.location) {
-      this.props.onChangePage(incomingAppFromLocation);
-    }
+    // let incomingAppFromLocation = getTabFromLocation(AppExtensions, getComponentFromRouterLocation(nextProps.location.pathname));
+    // if (incomingAppFromLocation !== this.props.page.location) {
+    //   this.props.onChangePage(incomingAppFromLocation);
+    // }
+    // this.loadExtensionRoute(nextProps.location.pathname);
   }
   componentDidMount() {
     Promise.all([
@@ -93,36 +97,94 @@ class MainApp extends Component{
         this.props.logoutUser();
       });
   }
-  onChangePage(el) {
-    this.context.router.push(`/${el.props.name}`);
-    this.props.onChangePage(el.props.name);
+  onChangeScene(el) {
+    // console.log(' onChangeScene', { el, });
+    if (AppConfigSettings.routerHistory === 'createMemoryHistory') {
+      this.props.onChangePage(el.props.path);
+    }
+    else {
+      this.context.router.push(el.props.path);
+    }
+    this.loadExtensionRoute(el.props.path);
+  }
+  loadExtensionRoute(path, options) {
+    console.log('loadExtensionRoute this.refs', this.refs,'this.state',this.state,this.props);
+
+    if (!this.props.location || this.props.location.pathname !== path || ( this.refs&& this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length===0)) {
+      
+    let location = path || '/home';//'/stats/items/3423242';
+    let matchedRoute = false;
+    Object.keys(AppRoutes).every((route) => {
+      if (matchedRoute!==false){
+        return false;
+      } else {
+        let pathKeys = [];
+        let pathRegex = pathToRegexp(route, pathKeys);
+        if (pathRegex.test(location)){
+          matchedRoute = {
+            matchedRouteLocation: location,
+            matchedRoutePathRegex: pathRegex,
+            matchedRouteParams:pathKeys,
+          };
+        }
+        return true;
+      }
+    });
+    if (this.refs.AppNavigator) {
+      this.refs.AppNavigator.goto(matchedRoute.matchedRouteLocation, {
+        props: this.props,
+        opts: {
+          side: Side.R,
+          clearHistory: true,
+        }
+      });
+    }
+    }    
+  }
+  // _configureScene(route, routeStack) {
+  //   console.log('CALLED _configureScene');
+  //   // console.log('configureScene', 'route', route, 'routeStack', routeStack);
+  //   if(route.type === 'Modal') {
+  //     return Navigator.SceneConfigs.FloatFromBottom;
+  //   }
+  //   return Navigator.SceneConfigs.HorizontalSwipeJumpFromRight;
+  // }
+  componentWillUpdate (nextProps, nextState){
+    console.log('COMPONENT WILL UPDATE', { nextProps }, { nextState })
+    this.loadExtensionRoute(nextProps.location.pathname);
+    // perform any preparations for an upcoming update
   }
   render() {
-    let self = this;
-    let CurrentApp = AppExtensions[ capitalize(this.props.page.location) ] || AppExtensions[defaultExtensionComponent];
     let displayContent = (
-      <View style={[styles.container]}>
-        <CurrentApp {...this.props}  />
+      <View style={[styles.container,]}>
+        {/*<CurrentApp {...this.props}  />*/}
+        <View style={styles.stretchContainer}>
+          <Area
+            ref="AppNavigator"
+            style={styles.stretchBox}
+            onLoad={this.loadExtensionRoute.bind(this, (this.props.location)?this.props.location.pathname:'/')}
+            >
+            <LoadingView/>
+          </Area>
+        </View>
         <Tabs selected={this.props.page.location} 
-          style={styles.tabBar}
-          onSelect={this.onChangePage.bind(this)}>
+          style={styles.tabBar}>
             {this.props.tabBarExtensions.map((ext)=>{
-              return  (<TabIcon 
-              key={ext.name} 
-              ext={ext}  
-              name={ext.name} 
-              title={ext.title} 
-              icon={ext.icon}
-              location={this.props.location}
-              changePage={this.onChangePage.bind(this)}
-              onSelect={this.onChangePage.bind(self)}
-              />);
+              return (<TabIcon 
+                {...ext}  
+                key={ext.name} 
+                ext={ext}  
+                location={this.props.location}
+                selected={this.props.page.location===ext.path}
+                // changePage={this.onChangeScene.bind(this)}
+                onSelect={this.onChangeScene.bind(this)}
+                />);
             })}
         </Tabs>
       </View>
     );
     let displayLogin = (
-      <View style={[styles.container]}>
+      <View style={[styles.container,]}>
         <AppExtensions.Login {...this.props}  />
       </View>
     );

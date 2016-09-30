@@ -90,7 +90,7 @@ module.exports = {
       test: /\.js?$/,
       loader: 'babel',
       query: {
-        presets: ['es2015', 'react', 'latest'],
+        presets: ['es2015', 'react','react-native', 'latest'],
       },
       include: [config.paths.src],
       exclude: [/node_modules/],
@@ -98,7 +98,7 @@ module.exports = {
       test: /\.js?$/,
       loader: 'babel',
       query: {
-        presets: ['es2015', 'react', 'latest'],
+        presets: ['es2015', 'react','react-native', 'latest'],
         plugins: CUSTOM_NODE_MODULES['babel-plugins'],
       },
       //add your modules here

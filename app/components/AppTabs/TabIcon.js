@@ -15,7 +15,8 @@ import Icon from '../Icons';
 import capitalize from 'capitalize';
 
 class TabIcon extends Component{ 
-  constructor(props){
+  constructor(props) {
+    console.log('TabIcon',{props})
     super(props);
     // this.state = {page:'second'};
   }

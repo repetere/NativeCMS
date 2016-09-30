@@ -7,11 +7,13 @@ const pages = {
    * @param {string} location name of extension to load
    */
   changePage(location) {
-    return (dispatch) => {
-      if (location !== 'login') {
-        AsyncStorage.setItem(constants.pages.ASYNCSTORAGE_KEY, location);
+    return (dispatch, getState) => {
+      if (getState().page.location !== location) {
+        if (location !== 'login') {
+          AsyncStorage.setItem(constants.pages.ASYNCSTORAGE_KEY, location);
+        }
+        dispatch(this.setPage(location));
       }
-      dispatch(this.setPage(location));
     };
   },
   setPage(location) {
@@ -31,13 +33,15 @@ const pages = {
    */
   initialAppLoaded() {
     return (dispatch) => {
-      AsyncStorage.getItem(constants.pages.ASYNCSTORAGE_KEY)
-        .then((page_location) => {
-          dispatch(this.initialAppLoad(page_location));
-        })
-        .catch((error) => {
-          dispatch(this.initialAppLoad());
-        });
+      // AsyncStorage.getItem(constants.pages.ASYNCSTORAGE_KEY)
+      //   .then((page_location) => {
+      //     dispatch(this.initialAppLoad(page_location));
+      //   })
+      //   .catch((error) => {
+      //     dispatch(this.initialAppLoad());
+      //   });
+      dispatch(this.initialAppLoad());
+
     };
   },
   /**

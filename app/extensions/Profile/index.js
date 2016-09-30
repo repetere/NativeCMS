@@ -12,27 +12,11 @@ import { Button, List, ListItem, } from 'react-native-elements';  // Card, Socia
 // const ScrollView = Animatable.createAnimatableComponent(ReactNative.ScrollView);
 import constants from '../../constants';
 
-const list = [
-  {
-    name: 'Amy Farha',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    subtitle: 'Vice President',
-  },
-  {
-    name: 'Chris Jackson',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-    subtitle: 'Vice Chairman',
-  },
-  // ... // more items
-];
-
 
 class Profile extends Component {
   constructor(){
     super(...arguments);
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows(['row 1', 'row 2']),
       ranattr:'ok',
     };
   }
@@ -42,7 +26,8 @@ class Profile extends Component {
       AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA),
       AsyncStorage.getItem(constants.jwt_token.PROFILE_JSON),
     ])
-    .then(results_asyncstorage => {
+      .then(results_asyncstorage => {
+      console.log('fetched data for profile')
       this.setState({ results_asyncstorage, user_props: this.props.user, });
     })
     .catch(err => { console.log('profile err', err); });  
@@ -59,18 +44,7 @@ class Profile extends Component {
               this.props.logoutUser()
             }}
             />
-        <List containerStyle={{ marginBottom: 20, flex:1, }}>
-          {
-            list.map((l, i) => (
-              <ListItem
-                roundAvatar
-                avatar={l.avatar_url}
-                key={i}
-                title={l.name}
-              />
-            ))
-          }
-        </List> 
+   
         <Text>results_asyncstorage: {JSON.stringify(this.state.results_asyncstorage,null,2)}</Text>
         <Text>user_props: {JSON.stringify(this.state.user_props,null,2)}</Text>
         </ScrollView>

@@ -65,6 +65,17 @@ const styles = StyleSheet.create(Object.assign({
   flexBox: {
     flex: 1,
   },
+  stretchBox: {
+    alignSelf: 'stretch',
+    flex:1,
+  },
+  stretchContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    alignSelf: 'stretch',
+  },
   tabContent: {
     flex: 1,
     alignItems: 'center',

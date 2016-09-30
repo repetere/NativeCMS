@@ -24,3 +24,4 @@ TODO - https://github.com/FaridSafi/react-native-gifted-chat
 TODO - https://github.com/Purii/react-native-tableview-simple 
 https://github.com/syrusakbary/react-native-refresher 
 https://github.com/oblador/react-native-collapsible 
+https://thebhwgroup.com/blog/accessing-iphone-camera-roll-images-react-native | http://facebook.github.io/react-native/releases/0.34/docs/cameraroll.html#getphotos

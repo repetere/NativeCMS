@@ -24,6 +24,7 @@ export default {
     },
     items: {
       GET_INDEX:'items?format=json',
+      POST_UPDATE:'items/',
     },
   },
 };
