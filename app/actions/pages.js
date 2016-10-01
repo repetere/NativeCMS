@@ -1,5 +1,6 @@
 import constants from '../constants';
 import { AsyncStorage, } from 'react-native';
+import customSettings from '../../content/config/settings.json';
 // import Immutable from 'immutable';
 
 const pages = {
@@ -31,16 +32,17 @@ const pages = {
   /**
    * once initial check of user login status, then set app state to loaded
    */
-  initialAppLoaded() {
+  initialAppLoaded(location) {
+    let initialLocation = (customSettings.defaultExtensionRoute) ? customSettings.defaultExtensionRoute : location;
     return (dispatch) => {
-      // AsyncStorage.getItem(constants.pages.ASYNCSTORAGE_KEY)
-      //   .then((page_location) => {
-      //     dispatch(this.initialAppLoad(page_location));
-      //   })
-      //   .catch((error) => {
-      //     dispatch(this.initialAppLoad());
-      //   });
-      dispatch(this.initialAppLoad());
+      AsyncStorage.getItem(constants.pages.ASYNCSTORAGE_KEY)
+        .then((page_location) => {
+          dispatch(this.initialAppLoad(page_location));
+        })
+        .catch((error) => {
+          dispatch(this.initialAppLoad(initialLocation));
+        });
+      // dispatch(this.initialAppLoad(initialLocation));
 
     };
   },

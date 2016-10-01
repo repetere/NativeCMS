@@ -29,8 +29,7 @@ import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 
 const history = getHistory(historySettings, AppConfigSettings, store);
 // const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
-const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || 'home';
-const defaultExtensionComponent = AppConfigSettings.defaultExtensionComponent || 'Home';
+const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || '/';
 
 class MainApp extends Component{
   constructor(props) {
@@ -38,16 +37,17 @@ class MainApp extends Component{
     this.state = {};
   }
   componentWillMount() {
+    // console.log('componentWillMount this.props',this.props)
     /**
      *THIS IS FOR LANDING ON A DIFFERENT PAGE
     */
-    let pageLocation = getTabFromLocation(AppExtensions, getComponentFromRouterLocation(this.props.location.pathname));
+    let pageLocation = this.props.location.pathname;
     if (pageLocation !== defaultExtensionRoute) {
       this.props.onChangePage(pageLocation);
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps);
+    // console.log('nextProps', nextProps);
     /**
      *THIS WILL HANDLE BROWSER NAVIGATION
     */
@@ -58,6 +58,7 @@ class MainApp extends Component{
     // this.loadExtensionRoute(nextProps.location.pathname);
   }
   componentDidMount() {
+    // console.log('componentDidMount this.props', this.props);
     Promise.all([
       AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME),
       AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA),
@@ -67,10 +68,6 @@ class MainApp extends Component{
         let jwt_token = results[ 0 ];
         let jwt_token_data = JSON.parse(results[ 1 ]);
         let jwt_user_profile = JSON.parse(results[ 2 ]);
-
-        // console.log('MAIN componentDidMount jwt_token', jwt_token);
-        // console.log('MAIN componentDidMount jwt_token_data', jwt_token_data);
-        // console.log('MAIN componentDidMount jwt_user_profile', jwt_user_profile);
         if (jwt_token_data && jwt_user_profile) {
           let url = AppLoginSettings.login.url;
           let response = {};
@@ -87,9 +84,9 @@ class MainApp extends Component{
         else {
           console.log('MAIN componentDidMount USER IS NOT LOGGED IN');
         }
-        this.setState({
-          jwt_token,
-        });        
+        // this.setState({
+        //   jwt_token,
+        // });        
         this.props.initialAppLoaded();
       })
       .catch((error) => {
@@ -101,15 +98,13 @@ class MainApp extends Component{
     // console.log(' onChangeScene', { el, });
     if (AppConfigSettings.routerHistory === 'createMemoryHistory') {
       this.props.onChangePage(el.props.path);
-    }
-    else {
+    } else {
       this.context.router.push(el.props.path);
     }
     this.loadExtensionRoute(el.props.path);
   }
   loadExtensionRoute(path, options) {
-    console.log('loadExtensionRoute this.refs', this.refs,'this.state',this.state,this.props);
-
+    // console.log('loadExtensionRoute this.props.location.pathname',this.props.location.pathname);
     if (!this.props.location || this.props.location.pathname !== path || ( this.refs&& this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length===0)) {
         
       let location = path || '/home';//'/stats/items/3423242';
@@ -130,33 +125,29 @@ class MainApp extends Component{
           return true;
         }
       });
+      let navigationRoute = matchedRoute.matchedRouteLocation || defaultExtensionRoute;
       if (this.refs.AppNavigator) {
-        this.refs.AppNavigator.goto(matchedRoute.matchedRouteLocation, {
-          props: this.props,
+        this.refs.AppNavigator.goto(navigationRoute, {
+          props: Object.assign({}, this.props,{}),
           opts: {
             side: Side.R,
+            animate:false,
             clearHistory: true,
-          }
+            reset: true,
+          },
         });
       }
     } else {
-      console.log('skipping componet update')
+      // console.log('skipping componet update');
     }
   }
-  // _configureScene(route, routeStack) {
-  //   console.log('CALLED _configureScene');
-  //   // console.log('configureScene', 'route', route, 'routeStack', routeStack);
-  //   if(route.type === 'Modal') {
-  //     return Navigator.SceneConfigs.FloatFromBottom;
-  //   }
-  //   return Navigator.SceneConfigs.HorizontalSwipeJumpFromRight;
-  // }
   componentWillUpdate (nextProps, nextState){
-    console.log('COMPONENT WILL UPDATE', { nextProps }, { nextState })
+    // console.log('COMPONENT WILL UPDATE', { nextProps }, { nextState })
     this.loadExtensionRoute(nextProps.location.pathname);
     // perform any preparations for an upcoming update
   }
   render() {
+    // console.log('RENDER this.props',this.props)
     let displayContent = (
       <View style={[styles.container,]}>
         {/*<CurrentApp {...this.props}  />*/}
@@ -169,7 +160,7 @@ class MainApp extends Component{
             <LoadingView/>
           </Area>
         </View>
-        <Tabs selected={this.props.page.location} 
+        <Tabs 
           style={styles.tabBar}>
             {this.props.tabBarExtensions.map((ext)=>{
               return (<TabIcon 
@@ -177,7 +168,7 @@ class MainApp extends Component{
                 key={ext.name} 
                 ext={ext}  
                 location={this.props.location}
-                selected={this.props.page.location===ext.path}
+                selected={this.props.location.pathname===ext.path}
                 // changePage={this.onChangeScene.bind(this)}
                 onSelect={this.onChangeScene.bind(this)}
                 />);

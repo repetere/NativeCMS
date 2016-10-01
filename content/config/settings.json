@@ -2,6 +2,5 @@
   "name":"Analytics",
   "routerHistory":"browserHistory",
   "allHistoryOptions":"browserHistory|hashHistory|createMemoryHistory",
-  "defaultExtensionRoute":"pipelines",
-  "defaultExtensionComponent":"Pipelines"
+  "defaultExtensionRoute":"/pipelines"
 }

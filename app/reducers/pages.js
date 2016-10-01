@@ -3,7 +3,7 @@ import customSettings from '../../content/config/settings.json';
 // import Immutable from 'immutable';
 
 const initialState = {
-  location: customSettings.defaultExtensionRoute || 'home',
+  location: (customSettings.defaultExtensionRoute)? customSettings.defaultExtensionRoute : '/',
   initial_app_state_loaded: false,
 };
 
@@ -13,7 +13,7 @@ const pageReducer = (state = initialState, action) => {
     var location = action.payload.location;
     return Object.assign(state, { location, });
   case constants.pages.INITIAL_APP_LOADED:
-    return { location: action.payload.location || state.location, initial_app_state_loaded:true, };
+    return { location: action.payload.location || customSettings.defaultExtensionRoute ||state.location, initial_app_state_loaded:true, };
   case constants.pages.RESET_APP_LOADED:
     return { location:state.location, initial_app_state_loaded:false, };
   default:

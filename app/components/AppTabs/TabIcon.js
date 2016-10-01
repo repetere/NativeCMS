@@ -16,14 +16,13 @@ import capitalize from 'capitalize';
 
 class TabIcon extends Component{ 
   constructor(props) {
-    console.log('TabIcon',{props})
     super(props);
     // this.state = {page:'second'};
   }
   render() {
-    let iconName = (this.props.selected) ? this.props.icon.initial : this.props.icon.initial; //this.props.icon.selected;
-    let iconColor = (this.props.selected) ? colorStyles.active : colorStyles.nav;
-    // console.log('iconColor',iconColor);
+    let selected = this.props.path === this.props.location.pathname;
+    let iconName = (selected) ? this.props.icon.initial : this.props.icon.initial;
+    let iconColor = (selected) ? colorStyles.active : colorStyles.nav;
     return (
       <TouchableOpacity 
         onPress={()=>{
@@ -31,7 +30,6 @@ class TabIcon extends Component{
         }}>
         <View style={styles.centerBox}>
           <Icon name={iconName} size={30} color={iconColor.color} style={iconColor} icontype={this.props.icon.type || 'Ionicons'}/>
-          {/* <IconComponent name={iconName} size={30} color={iconColor.color} style={iconColor}/> */}
           <Text style={[
             iconColor, styles.tabBarText,
           ]}>{capitalize(this.props. title || this.props.name) }</Text>

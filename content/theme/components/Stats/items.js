@@ -8,17 +8,15 @@ import LoadingView from '../../../../app/components/LoadingIndicator/LoadingView
 import { Button, } from 'react-native-elements';
 import constants from '../../constants';
 import ItemDetail from './itemDetail';
+import { request, } from '../../../../app/util/request';
 
-function getDataSource() {
-  return new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-}
 
 class Items extends Component {
   constructor(props){
     super(props);
-    let ds = getDataSource();
     this.state = {
-      fetchData: props.fetchData,
+      itemDataError: false,
+      itemDataLoaded: false,
       itemData: {
         itempages: 1,
         items: [ { title: 'title' }],
@@ -30,60 +28,63 @@ class Items extends Component {
     this.getPipelineIndex(); 
   }
   getPipelineIndex() {
-    this.props.requestData(constants.pipelines.all.BASE_URL+constants.pipelines.items.GET_INDEX, {
+    request(constants.pipelines.all.BASE_URL+constants.pipelines.items.GET_INDEX, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Access-Token': this.props.user.jwt_token,
       },
-    });
-  }
-  componentWillReceiveProps(nextProps) {
-    console.log('Parsers componentWillRecieveProps nextProps', nextProps);
-    let ds = getDataSource();
-    if (nextProps.fetchData.json) {
-      
+    })
+    .then(responseData => {
       this.setState({
-        fetchData: nextProps.fetchData,
+        itemDataError: false,
+        itemDataLoaded: true,
         itemData: {
-          itempages: nextProps.fetchData.json.itempages,
-          items: nextProps.fetchData.json.items,
-          itemscount: nextProps.fetchData.json.itemscount,
+          itempages: responseData.itempages,
+          items: responseData.items,
+          itemscount: responseData.itemscount,
         },
       });
-    }
+    })
+    .catch(error => {
+      this.setState({
+        itemDataError: error,
+        itemDataLoaded: true,
+      });
+    });
   }
+  // componentWillReceiveProps(nextProps) {
+  //   console.log('Parsers componentWillRecieveProps nextProps', nextProps);
+  // }
 
   render() {
-    console.log('itemS this.state', this.state);
     let loadingView = (<LoadingView/>);
-    // let loadedDataView = ;
+    let loadedDataView = (
+      <Table
+        name="pasdata-items-table"
+        pages={this.state.itemData.itempages}
+        rows={this.state.itemData.items}
+        totalcount={this.state.itemData.itemscount}
+        detailView={ItemDetail}
+        {...this.props}
+        >
+      </Table>
+    );
     let errorView = (
       <View style={styles.container}>
         <Text style={styles.welcome}>ERROR</Text>		
       </View>
     );
-    if (this.state.fetchData.url === constants.pipelines.all.BASE_URL + constants.pipelines.items.GET_INDEX) { 
-      if (this.state.fetchData.error) {
+    if (this.state.itemDataLoaded) { 
+      if (this.state.itemDataError) {
         return errorView;
       } else {
-        return (
-          <Table
-            name="pasdata-items-table"
-            pages={this.state.itemData.itempages}
-            rows={this.state.itemData.items}
-            totalcount={this.state.itemData.itemscount}
-            detailView={ItemDetail}
-            {...this.props}
-            >
-          </Table>
-        ); 
+        return loadedDataView; 
       }
     } else {
       return loadingView;
     }
-    
   }
 }
 

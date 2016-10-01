@@ -9,6 +9,7 @@ import constants from '../../constants';
 import moment from 'moment';
 import numeral from 'numeral';
 import Table from '../../../../app/components/Table';
+import { request, } from '../../../../app/util/request';
 
 
 function getBlankHeader() {
@@ -67,7 +68,8 @@ class Applications extends Component {
   constructor(props){
     super(props);
     this.state = {
-      fetchData: props.fetchData,
+      applicationDataError: false,
+      applicationDataLoaded: false,
       applicationData: {
         applicationpages: 1,
         applications: [ { title: 'title', }],
@@ -78,28 +80,44 @@ class Applications extends Component {
   componentDidMount() { 
     this.getPipelineIndex(); 
   }
+  // componentWillMount() {
+  //   console.log('componentWillMount APPPLICATIONS mounted')
+  // }
+  // componentWillUpdate() {
+  //   console.log('componentWillUpdate APPPLICATIONS mounted')
+  // }
   getPipelineIndex() {
-    this.props.requestData(constants.pipelines.all.BASE_URL+constants.pipelines.applications.GET_INDEX, {
+    request(constants.pipelines.all.BASE_URL+constants.pipelines.applications.GET_INDEX, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
         'X-Access-Token': this.props.user.jwt_token,
       },
-    });
-  }
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.fetchData.json) {
+    })
+    .then(responseData => {
+      console.log('application', { responseData, });
       this.setState({
-        fetchData: nextProps.fetchData,
+        applicationDataError: false,
+        applicationDataLoaded: true,
         applicationData: {
-          applicationpages: nextProps.fetchData.json.applicationpages,
-          applications: nextProps.fetchData.json.applications,
-          applicationscount: nextProps.fetchData.json.applicationscount,
+          applicationpages: responseData.applicationpages,
+          applications: responseData.applications,
+          applicationscount: responseData.applicationscount,
         },
       });
-    }
+    })
+    .catch(error => {
+      this.setState({
+        applicationDataError: error,
+        applicationDataLoaded: true,
+      });
+    });
   }
+  // componentWillReceiveProps(nextProps) {
+  //   console.log('componentWillReceiveProps APPPLICATIONS mounted')
+  //     this.getPipelineIndex(); 
+  // }
   render() {
     let loadingView = (<LoadingView/>);
     let loadedDataView = (
@@ -119,8 +137,8 @@ class Applications extends Component {
         <Text style={styles.welcome}>ERROR</Text>		
       </View>
     );
-    if (this.state.fetchData.url === constants.pipelines.all.BASE_URL + constants.pipelines.applications.GET_INDEX) { 
-      if (this.state.fetchData.error) {
+    if (this.state.applicationDataLoaded) { 
+      if (this.state.applicationDataError) {
         return errorView;
       } else {
         return loadedDataView; 

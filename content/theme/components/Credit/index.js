@@ -6,7 +6,7 @@ import { Button, } from 'react-native-elements';
 import constants from '../../constants';
 
 class Credit extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       fetchData: props.fetchData,
@@ -37,7 +37,8 @@ class Credit extends Component {
   //   });
   // }
   render() {
-    console.log('Credit this.state.fetchData', this.state.fetchData);
+    console.log('CREDIT COMPONENT RENDER');
+    // console.log('Credit this.state.fetchData', this.state.fetchData);
     let loadingView = (<LoadingView/>);
     let loadedDataView = (
       <View style={styles.container}>

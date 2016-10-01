@@ -12,7 +12,7 @@ exports.custom_extensions = {
   Credit,
 };
 exports.custom_routes = {
-  '/':Credit,
+  '/':Home,
   '/home':Home,
   '/pipelines':Pipelines,
   '/stats':Stats,

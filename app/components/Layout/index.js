@@ -36,6 +36,7 @@ class Layout extends Component {
               </View>
             <View style={layoutStyles.hr}></View>
           </View>
+          {/*<Text style={styles.welcome}>{this.state.selectedTab}</Text>*/}
           {this.renderLayoutComponent()}
         </ScrollView>
       );
@@ -65,7 +66,8 @@ class Layout extends Component {
     let LocalLayoutTabComponent = this.state.tabs[ this.state.selectedTab ].component;
     // let bindedElement = cloneElement(LocalLayoutTabComponent, this.props);
     // return bindedElement;
-    return (<LocalLayoutTabComponent {...this.props}/>);
+    return (<LocalLayoutTabComponent {...this.props}/>
+      );
   }
 }
 export default Layout;
