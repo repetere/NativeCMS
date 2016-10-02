@@ -16,6 +16,7 @@ class ItemDetail extends Component {
     super(props);
     this.state = {
     };
+    console.log('ItemDetail',{props,})
   }
   componentDidMount() { 
   }
@@ -58,7 +59,7 @@ class ItemDetail extends Component {
       ]}/>) : (<View/>);
     return (
       <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
-        <Button  title="GO BACK" onPress={this.props.goBack}/> 
+        <Button  title="GO BACK!" onPress={this.props.history.goBack}/> 
         
          {form}
 

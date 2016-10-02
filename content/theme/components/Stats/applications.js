@@ -96,7 +96,6 @@ class Applications extends Component {
       },
     })
     .then(responseData => {
-      console.log('application', { responseData, });
       this.setState({
         applicationDataError: false,
         applicationDataLoaded: true,

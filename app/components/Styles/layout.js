@@ -35,7 +35,8 @@ const styles = StyleSheet.create(Object.assign({
     // flex:0,
   },
   layoutContentContainer: {
-    padding:10,
+    padding: 10,
+    paddingBottom:60,
   },
   layoutTab: {
     flex: 1,

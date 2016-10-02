@@ -94,17 +94,19 @@ class MainApp extends Component{
         this.props.logoutUser();
       });
   }
-  onChangeScene(el) {
-    // console.log(' onChangeScene', { el, });
-    if (AppConfigSettings.routerHistory === 'createMemoryHistory') {
-      this.props.onChangePage(el.props.path);
-    } else {
-      this.context.router.push(el.props.path);
-    }
-    this.loadExtensionRoute(el.props.path);
+  onChangeScene(el, options) {
+    this.onChangeExtension(el.props.path, options);
   }
-  loadExtensionRoute(path, options) {
-    // console.log('loadExtensionRoute this.props.location.pathname',this.props.location.pathname);
+  onChangeExtension(path, options) {
+    if (AppConfigSettings.routerHistory === 'createMemoryHistory') {
+      this.props.onChangePage(path);
+    } else {
+      this.context.router.push(path);
+    }
+    this.loadExtensionRoute(path, options);
+  }
+  loadExtensionRoute(path, options = {}) {
+    console.log('loadExtensionRoute ',{path},{options});
     if (!this.props.location || this.props.location.pathname !== path || ( this.refs&& this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length===0)) {
         
       let location = path || '/home';//'/stats/items/3423242';
@@ -126,15 +128,72 @@ class MainApp extends Component{
         }
       });
       let navigationRoute = matchedRoute.matchedRouteLocation || defaultExtensionRoute;
+      let passProps = options.passProps;
+      let navigatorOptions = {
+        side: Side.R,
+        animate: false,
+        clearHistory: true,
+        reset: true,
+      };
+      let backNavigatorOptions = {
+        side: Side.L,
+        animate: false,
+        clearHistory: true,
+        reset: true,
+      };
+
+      if (options.config) {
+        if (options.config.transitionDirection) {
+          switch (options.config.transitionDirection) {
+          case 'right':
+            navigatorOptions.side = Side.R;
+            navigatorOptions.animate = true;
+            backNavigatorOptions.side = Side.L;
+            backNavigatorOptions.animate = true;
+            break;
+          case 'left':
+            navigatorOptions.side = Side.L;
+            navigatorOptions.animate = true;
+            backNavigatorOptions.side = Side.R;
+            backNavigatorOptions.animate = true;
+            break;
+          case 'top':
+            navigatorOptions.side = Side.T;
+            navigatorOptions.animate = true;
+            backNavigatorOptions.side = Side.B;
+            backNavigatorOptions.animate = true;
+            break;
+          case 'bottom':
+            navigatorOptions.side = Side.B;
+            navigatorOptions.animate = true;
+            backNavigatorOptions.side = Side.T;
+            backNavigatorOptions.animate = true;
+            break;
+          default:
+            break;
+          }
+        }
+
+        
+      }      
+
       if (this.refs.AppNavigator) {
         this.refs.AppNavigator.goto(navigationRoute, {
-          props: Object.assign({}, this.props,{}),
-          opts: {
-            side: Side.R,
-            animate:false,
-            clearHistory: true,
-            reset: true,
-          },
+          props: Object.assign({},
+            this.props,
+            passProps,
+            {
+              onChangeExtension: this.onChangeExtension.bind(this),
+              loadExtensionRoute: this.loadExtensionRoute.bind(this),
+              goToPreviousExtension: this.onChangeExtension.bind(this, path, Object.assign({},
+                options, {
+                  config: backNavigatorOptions,
+                }
+              )),
+              previousPath: path,
+              previousOptions: options,
+            }),
+          opts: navigatorOptions,
         });
       }
     } else {

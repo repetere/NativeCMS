@@ -66,7 +66,10 @@ class Items extends Component {
         pages={this.state.itemData.itempages}
         rows={this.state.itemData.items}
         totalcount={this.state.itemData.itemscount}
-        detailView={ItemDetail}
+        detailPath="/stats/items/:id"
+        loadExtensionRouteOptions={{
+          transitionDirection:'right',
+        }}
         {...this.props}
         >
       </Table>

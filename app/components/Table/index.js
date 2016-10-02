@@ -118,10 +118,6 @@ class Table extends Component {
     }
   }
   render() {
-    let detailProps = (this.state.detailData) ? Object.assign({}, this.props, { detailData: this.state.detailData, detailRowData: this.state.detailRowData, }) : {};
-    let detailAnimationProps = Object.assign({}, this.state.detailAnimation);
-    let DetailComponent = this.props.detailView || View;
-
     // console.log('TABLE this',{this})
     return (
       <View style={[styles.scrollViewStandardContainer,{flex:1}]}  >
@@ -134,7 +130,6 @@ class Table extends Component {
           initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
           >
         </ListView>
-        <DetailComponent {...detailProps}/>
       </View>
     );
   }
@@ -187,9 +182,15 @@ class Table extends Component {
     );
   }
   loadDetail(detailData, detailRowData) {
-    // console.log({detailData}, {detailRowData});
+    console.log({ detailData }, { detailRowData }, this.props);
+    this.props.onChangeExtension(this.props.detailPath.replace(':id', detailData._id), {
+      config: this.props.loadExtensionRouteOptions,
+      passProps: {
+        detailData, detailRowData,
+      },
+    });
     // let detailViewComponent = cloneElement(this.props.detailView, Object.assign({}, this.props, { detailData, renderData, }));
-    this.setState(Object.assign({}, getAnimationState('showDetail'), { detailData, detailRowData, }));
+    // this.setState(Object.assign({}, getAnimationState('showDetail'), { detailData, detailRowData, }));
     // this.refs.table.slideOutLeft(800);//.then((endState) => console.log(endState.finished ? 'slideOutLeft finished' : 'slideOutLeft cancelled'));
     // detailViewComponent.slideInRight(800);
   }
