@@ -11,6 +11,7 @@ built in helpers
 -react-native-easy-grid-view (layout)
 -react-native-vector-icons (icons)
 -react-native-tabs (tab bar)
+- https://github.com/KBLNY/react-native-message-bar ****
 TODO - https://github.com/d-a-n/react-native-modal-picker
 TODO - notification https://github.com/devBrian/react-native-dropdownalert  | (make custom https://github.com/KBLNY/react-native-message-bar)
 TODO - accordian (https://github.com/naoufal/react-native-accordion)
