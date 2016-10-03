@@ -126,12 +126,12 @@ function processNode(node, parentKey, htmlProps,width,height) {
     let key = `${parentKey}_${nodeName}`;
     let imageUri = src.value;
     let imageStyle = htmlProps.imageStyle || {width, height:height/2.5 }; 
-    console.log({imageUri})
+    // console.log({imageUri})
     let defaultImageStyle = styleForTag(nodeName);
     let styleForImage =  {
       style: Object.assign(defaultImageStyle,imageStyle)
     };
-    console.log({ styleForImage });
+    // console.log({ styleForImage });
     return (<Image key={key} source={{ uri: imageUri }} {...styleForImage} resizeMode="cover"  >{children}</Image>)
   }  
   if (isInlineElement(nodeName)) {

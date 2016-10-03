@@ -20,7 +20,9 @@ class TabIcon extends Component{
     // this.state = {page:'second'};
   }
   render() {
-    let selected = this.props.path === this.props.location.pathname;
+    console.log('this.props.location_path', this.props.location_path);
+    console.log('this.props.path', this.props.path);
+    let selected = this.props.path === this.props.location_path;
     let iconName = (selected) ? this.props.icon.initial : this.props.icon.initial;
     let iconColor = (selected) ? colorStyles.active : colorStyles.nav;
     return (

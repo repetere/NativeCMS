@@ -6,6 +6,11 @@ export function getComponentFromRouterLocation(location) {
   let appName = (locationArray[ 0 ].length > 0) ? locationArray[ 0 ] : locationArray[ 1 ];
   return capitalize(appName);
 } 
+export function getRouteExtensionFromLocation(location) {
+  let locationArray = location.split('/');
+  let appName = (locationArray[ 0 ].length > 0) ? locationArray[ 0 ] : locationArray[ 1 ];
+  return `/${appName}`;
+} 
 
 export function getTabFromLocation (extensions, location) {
   if (!location) {

@@ -186,7 +186,16 @@ class Table extends Component {
     this.props.onChangeExtension(this.props.detailPath.replace(':id', detailData._id), {
       config: this.props.loadExtensionRouteOptions,
       passProps: {
-        detailData, detailRowData,
+        detailData,
+        detailRowData,
+        // tableData: {
+        //   name:this.props.name,
+        //   pages: this.state.pages,
+        //   rows: this.props.rows,
+        //   rowscount: this.state.rowscount,
+        //   totalcount: this.state.totalcount,
+        // },
+        previousExtPath: this.props.previousExtPath, previousExtloadExtensionRouteOptions: this.props.previousExtloadExtensionRouteOptions,
       },
     });
     // let detailViewComponent = cloneElement(this.props.detailView, Object.assign({}, this.props, { detailData, renderData, }));

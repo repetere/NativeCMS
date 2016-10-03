@@ -23,7 +23,7 @@ import store from '../../stores';
 import actions from '../../actions';
 import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
-import { getComponentFromRouterLocation, getTabFromLocation, } from '../../util/location';
+import { getComponentFromRouterLocation, getTabFromLocation, getRouteExtensionFromLocation, } from '../../util/location';
 import pathToRegexp from 'path-to-regexp';
 import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 
@@ -35,6 +35,7 @@ class MainApp extends Component{
   constructor(props) {
     super(props);
     this.state = {};
+    this.previousRoute = {};
   }
   componentWillMount() {
     // console.log('componentWillMount this.props',this.props)
@@ -98,6 +99,10 @@ class MainApp extends Component{
     this.onChangeExtension(el.props.path, options);
   }
   onChangeExtension(path, options) {
+    let pageLocation = this.props.location.pathname;
+    if (pageLocation !== defaultExtensionRoute) {
+      this.previousRoute = { path:pageLocation, };
+    }
     if (AppConfigSettings.routerHistory === 'createMemoryHistory') {
       this.props.onChangePage(path);
     } else {
@@ -106,8 +111,16 @@ class MainApp extends Component{
     this.loadExtensionRoute(path, options);
   }
   loadExtensionRoute(path, options = {}) {
-    console.log('loadExtensionRoute ',{path},{options});
-    if (!this.props.location || this.props.location.pathname !== path || ( this.refs&& this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length===0)) {
+    // console.log('loadExtensionRoute ', { path }, { options }, this.previousRoute, this.refs.AppNavigator);
+
+    // window.appnav = this.refs.AppNavigator;
+    
+    /*
+    if (options && options.config && options.config.action === 'goToPreviousExtension') {
+      console.log('ABOUT TO GO BACK');
+      this.refs.AppNavigator.goback();
+    } else */
+    if (!this.props.location || this.props.location.pathname !== path || (this.refs && this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length === 0)) {
         
       let location = path || '/home';//'/stats/items/3423242';
       let matchedRoute = false;
@@ -187,7 +200,9 @@ class MainApp extends Component{
               loadExtensionRoute: this.loadExtensionRoute.bind(this),
               goToPreviousExtension: this.onChangeExtension.bind(this, path, Object.assign({},
                 options, {
-                  config: backNavigatorOptions,
+                  config: Object.assign(backNavigatorOptions, {
+                    action:'goToPreviousExtension',
+                  }),
                 }
               )),
               previousPath: path,
@@ -206,7 +221,7 @@ class MainApp extends Component{
     // perform any preparations for an upcoming update
   }
   render() {
-    // console.log('RENDER this.props',this.props)
+    console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname);
     let displayContent = (
       <View style={[styles.container,]}>
         {/*<CurrentApp {...this.props}  />*/}
@@ -227,7 +242,8 @@ class MainApp extends Component{
                 key={ext.name} 
                 ext={ext}  
                 location={this.props.location}
-                selected={this.props.location.pathname===ext.path}
+                location_path={getRouteExtensionFromLocation(this.props.location.pathname)}
+                selected={getRouteExtensionFromLocation(this.props.location.pathname)===ext.path}
                 // changePage={this.onChangeScene.bind(this)}
                 onSelect={this.onChangeScene.bind(this)}
                 />);

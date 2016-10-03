@@ -70,6 +70,10 @@ class Items extends Component {
         loadExtensionRouteOptions={{
           transitionDirection:'right',
         }}
+        previousExtPath="/stats/items"
+        previousExtloadExtensionRouteOptions={{
+          transitionDirection:'left',
+        }}
         {...this.props}
         >
       </Table>

@@ -59,7 +59,13 @@ class ItemDetail extends Component {
       ]}/>) : (<View/>);
     return (
       <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
-        <Button  title="GO BACK!" onPress={this.props.history.goBack}/> 
+        <Button  title="GO BACK!!!" onPress={
+          ()=>{
+            this.props.onChangeExtension(this.props.previousExtPath, {
+              config: this.props.previousExtloadExtensionRouteOptions,
+              // passProps: this.props.tableData,
+            });
+          }}/> 
         
          {form}
 
