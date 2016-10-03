@@ -91,6 +91,7 @@ module.exports = {
       loader: 'babel',
       query: {
         presets: ['es2015', 'react','react-native', 'latest'],
+        plugins: CUSTOM_NODE_MODULES['babel-plugins'],
       },
       include: [config.paths.src],
       exclude: [/node_modules/],
@@ -152,6 +153,10 @@ module.exports = {
       loader: 'file',
       // include: config.paths.demo,
     },
+    // {
+    //   test   : /\.(ttf|eot|png|jpg|jpeg|gif|svg)(\?[a-z0-9-=&.]+)?$/,
+    //   loader : 'file-loader',
+    // },
     ],
   },
 };
