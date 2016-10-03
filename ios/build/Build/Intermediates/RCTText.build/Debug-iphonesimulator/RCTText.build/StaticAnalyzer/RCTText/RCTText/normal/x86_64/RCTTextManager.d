@@ -1,6 +1,6 @@
 dependencies: \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextManager.m \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextManager.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextManager.m \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextManager.h \
   ../../React/Views/RCTViewManager.h ../../React/Base/RCTBridgeModule.h \
   ../../React/Base/RCTDefines.h ../../React/Base/RCTConvert.h \
   ../../React/CSSLayout/CSSLayout.h ../../React/CSSLayout/CSSMacros.h \
@@ -15,9 +15,9 @@ dependencies: \
   ../../React/Base/RCTFrameUpdate.h ../../React/Base/RCTInvalidating.h \
   ../../React/Views/UIView+React.h ../../React/Views/RCTComponent.h \
   ../../React/Modules/RCTAccessibilityManager.h \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowRawText.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowRawText.h \
   ../../React/Views/RCTShadowView.h ../../React/Base/RCTRootView.h \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowText.h \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTText.h \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextView.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowText.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTText.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextView.h \
   ../../React/Views/RCTView.h

@@ -1,8 +1,8 @@
 dependencies: \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Image/RCTImageUtils.m \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Image/RCTImageUtils.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Image/RCTImageUtils.m \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Image/RCTImageUtils.h \
   ../../React/Base/RCTDefines.h \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Image/RCTResizeMode.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Image/RCTResizeMode.h \
   ../../React/Base/RCTConvert.h ../../React/CSSLayout/CSSLayout.h \
   ../../React/CSSLayout/CSSMacros.h ../../React/Views/RCTAnimationType.h \
   ../../React/Views/RCTBorderStyle.h \

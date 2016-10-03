@@ -1,6 +1,6 @@
 dependencies: \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowRawText.m \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowRawText.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowRawText.m \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTShadowRawText.h \
   ../../React/Views/RCTShadowView.h ../../React/CSSLayout/CSSLayout.h \
   ../../React/CSSLayout/CSSMacros.h ../../React/Views/RCTComponent.h \
   ../../React/Base/RCTRootView.h ../../React/Base/RCTBridge.h \

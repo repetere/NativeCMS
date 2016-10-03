@@ -1,6 +1,6 @@
 dependencies: \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/ios/NativeCMS/AppDelegate.m \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/ios/NativeCMS/AppDelegate.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/ios/NativeCMS/AppDelegate.m \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/ios/NativeCMS/AppDelegate.h \
   ../node_modules/react-native/React/Base/RCTBundleURLProvider.h \
   ../node_modules/react-native/React/Base/RCTRootView.h \
   ../node_modules/react-native/React/Base/RCTBridge.h \

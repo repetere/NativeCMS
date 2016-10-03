@@ -1,6 +1,6 @@
 dependencies: \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextField.m \
-  /Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextField.h \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextField.m \
+  /Users/yawetse/Developer/github/typesettin/NativeCMS/node_modules/react-native/Libraries/Text/RCTTextField.h \
   ../../React/Views/RCTComponent.h ../../React/Base/RCTConvert.h \
   ../../React/CSSLayout/CSSLayout.h ../../React/CSSLayout/CSSMacros.h \
   ../../React/Views/RCTAnimationType.h \

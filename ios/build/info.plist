@@ -2,7 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LastAccessedDate</key>
+	<date>2016-10-03T18:59:16Z</date>
 	<key>WorkspacePath</key>
-	<string>/Users/yawetse/Developer/github/typesettin/periodicjs.ext.react_native_cms/NativeCMS/ios/NativeCMS.xcodeproj</string>
+	<string>/Users/yawetse/Developer/github/typesettin/NativeCMS/ios/NativeCMS.xcodeproj</string>
 </dict>
 </plist>
