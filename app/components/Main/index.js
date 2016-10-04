@@ -58,12 +58,12 @@ class MainApp extends Component{
     //   this.props.onChangePage(incomingAppFromLocation);
     // }
     // this.loadExtensionRoute(nextProps.location.pathname);
-    if (this.refs.AlertNotification) {
-      if (!MessageBarManager.getRegisteredMessageBar()) {
-        MessageBarManager.registerMessageBar(this.refs.AlertNotification);
-      }
-      MessageBarManager.showAlert(nextProps.messageBar);
-    }   
+    // if (this.refs.AlertNotification) {
+    //   if (!MessageBarManager.getRegisteredMessageBar()) {
+    //     MessageBarManager.registerMessageBar(this.refs.AlertNotification);
+    //   }
+    //   MessageBarManager.showAlert(nextProps.messageBar);
+    // }   
   }
   componentDidMount() {
     // console.log('componentDidMount this.props', this.props);
@@ -102,14 +102,16 @@ class MainApp extends Component{
         this.props.logoutUser();
       });
     setImmediate(() => {
+      MessageBarManager.hideAlert();
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
-      // MessageBarManager.hideAlert();
+      MessageBarManager.hideAlert();
     });
       
   }
   componentWillUnmount() {
   // Remove the alert located on this master page from the manager
     setImmediate(() => {
+      MessageBarManager.hideAlert();
       MessageBarManager.unregisterMessageBar();
     });
   }
@@ -217,22 +219,16 @@ class MainApp extends Component{
             {
               onChangeExtension: this.onChangeExtension.bind(this),
               loadExtensionRoute: this.loadExtensionRoute.bind(this),
-              goToPreviousExtension: this.onChangeExtension.bind(this, path, Object.assign({},
-                options, {
-                  config: Object.assign(backNavigatorOptions, {
-                    action:'goToPreviousExtension',
-                  }),
-                }
-              )),
-              previousPath: path,
-              previousOptions: options,
+              MessageBarManager,
             }),
           opts: navigatorOptions,
         });
       }
-      // console.log('this.props.showInfo',this.props.showInfo)
-      // this.props.showInfo({ title: 'new page', message: 'time stamp ' + new Date(), });
-         
+      // // console.log('this.props.showInfo',this.props.showInfo)
+      // // this.props.showInfo({ title: 'new page', message: 'time stamp ' + new Date(), });
+      // if (this.refs.AlertNotification) {
+      //   MessageBarManager.showAlert({title:'some titile', message: 'time stamp ' + new Date(), });
+      // }  
     } else {
       // console.log('skipping componet update');
     }
@@ -245,7 +241,7 @@ class MainApp extends Component{
   render() {
     // console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname);
     let displayContent = (
-      <View style={[styles.container,]}>
+      <View style={[styles.container,{backgroundColor:'white'}]}>
         {/*<CurrentApp {...this.props}  />*/}
         <View style={styles.stretchContainer}>
           <Area
@@ -325,7 +321,6 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const MainAppContainer = connect(mapStateToProps, mapDispatchToProps)(MainApp);
-
 
 class Main extends Component{
   render() {

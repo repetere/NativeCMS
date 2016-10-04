@@ -40,6 +40,9 @@ const styles = StyleSheet.create(Object.assign({
     position: 'relative',
     marginBottom: 60,
   },
+  scrollViewHorizontal: {
+    flexDirection: 'row',
+  },
   scrollViewWrapperContainer: {
     flex: 1,
     justifyContent: 'center',

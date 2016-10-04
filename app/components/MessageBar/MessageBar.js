@@ -28,15 +28,18 @@ class MessageBar extends Component {
     this.notifyAlertHiddenCallback = null;
     this.alertShown = false;
     this.timeoutHide = null;
+    this.initialLoad = true;
 
     this.state = this.getStateByProps(props);
   }
 
   componentWillReceiveProps(nextProps) {
+    this.initialLoad = false;
     this.setNewState(nextProps);
   }
 
   setNewState(state) {
+    this.initialLoad = false;
     // Set the new state, this is triggered when the props of this MessageBar changed
     this.setState(this.getStateByProps(state));
 
@@ -59,7 +62,7 @@ class MessageBar extends Component {
       message: props.message,
       avatar: props.avatar,
       alertType: props.alertType || 'info',
-      duration: props.duration || 3000,
+      duration: props.duration || 8000,
 
       /* Hide setters */
       shouldHideAfterDelay: (props.shouldHideAfterDelay == undefined) ? true : props.shouldHideAfterDelay,
@@ -82,7 +85,7 @@ class MessageBar extends Component {
       durationToHide: props.durationToHide || 350,
 
       /* Offset of the View, useful if you have a navigation bar or if you want the alert be shown below another component instead of the top of the screen */
-      viewTopOffset: props.viewTopOffset || 0,
+      viewTopOffset: props.viewTopOffset || -1,
       viewBottomOffset: props.viewBottomOffset || 0,
       viewLeftOffset: props.viewLeftOffset || 0,
       viewRightOffset: props.viewRightOffset || 0,
@@ -356,12 +359,18 @@ class MessageBar extends Component {
 
   render() {
     // Set the animation transformation depending on the chosen animationType, or depending on the state's position if animationType is not overridden
+    // console.log('before this.initialLoad', this.initialLoad);
     this._apllyAnimationTypeTransformation();
-
+    // console.log('after this.initialLoad', this.initialLoad);
+    let notificationStyle = (this.initialLoad || (!this.state.title && this.state.messsage))? { transform: this.animationTypeTransform, height:0, borderBottomWidth: 0}: { transform: this.animationTypeTransform, backgroundColor: this.state.backgroundColor, borderColor: this.state.strokeColor, borderBottomWidth: 1, position: 'absolute', top: this.state.viewTopOffset, bottom: this.state.viewBottomOffset, left: this.state.viewLeftOffset, right: this.state.viewRightOffset, paddingTop: this.state.viewTopInset, paddingBottom: this.state.viewBottomInset, paddingLeft: this.state.viewLeftInset, paddingRight: this.state.viewRightInset };
     return (
-      <Animated.View style={{ transform: this.animationTypeTransform, backgroundColor: this.state.backgroundColor, borderColor: this.state.strokeColor, borderBottomWidth: 1, position: 'absolute', top: this.state.viewTopOffset, bottom: this.state.viewBottomOffset, left: this.state.viewLeftOffset, right: this.state.viewRightOffset, paddingTop: this.state.viewTopInset, paddingBottom: this.state.viewBottomInset, paddingLeft: this.state.viewLeftInset, paddingRight: this.state.viewRightInset }}>
+      <Animated.View style={notificationStyle}>
         <TouchableOpacity onPress={()=>{this._alertTapped()}} style={{ flex: 1 }}>
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'flex-end',top:-1 ,padding:10}} >
+          <View style={{
+            flex: 1, flexDirection: 'row', alignItems: 'flex-end',
+            top: -1,
+            padding: (this.initialLoad || (!this.state.title && this.state.messsage))?0:10,
+          }} >
             { this.renderImage() }
             <View style={{ flex: 1, flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'center', marginLeft: 10 }} >
               { this.renderTitle() }
