@@ -28,8 +28,6 @@ import pathToRegexp from 'path-to-regexp';
 import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 import { MessageBarManager, MessageBar, } from '../MessageBar';
 
-console.log({ MessageBarManager, MessageBar, })
-
 const history = getHistory(historySettings, AppConfigSettings, store);
 // const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
 const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || '/';
@@ -60,6 +58,12 @@ class MainApp extends Component{
     //   this.props.onChangePage(incomingAppFromLocation);
     // }
     // this.loadExtensionRoute(nextProps.location.pathname);
+    if (this.refs.AlertNotification) {
+      if (!MessageBarManager.getRegisteredMessageBar()) {
+        MessageBarManager.registerMessageBar(this.refs.AlertNotification);
+      }
+      MessageBarManager.showAlert(nextProps.messageBar);
+    }   
   }
   componentDidMount() {
     // console.log('componentDidMount this.props', this.props);
@@ -98,7 +102,6 @@ class MainApp extends Component{
         this.props.logoutUser();
       });
     setImmediate(() => {
-      console.log('componentDidMount this.refs',this.refs)
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
       // MessageBarManager.hideAlert();
     });
@@ -107,7 +110,6 @@ class MainApp extends Component{
   componentWillUnmount() {
   // Remove the alert located on this master page from the manager
     setImmediate(() => {
-
       MessageBarManager.unregisterMessageBar();
     });
   }
@@ -128,9 +130,9 @@ class MainApp extends Component{
   }
   loadExtensionRoute(path, options = {}) {
     // console.log('loadExtensionRoute ', { path }, { options }, this.previousRoute, this.refs.AppNavigator);
+    console.log('this.props', this.props);
 
     // window.appnav = this.refs.AppNavigator;
-    console.log('this.refs', this.refs)
     if (!MessageBarManager.getRegisteredMessageBar()) {
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
     }
@@ -228,17 +230,9 @@ class MainApp extends Component{
           opts: navigatorOptions,
         });
       }
-
-      if (this.refs.AlertNotification) {
-        
-      MessageBarManager.showAlert({
-        title: 'Your alert title goes here',
-        message: 'Your alert message goes here',
-        alertType: 'info',
-        // See Properties section for full customization
-        // Or check `index.ios.js` or `index.android.js` for a complete example
-      });
-      }      
+      // console.log('this.props.showInfo',this.props.showInfo)
+      // this.props.showInfo({ title: 'new page', message: 'time stamp ' + new Date(), });
+         
     } else {
       // console.log('skipping componet update');
     }
@@ -311,6 +305,7 @@ const mapStateToProps = (state) => {
     user: state.user,
     tabBarExtensions: state.tabBarExtensions,
     fetchData: state.fetchData,
+    messageBar: state.messageBar,
   };
 };
 
@@ -319,6 +314,8 @@ const mapDispatchToProps = (dispatch) => {
     initialAppLoaded:()=>store.dispatch(actions.pages.initialAppLoaded()),
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
+    showError: (notification) => store.dispatch(actions.messageBar.showError(notification)),
+    showInfo: (notification) => store.dispatch(actions.messageBar.showInfo(notification)),
     setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),
     getUserProfile: (jwt_token) => store.dispatch(actions.user.getUserProfile(jwt_token)),
     saveUserProfile: (url, response, json) => store.dispatch(actions.user.saveUserProfile(url, response, json)),

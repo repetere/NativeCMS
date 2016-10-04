@@ -29,6 +29,10 @@ export default {
     CLIENT_CACHE_DATA_FAILURE:'client cache data failed',
     CLIENT_CACHE_DATA_SUCCESS:'client cache data succeeded',
   },
+  messageBar:{
+    SHOW_INFO:'show info notification',
+    SHOW_ERROR:'show error notification',
+  },
   jwt_token: {
     TOKEN_NAME: `${AppConfigSettings.name}_jwt_token`,
     TOKEN_DATA: `${AppConfigSettings.name}_jwt_token_data`,

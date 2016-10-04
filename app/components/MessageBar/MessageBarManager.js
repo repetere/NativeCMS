@@ -19,7 +19,6 @@ export default {
 	},
 
   registerMessageBar: function (messageBar) {
-    console.log('registerMessageBar',{messageBar})
 		this._currentMessageBarAlert = messageBar;
 	},
 
@@ -67,7 +66,6 @@ export default {
 
 	hideAlert:function() {
     if (this._currentMessageBarAlert && this._currentMessageBarAlert !== null) {
-      console.log('this._currentMessageBarAlert',this._currentMessageBarAlert,{this})
 			this._currentMessageBarAlert.hideMessageBarAlert();
 		}
 	},
