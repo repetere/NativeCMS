@@ -221,7 +221,7 @@ class MainApp extends Component{
     // perform any preparations for an upcoming update
   }
   render() {
-    console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname);
+    // console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname);
     let displayContent = (
       <View style={[styles.container,]}>
         {/*<CurrentApp {...this.props}  />*/}
