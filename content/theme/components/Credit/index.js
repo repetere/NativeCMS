@@ -6,6 +6,7 @@ import LoadingView from '../../../../app/components/LoadingIndicator/LoadingView
 import GroupListDetail from '../../../../app/components/GroupListDetail';
 import { Button, Text, SearchBar } from 'react-native-elements';
 import constants from '../../constants';
+import EngineDetail from '../Pipelines/engineDetail';
 import moment from 'moment';
 import numeral from 'numeral';
 
@@ -39,9 +40,13 @@ class Credit extends Component {
           componentProps: {
             title:'Engines',
           },
+          detailLoad: {
+            method:'passProps',
+          },
         },
         detail: {
-          fetchUrl:constants.pipelines.all.BASE_URL+constants.pipelines.engines.GET_INDEX,
+          fetchUrl: constants.pipelines.all.BASE_URL + constants.pipelines.engines.GET_INDEX,
+          detailComponent: EngineDetail,
         },
       },
     };

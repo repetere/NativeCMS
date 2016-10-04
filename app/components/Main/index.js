@@ -137,6 +137,7 @@ class MainApp extends Component{
     // window.appnav = this.refs.AppNavigator;
     if (!MessageBarManager.getRegisteredMessageBar()) {
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
+      MessageBarManager.hideAlert();
     }
     /*
     if (options && options.config && options.config.action === 'goToPreviousExtension') {

@@ -175,7 +175,6 @@ class GroupList extends Component{
     this.props.getGroupListDetailFunctions.getListData();
   }
   render() {
-    console.log('group list this.state',this.state)
     let loadingView = (<LoadingView/>);
     let emptyView = (<EmptyDisplay message={'No '+capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title+' found'))}/>);
     let errorView = (<LoadingView/>);
@@ -247,7 +246,10 @@ class GroupList extends Component{
     return (
       <ListItem
         {...renderData.content}
-        onPress={(data)=>{console.log('listItem press',data)}}
+        onPress={() => {
+          console.log('list item press func');
+          this.props.getGroupListDetailFunctions.setDetailData({ detailData: data, renderData, });
+        } }
         />
     );
   }
@@ -259,10 +261,16 @@ class GroupDetail extends Component{
     this.state = {
     };
   }
+  componentWillReceiveProps(nextProps) {
+    // this.setState(nextProps);
+  }
   render() {
+    console.log('GroupDetail this.props',this.props);
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
+    let customDetailComponent = this.state.GroupListDetail.detail.detailComponent;
+    console.log({customDetailComponent})
     let loadedDataView = (
       <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
         <View style={layoutStyles.layoutContentContainer}>
@@ -271,7 +279,13 @@ class GroupDetail extends Component{
           </Text>
         </View>
       </ScrollView>);
-    return loadedDataView;     
+    if (customDetailComponent){
+      return <customDetailComponent {...this.state} />;
+    }
+    else {
+      
+      return loadedDataView;     
+    }
   }
 }
 
@@ -327,6 +341,11 @@ class GroupListDetail extends Component{
       },
     };
   }
+  setDetailData(data) {
+    this.setState({
+      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { detailData:data, }),
+    });
+  }
   render() {
     let { width, /*height,*/ } = Dimensions.get('window');
     let getDataFunctions = {
@@ -337,6 +356,7 @@ class GroupListDetail extends Component{
             componentDataName: 'list',
             componentStateDataName: 'listData',
           }),
+        setDetailData: this.setDetailData.bind(this),
       },
     };
     let dataView = (width > 600) ?
