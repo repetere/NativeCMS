@@ -4,11 +4,16 @@ import { Button, Text, SearchBar, List, ListItem } from 'react-native-elements';
 import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
 import LoadingView from '../LoadingIndicator/LoadingView';
+import EmptyDisplay from '../EmptyDisplay';
 import moment from 'moment';
 import numeral from 'numeral';
+import capitalize from 'capitalize';
+import pluralize from 'pluralize';
+import debounce from 'debounce';
 import { request, } from '../../util/request';
+import querystring from 'querystring';
 
-const GROUP_LIST_MASTER_WIDTH = 400;
+const GROUP_LIST_MASTER_WIDTH = 350;
 
 function getDataSource() {
   return new ListView.DataSource({
@@ -77,14 +82,17 @@ function getRefreshData() {
   }, 1000);
 }
 
-function getDataForLists(config,options) {
+function getDataForLists(config, options ={}) {
+  let queryString = '?'+querystring.stringify(Object.assign({}, options.query, {
+    format: 'json',
+  }));
   let stateData = {
     dataError: false,
     dataLoaded: false,
   };
   let stateDataProp = {};
   // request(this.props.GroupListDetail.list.fetchUrl, {
-  request(this.props[config.componentPropsName].list.fetchUrl, {
+  request(this.props[config.componentPropsName].list.fetchUrl+queryString, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',
@@ -154,6 +162,7 @@ class GroupList extends Component{
     super(props);
     // console.log('this.props.GroupListDetailStateData',this.props.GroupListDetailStateData)
     this.getRenderRowData = props.getRenderRowData || getDefaultRenderRowData;
+    this.searchFunction = debounce(this.props.getGroupListDetailFunctions.getListData, 200);
     this.state = getInitialListStateFromProps(props.GroupListDetailStateData.listData);
   }
   componentWillReceiveProps(nextProps) {
@@ -166,8 +175,9 @@ class GroupList extends Component{
     this.props.getGroupListDetailFunctions.getListData();
   }
   render() {
+    console.log('group list this.state',this.state)
     let loadingView = (<LoadingView/>);
-    let emptyView = (<LoadingView/>);
+    let emptyView = (<EmptyDisplay message={'No '+capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title+' found'))}/>);
     let errorView = (<LoadingView/>);
     let loadedDataView = (
       <View style={[ styles.scrollViewStandardContainer, {
@@ -181,7 +191,10 @@ class GroupList extends Component{
           justifyContent:'center',
           alignItems:'stretch',
           height: 60,
-          paddingTop:20,
+          paddingTop: 20,
+          backgroundColor:'whitesmoke',
+          borderBottomWidth:1,
+          borderBottomColor: 'lightgray',
         }}>
           <View style={{
           flexDirection: 'row',
@@ -189,36 +202,38 @@ class GroupList extends Component{
           alignItems: 'stretch',
           }}>
             <Text>sidebar</Text>  
-            <Text>{this.props.GroupListDetail.list.componentProps.title}</Text>  
+            <Text style={{fontWeight:'bold'}}>{this.props.GroupListDetail.list.componentProps.title}</Text>  
             <Text>action</Text>  
           </View>
         </View>
         <View style={styles.stretchBox}>
           <SearchBar
             lightTheme
-            onChangeText={(data)=>{console.log('SearchBar data',data)}}
+            onChangeText={(data)=>{this.searchFunction({query:{search:data}})}}
             placeholder='Type Here...'
-            inputStyle={{backgroundColor:'white'}}/>
-          <ListView
-            style={[ styles.flexBox, ]}
-            contentContainerStyle={{ position: 'relative', }}
-            enableEmptySections={true}
-            dataSource={this.state.rows}
-            renderRow={this.renderRow.bind(this, this.getRenderRowData) }
-            initialListSize={(Platform.OS === 'web' && this.state.rowscount < 20) ? 100000000 : undefined}
-            refreshControl={
-                <RefreshControl
-                  refreshing={this.state.isRefreshing}
-                  onRefresh={getRefreshData.bind(this)}
-                  tintColor="slategrey"
-                  title="Loading"
-                  titleColor="slategrey"
-                  colors={['lightslategray']}
-                  progressBackgroundColor="lightsteelblue"
-                />
-              }>
-            >
-          </ListView>
+            inputStyle={{ backgroundColor: 'white' }}/>
+          {(this.state.rowscount < 1) ? emptyView : (
+            <ListView
+              style={[ styles.flexBox, ]}
+              contentContainerStyle={{ position: 'relative', }}
+              enableEmptySections={true}
+              dataSource={this.state.rows}
+              renderRow={this.renderRow.bind(this, this.getRenderRowData) }
+              initialListSize={(Platform.OS === 'web' && this.state.rowscount < 20) ? 100000000 : undefined}
+              refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.isRefreshing}
+                    onRefresh={getRefreshData.bind(this)}
+                    tintColor="slategrey"
+                    title="Loading"
+                    titleColor="slategrey"
+                    colors={['lightslategray']}
+                    progressBackgroundColor="lightsteelblue"
+                  />
+                }>
+              >
+            </ListView>
+          )}
         </View>
       </View>
       );
@@ -290,7 +305,7 @@ class MultiColumn extends Component{
     let loadedDataView = (
       <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={{ position:'relative', alignSelf: 'stretch', flex:1, }} horizontal={true}>
         {(this.props.GroupListDetail.options.useGroups) ? <Group style={{ width: GROUP_LIST_MASTER_WIDTH, }} {...this.props} /> : null}
-        <View style={{ flex:0, width: GROUP_LIST_MASTER_WIDTH, maxWidth: GROUP_LIST_MASTER_WIDTH, }}>
+        <View style={{  width: GROUP_LIST_MASTER_WIDTH, maxWidth: GROUP_LIST_MASTER_WIDTH, }}>
           <GroupList  {...this.props} />
         </View>  
         <GroupDetail {...this.props} />

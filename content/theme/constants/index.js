@@ -5,7 +5,7 @@ export default {
       BASE_URL: 'https://pas-dev.promisefinancial.net:8885/pas/data/v2/',
     },
     engines: {
-      GET_INDEX:'engines?format=json',
+      GET_INDEX:'engines',
     },
     resources: {
       GET_INDEX:'resources?format=json',

@@ -8,6 +8,7 @@
   "dependencies": {
     "babel-polyfill": "^6.13.0",
     "capitalize": "^1.0.0",
+    "debounce": "^1.0.0",
     "immutable": "^3.8.1",
     "moment": "^2.15.1",
     "numeral": "^1.5.3",
