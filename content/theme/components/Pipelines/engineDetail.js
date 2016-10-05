@@ -49,9 +49,9 @@ class EngineDetail extends Component {
     let topActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? null : ActionBarComponent;
     let bottomActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? ActionBarComponent : null;
     return (
-      <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder, ]}  >
+      <View style={[ styles.scrollViewStandardContainer, styles.statusBarPadding, {paddingBottom:60} ]}  >
         {topActionBar}
-        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
+        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer} className="engineScrollView">
           <Button  title="GO BACK!!!" onPress={
             ()=>{
               this.props.goBackToExtension();

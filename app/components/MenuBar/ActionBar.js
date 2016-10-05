@@ -10,13 +10,13 @@ import colorStyles from '../Styles/colors';
 function getMenuItem(props, index, menuBarContentItemStyle = {}) {
   if (props) {
     if (props.itemType === 'icon') {
-      return <Icons {...props.icon} style={[ layoutStyles.menuBarItemIcon, colorStyles.link, menuBarContentItemStyle, ]} size={24}/>;
+      return <Icons {...props.icon} style={[ layoutStyles.menuBarItemIcon, colorStyles.link, menuBarContentItemStyle, ]} size={24} key={index}/>;
     } else if (props.itemType === 'text'){
-      return <Text style={[layoutStyles.menuBarItemText, menuBarContentItemStyle, ]}>{props.label}</Text>;  
+      return <Text key={index} style={[layoutStyles.menuBarItemIcon, layoutStyles.menuBarItemText, menuBarContentItemStyle, ]}>{props.label}</Text>;  
     }
   }
   else {
-    return <View style={[layoutStyles.menuBarItemIcon, { minWidth:40, }, menuBarContentItemStyle, ]}/>;
+    return <View key={index} style={[layoutStyles.menuBarItemIcon, { minWidth:40, }, menuBarContentItemStyle, ]}/>;
   }
 }
 

@@ -20,6 +20,9 @@ let webFixes = (Platform.OS === 'web') ? {
     overflow: 'auto',
     display: 'block',
   },
+  statusBarPadding: {
+    paddingTop:0,
+  },
 } : {};
 
 const styles = StyleSheet.create(Object.assign({

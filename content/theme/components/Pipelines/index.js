@@ -50,7 +50,8 @@ class Pipelines extends Component {
                 icontype: 'Ionicons',
                 name: 'ios-create-outline',
               },
-              itemType:'icon',
+              itemType: 'text',
+              label:'Edit'
             },
           },
         },
