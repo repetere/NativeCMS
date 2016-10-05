@@ -12,7 +12,11 @@ function getMenuItem(props, propertyName) {
     if (props[propertyName].itemType === 'icon') {
       return <Icons {...props[propertyName].icon} style={[ layoutStyles.menuBarItemIcon, colorStyles.link, ]} size={24}/>;
     } else if (props[propertyName].itemType === 'text'){
-      return <Text style={layoutStyles.menuBarItemText}>{props[propertyName].label}</Text>;  
+      return <Text style={[
+        layoutStyles.menuBarItemIcon,
+        layoutStyles.menuBarItemText,
+      ]}>{ props[ propertyName ].label }
+      </Text>;  
     }
   }
   else {

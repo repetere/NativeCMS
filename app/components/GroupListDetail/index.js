@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Platform, Dimensions, ListView, ScrollView, RefreshControl, } from 'react-native';
+import { StyleSheet, View, Platform, Dimensions, ListView, ScrollView, RefreshControl, TouchableHighlight, } from 'react-native';
 import { Button, Text, SearchBar, List, ListItem } from 'react-native-elements';
+import Modal from 'react-native-modalbox';
 import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
@@ -129,6 +130,19 @@ function getDataForLists(config, options ={}) {
   
 }
 
+function getDetailState(context, nextProps) {
+  // console.log('getDetailState', { nextProps });
+  return Object.assign({},
+    nextProps.GroupListDetailStateData.detailData, {
+      goBackToExtension: nextProps.onChangeExtension.bind(context, '/pipelines', {
+        passProps: {
+          GroupListDetailStateData: Object.assign({}, nextProps.GroupListDetailStateData, { detailData: {},}),
+        },
+        config: { transitionDirection: 'left', },
+      }),
+    });
+}
+
 class Group extends Component{
   constructor(props) {
     super(props);
@@ -249,19 +263,6 @@ class GroupList extends Component{
   }
 }
 
-function getDetailState(context, nextProps) {
-  // console.log('getDetailState', { nextProps });
-  return Object.assign({},
-    nextProps.GroupListDetailStateData.detailData, {
-      goBackToExtension: nextProps.onChangeExtension.bind(context, '/pipelines', {
-        passProps: {
-          GroupListDetailStateData: Object.assign({}, nextProps.GroupListDetailStateData, { detailData: {},}),
-        },
-        config: { transitionDirection: 'left', },
-      }),
-    });
-}
-
 class GroupDetail extends Component{
   constructor(props) {
     super(props);
@@ -322,6 +323,10 @@ class MultiColumn extends Component{
       displaySidebar:false,
     };
   }
+  componentDidMount() {
+    console.log('group list this.refs', this.refs)
+    setTimeout(()=>{this.refs.modal1.open();},2000)
+  }
   render() {
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
@@ -333,6 +338,20 @@ class MultiColumn extends Component{
           <GroupList  {...this.props} />
         </View>  
         <GroupDetail {...this.props} />
+        <Modal style={[{
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf:'stretch',
+          margin: 10,
+          marginRight:20,
+        }, ]} backdrop={true}  position={"top"} ref={"modal1"}>
+          <TouchableHighlight onPress={() => { console.log('pressed modal text', this.refs); this.refs.modal1.close(); } }>
+            <View>
+              <Text style={[ styles.text, { color: "black" }]} >Modal on top</Text>
+            </View>  
+          </TouchableHighlight>
+  
+        </Modal>
       </ScrollView>
     );
     return loadedDataView;     
