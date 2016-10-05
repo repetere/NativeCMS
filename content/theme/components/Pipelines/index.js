@@ -43,6 +43,14 @@ class Pipelines extends Component {
           detailLoad: {
             method:'passProps',
           },
+          menuBar: {
+            rightItem: {
+              icon: {
+                icontype: 'Ionicons',
+                name: 'ios-create-outline',
+              },
+            },
+          },
         },
         detail: {
           fetchUrl: constants.pipelines.all.BASE_URL + constants.pipelines.engines.GET_INDEX,

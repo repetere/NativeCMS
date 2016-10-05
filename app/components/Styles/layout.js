@@ -10,6 +10,21 @@ let webFixes = (Platform.OS === 'web') ? {
     alignSelf:'center',
     justifyContent: 'center',
   },
+  menuBarContentWrapper:{
+    justifyContent:'center',
+    alignItems:'stretch',
+    height: 40,
+    paddingTop: 0,
+    backgroundColor:'whitesmoke',
+    borderBottomWidth:1,
+    borderBottomColor: 'lightgray',
+  },
+  menuBarSpaceAndBorder:{
+    flex: 1, 
+    borderRightWidth:1,
+    borderRightColor: 'lightgray',
+    paddingBottom:40,
+  },
 } : {};
 let iosFixes = (Platform.OS === 'ios') ? {
   layoutTabIconStyle: {
@@ -138,7 +153,41 @@ const styles = StyleSheet.create(Object.assign({
     flexDirection: 'row',
     overflow: 'hidden',
   },
-  
+  groupListDetailScrollContainer: {
+    position: 'relative',
+    alignSelf: 'stretch',
+    flex: 1,
+  },
+  multiColumnWidthContainer: {
+    width: 350,
+    maxWidth: 350,
+  },
+  positionRelative: {
+    position:'relative',
+  },
+  menuBarItemWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
+  },
+  menuBarContentWrapper:{
+    justifyContent:'center',
+    alignItems:'stretch',
+    height: 60,
+    paddingTop: 25,
+    backgroundColor:'whitesmoke',
+    borderBottomWidth:1,
+    borderBottomColor: 'lightgray',
+  },
+  menuBarSpaceAndBorder:{
+    flex: 1, 
+    borderRightWidth:1,
+    borderRightColor: 'lightgray',
+    paddingBottom:60,
+  },
+  menuBarTextSize: {
+    fontSize:24,
+  }
 }, webFixes));
 
 export default styles;

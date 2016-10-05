@@ -3,8 +3,10 @@ import { StyleSheet, View, Platform, Dimensions, ListView, ScrollView, RefreshCo
 import { Button, Text, SearchBar, List, ListItem } from 'react-native-elements';
 import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
+import colorStyles from '../Styles/colors';
 import LoadingView from '../LoadingIndicator/LoadingView';
 import EmptyDisplay from '../EmptyDisplay';
+import Icons from '../Icons';
 import moment from 'moment';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
@@ -181,30 +183,13 @@ class GroupList extends Component{
     let emptyView = (<EmptyDisplay message={'No '+capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title+' found'))}/>);
     let errorView = (<LoadingView/>);
     let loadedDataView = (
-      <View style={[ styles.scrollViewStandardContainer, {
-        flex: 1, 
-        borderRightWidth:1,
-        borderRightColor: 'lightgray',
-        paddingBottom:60,
-      }
+      <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
       ]}  >
-        <View style={{
-          justifyContent:'center',
-          alignItems:'stretch',
-          height: 60,
-          paddingTop: 20,
-          backgroundColor:'whitesmoke',
-          borderBottomWidth:1,
-          borderBottomColor: 'lightgray',
-        }}>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'stretch',
-          }}>
+        <View style={layoutStyles.menuBarContentWrapper}>
+          <View style={layoutStyles.menuBarItemWrapper}>
             <Text>sidebar</Text>  
-            <Text style={{ fontWeight:'bold', }}>{capitalize(this.props.GroupListDetail.list.componentProps.title)}</Text>  
-            <Text>action</Text>  
+            <Text style={{ fontWeight: 'bold',fontSize:16, }}>{pluralize(capitalize(this.props.GroupListDetail.list.componentProps.title)) }</Text> 
+            {(this.props.GroupListDetail.list.menuBar.rightItem) ? <Icons {...this.props.GroupListDetail.list.menuBar.rightItem.icon} style={[{paddingRight:5,paddingLeft:5,fontSize:24},colorStyles.link]} size={20}/> :null}
           </View>
         </View>
         <View style={styles.stretchBox}>
@@ -218,7 +203,7 @@ class GroupList extends Component{
           {(this.state.rowscount < 1) ? emptyView : (
             <ListView
               style={[ styles.flexBox, ]}
-              contentContainerStyle={{ position: 'relative', }}
+              contentContainerStyle={layoutStyles.positionRelative}
               enableEmptySections={true}
               dataSource={this.state.rows}
               renderRow={this.renderRow.bind(this, this.getRenderRowData) }
@@ -337,9 +322,9 @@ class MultiColumn extends Component{
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
     let loadedDataView = (
-      <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={{ position:'relative', alignSelf: 'stretch', flex:1, }} horizontal={true}>
-        {(this.props.GroupListDetail.options.useGroups) ? <Group style={{ width: GROUP_LIST_MASTER_WIDTH, }} {...this.props} /> : null}
-        <View style={{  width: GROUP_LIST_MASTER_WIDTH, maxWidth: GROUP_LIST_MASTER_WIDTH, }}>
+      <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} horizontal={true}>
+        {(this.props.GroupListDetail.options.useGroups) ? <Group style={layoutStyles.multiColumnWidthContainer} {...this.props} /> : null}
+        <View style={layoutStyles.multiColumnWidthContainer}>
           <GroupList  {...this.props} />
         </View>  
         <GroupDetail {...this.props} />

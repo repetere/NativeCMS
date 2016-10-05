@@ -369,7 +369,7 @@ class MessageBar extends Component {
           <View style={{
             flex: 1, flexDirection: 'row', alignItems: 'flex-end',
             top: -1,
-            padding: (this.initialLoad || (!this.state.title && this.state.messsage))?0:10,
+            padding: (this.initialLoad || (!this.state.title || !this.state.messsage))?0:10,
           }} >
             { this.renderImage() }
             <View style={{ flex: 1, flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'center', marginLeft: 10 }} >
