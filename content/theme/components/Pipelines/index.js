@@ -44,18 +44,44 @@ class Pipelines extends Component {
             method:'passProps',
           },
           menuBar: {
+            title:'Engine',
             rightItem: {
               icon: {
                 icontype: 'Ionicons',
                 name: 'ios-create-outline',
               },
+              itemType:'icon',
             },
           },
         },
         detail: {
           fetchUrl: constants.pipelines.all.BASE_URL + constants.pipelines.engines.GET_INDEX,
           detailComponent: EngineDetail,
-          detailExtensionRoute:'/pipelines/engines/:id',
+          detailExtensionRoute: '/pipelines/engines/:id',
+          actions: [{
+            icon: {
+              icontype: 'Ionicons',
+              name: 'ios-trash-outline', //   name: 'ios-settings-outline',
+            },
+            itemType: 'icon',
+            title: 'Delete Engine',
+            description: 'delete pipeline engine',
+            type: 'confirmmodal',
+            params: {
+              path: '',
+              method:'',
+            },
+          }, {
+            icon: {
+              icontype: 'Ionicons',
+              name: 'ios-create-outline',
+            },
+            itemType: 'icon',
+            title: 'Create Engine',
+            description: 'create new engines',
+            type: 'modal',
+            component: EngineDetail,
+          }, ],
         },
       },
     };

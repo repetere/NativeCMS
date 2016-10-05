@@ -48,7 +48,7 @@ const styles = StyleSheet.create(Object.assign({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    marginBottom: 60,
+    paddingBottom: 60,
   },
   statusBarPadding: {
     paddingTop:20,

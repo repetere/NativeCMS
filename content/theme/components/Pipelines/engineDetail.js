@@ -4,6 +4,7 @@ import styles from '../../../../app/components/Styles/shared';
 import layoutStyles from '../../../../app/components/Styles/layout';
 import Icons from '../../../../app/components/Icons';
 import HTMLText from '../../../../app/components/HTMLText';
+import ActionBar from '../../../../app/components/MenuBar/ActionBar';
 import Form from '../../../../app/components/Form';
 import { checkStatus, request, } from '../../../../app/util/request';
 import LoadingView from '../../../../app/components/LoadingIndicator/LoadingView';
@@ -27,50 +28,41 @@ class EngineDetail extends Component {
     //   });
     // }
   }
-  updateItem(formdata) {
-    // console.log('updateItem', { formdata });
-    request(constants.pipelines.all.BASE_URL + constants.pipelines.items.POST_UPDATE + this.props.detailData._id,
-      {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-Access-Token': this.props.user.jwt_token,
-        },
-        body: JSON.stringify(Object.assign(formdata,{ docid:this.props.detailData._id, })),
-      })
-      .then((response) => {
-        console.log('updateItem request',{ response, });
-      })
-      .catch((error) => {
-        console.warn('updateItem error',{ error, });
-      });
-  }
-  render() {
-    let HTMLTEXT = (this.props && this.props.detailData && this.props.detailData.content) ? this.props.detailData.content:'';
-    let HTMLIMG = (this.props && this.props.detailData && this.props.detailData.primaryasset) ? `<img src=${this.props.detailData.primaryasset.fileurl}>` : '';
-    let { width, height, } = Dimensions.get('window');
-    let form = (this.props.detailData && this.props.detailData.title) ? (<Form error={false}
-      submitFunction={this.updateItem.bind(this) }
-      formElements={[
-        <FormLabel>Title</FormLabel>,
-        <FormInput name="title" placeholder="Please enter your username or email" defaultValue={this.props.detailData.title} selectTextOnFocus={true} autoCapitalize="none" formTextChange={true} returnKeyType="next" />,
-        <Button title="Update" submitOnPress="true" />,
-      ]}/>) : (<View/>);
-    return (
-      <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
-        <Button  title="GO BACK!!!" onPress={
-          ()=>{
-            this.props.goBackToExtension();
-          }}/> 
-        
-         {form}
 
-        <HTMLText html={HTMLIMG} ></HTMLText>  
-        <HTMLText html={HTMLTEXT}></HTMLText>  
-        <Text>{JSON.stringify(this.props.detailData,'',2)}</Text>
-        <Text>height ReactPropTypes.number height sets the height of this component.</Text>
-      </ScrollView>
+  render() {
+
+    let menuBarContentWrapperStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? layoutStyles.menuBarContentBottomtWrapperOverrride : {};
+    let menuBarContentItemStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? {} : { paddingLeft: 20, };
+    let menuBarItemWrapperStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? {
+      justifyContent: 'space-around',
+    } :
+    {
+      justifyContent: 'flex-end',
+    };
+
+    let ActionBarComponent = (<ActionBar
+      {...this.props.GroupListDetail.detail}
+      menuBarContentWrapperStyle={menuBarContentWrapperStyle}
+      menuBarItemWrapperStyle={menuBarItemWrapperStyle}
+      menuBarContentItemStyle={menuBarContentItemStyle}
+      />);
+    let topActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? null : ActionBarComponent;
+    let bottomActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? ActionBarComponent : null;
+    return (
+      <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder, ]}  >
+        {topActionBar}
+        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
+          <Button  title="GO BACK!!!" onPress={
+            ()=>{
+              this.props.goBackToExtension();
+            }}/> 
+          
+          <Text>{JSON.stringify(this.props.detailData,'',2)}</Text>
+          <Text>{JSON.stringify(this.props.detailData,'',2)}</Text>
+          <Text>height ReactPropTypes.number height sets the height of this component.</Text>
+        </ScrollView>
+        {bottomActionBar}
+      </View>
     );
   }
 }

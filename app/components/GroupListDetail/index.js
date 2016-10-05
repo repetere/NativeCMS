@@ -6,6 +6,7 @@ import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 import LoadingView from '../LoadingIndicator/LoadingView';
 import EmptyDisplay from '../EmptyDisplay';
+import MenuBar from '../MenuBar';
 import Icons from '../Icons';
 import moment from 'moment';
 import numeral from 'numeral';
@@ -94,33 +95,38 @@ function getDataForLists(config, options ={}) {
   };
   let stateDataProp = {};
   // request(this.props.GroupListDetail.list.fetchUrl, {
-  request(this.props[config.componentPropsName].list.fetchUrl+queryString, {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-Access-Token': this.props.user.jwt_token,
-    },
-  })
-  .then(responseData => {
-    stateData.dataLoaded = true;
-    stateData.pages = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.pagesProp ];
-    stateData.rows = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.dataProp ];
-    stateData.totalcount = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.countProp ];
-    // stateData  
-    stateDataProp[config.componentStateDataName] = stateData;
-    
-    this.setState({
-      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
-    });
-  })
-  .catch(error => {
-    stateData.dataLoaded = true;
-    stateData.dataError = error;
-    this.setState({
-      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
+  return new Promise((resolve, reject) => {
+    request(this.props[config.componentPropsName].list.fetchUrl+queryString, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Access-Token': this.props.user.jwt_token,
+      },
+    })
+    .then(responseData => {
+      stateData.dataLoaded = true;
+      stateData.pages = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.pagesProp ];
+      stateData.rows = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.dataProp ];
+      stateData.totalcount = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.countProp ];
+      // stateData  
+      stateDataProp[config.componentStateDataName] = stateData;
+      
+      this.setState({
+        GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
+      });
+      resolve(responseData);
+    })
+    .catch(error => {
+      stateData.dataLoaded = true;
+      stateData.dataError = error;
+      this.setState({
+        GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
+      });
+      reject(error);
     });
   });
+  
 }
 
 class Group extends Component{
@@ -185,13 +191,7 @@ class GroupList extends Component{
     let loadedDataView = (
       <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
       ]}  >
-        <View style={layoutStyles.menuBarContentWrapper}>
-          <View style={layoutStyles.menuBarItemWrapper}>
-            <Text>sidebar</Text>  
-            <Text style={{ fontWeight: 'bold',fontSize:16, }}>{pluralize(capitalize(this.props.GroupListDetail.list.componentProps.title)) }</Text> 
-            {(this.props.GroupListDetail.list.menuBar.rightItem) ? <Icons {...this.props.GroupListDetail.list.menuBar.rightItem.icon} style={[{paddingRight:5,paddingLeft:5,fontSize:24},colorStyles.link]} size={20}/> :null}
-          </View>
-        </View>
+        <MenuBar {...this.props.GroupListDetail.list.menuBar} />
         <View style={styles.stretchBox}>
           <SearchBar
             lightTheme
@@ -199,7 +199,12 @@ class GroupList extends Component{
               this.searchFunction({ query: { search: data, }, });
             } }
             placeholder={'Search for '+pluralize(capitalize(this.props.GroupListDetail.list.componentProps.title))+'...'}
-            inputStyle={{ backgroundColor: 'white', }}/>
+            inputStyle={{
+              backgroundColor: 'white',
+              borderBottomWidth: 0,
+              borderTopWidth: 0,
+            }}
+            containerStyle={{ backgroundColor: 'darkgray', }}/>
           {(this.state.rowscount < 1) ? emptyView : (
             <ListView
               style={[ styles.flexBox, ]}
@@ -296,7 +301,7 @@ class SingleColumn extends Component{
       let singleDetailPath = nextProps.GroupListDetail.detail.detailExtensionRoute.replace(':id', nextProps.GroupListDetailStateData.detailData.detailData._id);
       // console.log({groupDetailOptions})
       this.props.onChangeExtension(singleDetailPath, {
-        passProps: groupDetailOptions,
+        passProps: Object.assign({}, nextProps, groupDetailOptions),
         config: { transitionDirection: 'right', },
       });
     }

@@ -177,17 +177,43 @@ const styles = StyleSheet.create(Object.assign({
     paddingTop: 25,
     backgroundColor:'whitesmoke',
     borderBottomWidth:1,
-    borderBottomColor: 'lightgray',
+    borderBottomColor: 'darkgray',
+  },
+  menuBarContentBottomtWrapperOverrride:{
+    height: 40,
+    paddingTop: 0,
+    borderBottomWidth:0,
+    // borderBottomColor: 'darkgray',
+    borderTopWidth:1,
+    borderTopColor: 'darkgray',
   },
   menuBarSpaceAndBorder:{
     flex: 1, 
     borderRightWidth:1,
-    borderRightColor: 'lightgray',
+    borderRightColor: 'darkgray',
     paddingBottom:60,
   },
   menuBarTextSize: {
     fontSize:24,
-  }
+  },
+  menuBarTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    flex: 1,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  menuBarItemText: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  menuBarItemIcon: {
+    paddingRight: 5,
+    paddingLeft: 5,
+    justifyContent: 'center',
+    alignSelf: 'center', 
+  },
 }, webFixes));
 
 export default styles;
