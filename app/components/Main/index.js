@@ -131,8 +131,8 @@ class MainApp extends Component{
     this.loadExtensionRoute(path, options);
   }
   loadExtensionRoute(path, options = {}) {
-    // console.log('loadExtensionRoute ', { path }, { options }, this.previousRoute, this.refs.AppNavigator);
-    console.log('this.props', this.props);
+    // console.log('loadExtensionRoute ', { path, }, { options, });
+    // console.log('this.props', this.props);
 
     // window.appnav = this.refs.AppNavigator;
     if (!MessageBarManager.getRegisteredMessageBar()) {

@@ -172,7 +172,9 @@ class GroupList extends Component{
     }
   }
   componentDidMount() {
-    this.props.getGroupListDetailFunctions.getListData();
+    if (this.state.rowscount < 1) {
+      this.props.getGroupListDetailFunctions.getListData();
+    }
   }
   render() {
     let loadingView = (<LoadingView/>);
@@ -196,21 +198,23 @@ class GroupList extends Component{
           borderBottomColor: 'lightgray',
         }}>
           <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'stretch',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'stretch',
           }}>
             <Text>sidebar</Text>  
-            <Text style={{fontWeight:'bold'}}>{this.props.GroupListDetail.list.componentProps.title}</Text>  
+            <Text style={{ fontWeight:'bold', }}>{capitalize(this.props.GroupListDetail.list.componentProps.title)}</Text>  
             <Text>action</Text>  
           </View>
         </View>
         <View style={styles.stretchBox}>
           <SearchBar
             lightTheme
-            onChangeText={(data)=>{this.searchFunction({query:{search:data}})}}
-            placeholder='Type Here...'
-            inputStyle={{ backgroundColor: 'white' }}/>
+            onChangeText={(data) => {
+              this.searchFunction({ query: { search: data, }, });
+            } }
+            placeholder={'Search for '+pluralize(capitalize(this.props.GroupListDetail.list.componentProps.title))+'...'}
+            inputStyle={{ backgroundColor: 'white', }}/>
           {(this.state.rowscount < 1) ? emptyView : (
             <ListView
               style={[ styles.flexBox, ]}
@@ -247,12 +251,25 @@ class GroupList extends Component{
       <ListItem
         {...renderData.content}
         onPress={() => {
-          console.log('list item press func');
+          // console.log('list item press func');
           this.props.getGroupListDetailFunctions.setDetailData({ detailData: data, renderData, });
         } }
         />
     );
   }
+}
+
+function getDetailState(context, nextProps) {
+  // console.log('getDetailState', { nextProps });
+  return Object.assign({},
+    nextProps.GroupListDetailStateData.detailData, {
+      goBackToExtension: nextProps.onChangeExtension.bind(context, '/pipelines', {
+        passProps: {
+          GroupListDetailStateData: Object.assign({}, nextProps.GroupListDetailStateData, { detailData: {},}),
+        },
+        config: { transitionDirection: 'left', },
+      }),
+    });
 }
 
 class GroupDetail extends Component{
@@ -262,29 +279,21 @@ class GroupDetail extends Component{
     };
   }
   componentWillReceiveProps(nextProps) {
-    // this.setState(nextProps);
+    let groupDetailOptions = getDetailState(this, nextProps);
+    this.setState(groupDetailOptions);
+    // console.log('nextProps.getGroupListDetailFunctions.useSingleViewHelpers()', nextProps.getGroupListDetailFunctions.useSingleViewHelpers());
   }
   render() {
-    console.log('GroupDetail this.props',this.props);
-    let loadingView = (<LoadingView/>);
-    let emptyView = (<LoadingView/>);
-    let errorView = (<LoadingView/>);
-    let customDetailComponent = this.state.GroupListDetail.detail.detailComponent;
-    console.log({customDetailComponent})
-    let loadedDataView = (
-      <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
-        <View style={layoutStyles.layoutContentContainer}>
-          <Text style={{marginBottom: 10}}>
-            group detail
-          </Text>
-        </View>
-      </ScrollView>);
-    if (customDetailComponent){
-      return <customDetailComponent {...this.state} />;
-    }
-    else {
-      
-      return loadedDataView;     
+    // let loadingView = (<LoadingView/>);
+    let emptyView = (<EmptyDisplay message={'No '+capitalize(this.props.GroupListDetail.list.componentProps.title+' selected')}/>);
+    // let errorView = (<LoadingView/>);
+    let CustomDetailComponent = this.props.GroupListDetail.detail.detailComponent;
+    // console.log({ CustomDetailComponent });
+
+    if (CustomDetailComponent && this.state.detailData){
+      return <CustomDetailComponent {...this.state} {...this.props}/>;     
+    } else {
+      return emptyView;     
     }
   }
 }
@@ -295,6 +304,17 @@ class SingleColumn extends Component{
     this.state = {
       currentDisplay:'GroupList',
     };
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.GroupListDetailStateData.detailData && nextProps.GroupListDetailStateData.detailData.detailData && nextProps.GroupListDetailStateData.detailData.detailData._id) {
+      let groupDetailOptions = getDetailState(this, nextProps);
+      let singleDetailPath = nextProps.GroupListDetail.detail.detailExtensionRoute.replace(':id', nextProps.GroupListDetailStateData.detailData.detailData._id);
+      // console.log({groupDetailOptions})
+      this.props.onChangeExtension(singleDetailPath, {
+        passProps: groupDetailOptions,
+        config: { transitionDirection: 'right', },
+      });
+    }
   }
   render() {
     let loadingView = (<LoadingView/>);
@@ -332,12 +352,12 @@ class MultiColumn extends Component{
 class GroupListDetail extends Component{
   constructor(props) {
     super(props);
-    // console.log('GroupListDetail props', props);
+    console.log('GroupListDetail props', props);
     this.state = {
       GroupListDetailStateData: {
-        groupData:{},
-        listData:{},
-        detailData:{},
+        groupData:(props.GroupListDetailStateData && props.GroupListDetailStateData.groupData)?props.GroupListDetailStateData.groupData:{},
+        listData:(props.GroupListDetailStateData && props.GroupListDetailStateData.listData)?props.GroupListDetailStateData.listData:{},
+        detailData:(props.GroupListDetailStateData && props.GroupListDetailStateData.detailData)?props.GroupListDetailStateData.detailData:{},
       },
     };
   }
@@ -357,11 +377,12 @@ class GroupListDetail extends Component{
             componentStateDataName: 'listData',
           }),
         setDetailData: this.setDetailData.bind(this),
+        useSingleViewHelpers: ()=>width < 600,
       },
     };
     let dataView = (width > 600) ?
       (<MultiColumn  {...this.props} {...this.state} {...getDataFunctions}/>)
-      : (<SingleColumn  {...this.props} {...this.state} {...getDataFunctions}/>);
+      : (<SingleColumn {...this.props} {...this.state} {...getDataFunctions}/>);
     return dataView;     
   }
 }

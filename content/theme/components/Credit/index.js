@@ -1,56 +1,77 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Platform, Dimensions, ListView, ScrollView, RefreshControl, } from 'react-native';
+import React, { Component, } from 'react';
+import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, } from 'react-native';
 import styles from '../../../../app/components/Styles/shared';
-import layoutStyles from '../../../../app/components/Styles/layout';
-import LoadingView from '../../../../app/components/LoadingIndicator/LoadingView';
-import GroupListDetail from '../../../../app/components/GroupListDetail';
-import { Button, Text, SearchBar } from 'react-native-elements';
-import constants from '../../constants';
-import EngineDetail from '../Pipelines/engineDetail';
-import moment from 'moment';
-import numeral from 'numeral';
+import ActivityIndicator from '../../../../app/components/LoadingIndicator';
+import Layout from '../../../../app/components/Layout';
+import { Button, } from 'react-native-elements';
+import EngineComponent from '../Pipelines/engines';
+import ResourcesComponent from '../Pipelines/resources';
+import ParsersComponent from '../Pipelines/parsers';
+import SegmentsComponent from '../Pipelines/segments';
+if (Platform.OS === 'web') {
+  require('babel-polyfill');
+}
+let layoutData = {
+  extensionTitle: 'Pipelines',
+  layoutType: 'tabs',
+  selectedTab:'engines',
+  tabs: {
+    engines:{
+      name: 'engines',
+      title: 'Engines',
+      component: EngineComponent, 
+      props:{},
+    }, 
+    resources: {
+      name: 'resources',
+      title: 'Resources',
+      component: ResourcesComponent, 
+      props:{},
+    }, 
+    parsers: {
+      name: 'parsers',
+      title: 'Parsers',
+      component: ParsersComponent, 
+      props:{},
+    }, 
+    segments: {
+      name: 'segments',
+      title: 'Segments',
+      component: SegmentsComponent, 
+      props:{},
+    },
+  },
+};
 
 class Credit extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      fetchData: props.fetchData,
     };
   }
+  componentDidMount() {
+    // this.props.requestData('https://pas-dev.promisefinancial.net:8885/pas/data/v2', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'X-Access-Token': this.props.user.jwt_token,
+    //     'x-access-token': this.props.user.jwt_token,
+    //     // 'Access-Control-Allow-Origin':'*',
+    //   },
+    //   body: JSON.stringify({
+    //     access_token: this.props.user.jwt_token,
+    //   }),
+    // });
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      fetchData: nextProps.fetchData,
+    });
+  }
   render() {
-    let groupListOptions = {
-      GroupListDetail: {
-        options: {
-          useGroups: false,
-        },
-        group: {
-          fetchUrl:constants.pipelines.all.BASE_URL+constants.pipelines.engines.GET_INDEX,
-          listProps: {
-            pagesProp:'enginepages',
-            dataProp:'engines',
-            countProp:'enginescount',
-          },
-        },
-        list: {
-          fetchUrl: constants.pipelines.all.BASE_URL + constants.pipelines.engines.GET_INDEX,
-          listProps: {
-            pagesProp:'enginepages',
-            dataProp:'engines',
-            countProp:'enginescount',
-          },
-          componentProps: {
-            title:'Engines',
-          },
-          detailLoad: {
-            method:'passProps',
-          },
-        },
-        detail: {
-          fetchUrl: constants.pipelines.all.BASE_URL + constants.pipelines.engines.GET_INDEX,
-          detailComponent: EngineDetail,
-        },
-      },
-    };
-    return (<GroupListDetail {...this.props} {...groupListOptions}/>);     
+    return (<Layout {...this.props} layoutData={layoutData} />);
   }
 }
 

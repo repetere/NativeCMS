@@ -28,7 +28,7 @@ class EngineDetail extends Component {
     // }
   }
   updateItem(formdata) {
-    console.log('updateItem', { formdata });
+    // console.log('updateItem', { formdata });
     request(constants.pipelines.all.BASE_URL + constants.pipelines.items.POST_UPDATE + this.props.detailData._id,
       {
         method: 'PUT',
@@ -61,10 +61,7 @@ class EngineDetail extends Component {
       <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer}>
         <Button  title="GO BACK!!!" onPress={
           ()=>{
-            this.props.onChangeExtension(this.props.previousExtPath, {
-              config: this.props.previousExtloadExtensionRouteOptions,
-              // passProps: this.props.tableData,
-            });
+            this.props.goBackToExtension();
           }}/> 
         
          {form}
