@@ -7,10 +7,21 @@ import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 
-function getMenuItem(props, index, menuBarContentItemStyle = {}) {
+function getMenuItem(props, index, menuBarContentItemStyle = {}, modalExtensionRefs = {}) {
+  let onPressProp = {};
   if (props) {
+    if (props.type === 'modal') {
+      onPressProp = {
+        onPress: () => { modalExtensionRefs[ props.modalOptions.ref ].open(); }
+      };
+    }
     if (props.itemType === 'icon') {
-      return <Icons {...props.icon} style={[ layoutStyles.menuBarItemIcon, colorStyles.link, menuBarContentItemStyle, ]} size={24} key={index}/>;
+      return <Icons {...props.icon}
+        style={[ layoutStyles.menuBarItemIcon, colorStyles.link, menuBarContentItemStyle, ]}
+        {...onPressProp}
+        // onPress={() => { console.log('icon pressed', { modalExtensionRefs, props }) } }
+        size={24}
+        key={index}/>;
     } else if (props.itemType === 'text'){
       return <Text key={index} style={[layoutStyles.menuBarItemIcon, layoutStyles.menuBarItemText, menuBarContentItemStyle, ]}>{props.label}</Text>;  
     }
@@ -25,7 +36,7 @@ class ActionBar extends Component{
     super(props);
   }
   render() {
-    let menuItems = this.props.actions.map((action, i) => getMenuItem(action, i, this.props.menuBarContentItemStyle));
+    let menuItems = this.props.actions.map((action, i) => getMenuItem(action, i, this.props.menuBarContentItemStyle,this.props.modalExtensionRefs));
 
     return (<View style={[layoutStyles.menuBarContentWrapper, this.props.menuBarContentWrapperStyle, ]}>
       <View style={[layoutStyles.menuBarItemWrapper, this.props.menuBarItemWrapperStyle, ]}>

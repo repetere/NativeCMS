@@ -218,7 +218,7 @@ class GroupList extends Component{
               borderBottomWidth: 0,
               borderTopWidth: 0,
             }}
-            containerStyle={{ backgroundColor: 'darkgray', }}/>
+            containerStyle={{ backgroundColor: 'darkgray', borderWidth:0, }}/>
           {(this.state.rowscount < 1) ? emptyView : (
             <ListView
               style={[ styles.flexBox, ]}
@@ -234,7 +234,7 @@ class GroupList extends Component{
                     tintColor="slategrey"
                     title="Loading"
                     titleColor="slategrey"
-                    colors={['lightslategray']}
+                    colors={['lightslategray', ]}
                     progressBackgroundColor="lightsteelblue"
                   />
                 }>
@@ -289,6 +289,52 @@ class GroupDetail extends Component{
   }
 }
 
+function closeModal(name) {
+  this.refs[ name ].close();
+}
+
+function generateModals(actions, props, context) {
+  let { width, height, } = Dimensions.get('window');
+  // console.log('Dimensions',{ width, height, })
+  let modals = actions.map((action, i) => {
+    let modalOptions = Object.assign({
+      style:{
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'stretch',
+        // margin: 10,
+        // marginRight:20,
+      },
+      backdrop:true,
+      position: 'top',
+      key:i,
+      ref: `modal_generate_modal_${i}`,
+      component: false,
+      passProps: {},
+    }, action.modalOptions);
+
+
+    modalOptions.passProps = Object.assign({}, modalOptions.passProps, {
+      // closeExtensionModal: closeModal.bind(context || this, modalOptions.ref),
+    });
+    modalOptions.style = Object.assign({
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'stretch',
+      width: (width >600)? (width-200):(width-30),
+      marginTop: (height >700)? 50:20,
+    }, modalOptions.style);    
+    
+    let ModalOptionComponent = modalOptions.component;
+    let ModelContent = (modalOptions.component) ? (<ModalOptionComponent {...modalOptions.passProps}/>):null;
+
+    return (modalOptions.component===false) ? null : (<Modal style={modalOptions.style} backdrop={modalOptions.backdrop} key={modalOptions.key}  position={modalOptions.position} ref={modalOptions.ref}>
+      {ModelContent}
+    </Modal>);
+  });
+  return modals;
+}
+
 class SingleColumn extends Component{
   constructor(props) {
     super(props);
@@ -302,7 +348,7 @@ class SingleColumn extends Component{
       let singleDetailPath = nextProps.GroupListDetail.detail.detailExtensionRoute.replace(':id', nextProps.GroupListDetailStateData.detailData.detailData._id);
       // console.log({groupDetailOptions})
       this.props.onChangeExtension(singleDetailPath, {
-        passProps: Object.assign({}, nextProps, groupDetailOptions),
+        passProps: Object.assign({detailViewModals:generateModals, }, nextProps, groupDetailOptions),
         config: { transitionDirection: 'right', },
       });
     }
@@ -320,12 +366,18 @@ class MultiColumn extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      displaySidebar:false,
+      displaySidebar: false,
+      modals:{},
     };
   }
   componentDidMount() {
-    console.log('group list this.refs', this.refs)
-    setTimeout(()=>{this.refs.modal1.open();},2000)
+    // console.log('group list this.refs', this.refs)
+    this.setState({
+      modals: {
+        modalExtensionRefs: this.refs,
+      },
+    });
+    // setTimeout(()=>{this.refs.modal1.open();},2000)
   }
   render() {
     let loadingView = (<LoadingView/>);
@@ -335,23 +387,10 @@ class MultiColumn extends Component{
       <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} horizontal={true}>
         {(this.props.GroupListDetail.options.useGroups) ? <Group style={layoutStyles.multiColumnWidthContainer} {...this.props} /> : null}
         <View style={layoutStyles.multiColumnWidthContainer}>
-          <GroupList  {...this.props} />
+          <GroupList  {...this.props} {...this.state.modals}/>
         </View>  
-        <GroupDetail {...this.props} />
-        <Modal style={[{
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignSelf:'stretch',
-          margin: 10,
-          marginRight:20,
-        }, ]} backdrop={true}  position={"top"} ref={"modal1"}>
-          <TouchableHighlight onPress={() => { console.log('pressed modal text', this.refs); this.refs.modal1.close(); } }>
-            <View>
-              <Text style={[ styles.text, { color: "black" }]} >Modal on top</Text>
-            </View>  
-          </TouchableHighlight>
-  
-        </Modal>
+        <GroupDetail {...this.props} {...this.state.modals}/>
+        {generateModals.call(this, this.props.GroupListDetail.detail.actions, this.props)}  
       </ScrollView>
     );
     return loadedDataView;     

@@ -81,7 +81,15 @@ class Pipelines extends Component {
             title: 'Create Engine',
             description: 'create new engines',
             type: 'modal',
-            component: EngineDetail,
+            modalOptions: {
+              component: LoadingView,
+              ref:'create_engine_modal',
+              style: {
+                // margin: 30,
+                
+                // width:500,
+              },
+            },
           }, ],
         },
       },

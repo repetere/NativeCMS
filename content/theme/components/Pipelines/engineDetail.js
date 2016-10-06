@@ -16,10 +16,19 @@ class EngineDetail extends Component {
   constructor(props){
     super(props);
     this.state = {
+      modalExtensionRefs: this.props.modalExtensionRefs,
     };
+    this.detailViewModalComponents = null;
     console.log('EngineDetail',{props,})
   }
   componentDidMount() { 
+    if (this.refs) {
+      this.setState({
+        modalExtensionRefs: this.refs,
+      });
+    }
+    //    console.log('componentWillMount this',{this})
+    // this.detailViewModalComponents = (this.props.detailViewModals) ? this.props.detailViewModals(this.props.GroupListDetail.detail.actions, this.props, this) : null;
   }
   componentWillReceiveProps(nextProps) {
     // console.log({ nextProps, });
@@ -28,9 +37,14 @@ class EngineDetail extends Component {
     //   });
     // }
   }
+  componentWillMount() {
+    // console.log('componentWillMount this',{this})
+    // this.detailViewModalComponents = (this.props.detailViewModals) ? this.props.detailViewModals(this.props.GroupListDetail.detail.actions, this.props, this) : null;
+
+  }
 
   render() {
-
+    // let detailViewModalComponents = (this.props.detailViewModals) ? this.props.detailViewModals() : null;
     let menuBarContentWrapperStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? layoutStyles.menuBarContentBottomtWrapperOverrride : {};
     let menuBarContentItemStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? {} : { paddingLeft: 20, };
     let menuBarItemWrapperStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? {
@@ -45,6 +59,8 @@ class EngineDetail extends Component {
       menuBarContentWrapperStyle={menuBarContentWrapperStyle}
       menuBarItemWrapperStyle={menuBarItemWrapperStyle}
       menuBarContentItemStyle={menuBarContentItemStyle}
+      modalExtensionRefs={this.state.modalExtensionRefs}
+      // passProps={this.props}
       />);
     let topActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? null : ActionBarComponent;
     let bottomActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? ActionBarComponent : null;
@@ -62,6 +78,7 @@ class EngineDetail extends Component {
           <Text>height ReactPropTypes.number height sets the height of this component.</Text>
         </ScrollView>
         {bottomActionBar}
+        {this.props.detailViewModals.call(this, this.props.GroupListDetail.detail.actions, this.props) }  
       </View>
     );
   }
