@@ -7,7 +7,7 @@ import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 import LoadingView from '../LoadingIndicator/LoadingView';
 import EmptyDisplay from '../EmptyDisplay';
-import MenuBar from '../MenuBar';
+import MenuBar, { ActionBar, } from '../MenuBar';
 import Icons from '../Icons';
 import moment from 'moment';
 import numeral from 'numeral';

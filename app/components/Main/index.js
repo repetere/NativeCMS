@@ -223,7 +223,7 @@ class MainApp extends Component{
       }      
 
       if (this.refs.AppNavigator && navigationRoute !== this.getCurrentScenePath()) {
-        console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
+        // console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
         this.refs.AppNavigator.goto(navigationRoute, {
           props: Object.assign({},
             this.props,
