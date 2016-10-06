@@ -349,7 +349,7 @@ class SingleColumn extends Component{
       // console.log({groupDetailOptions})
       this.props.onChangeExtension(singleDetailPath, {
         passProps: Object.assign({detailViewModals:generateModals, }, nextProps, groupDetailOptions),
-        config: { transitionDirection: 'right', },
+        config: { transitionDirection: 'top', },
       });
     }
   }

@@ -45,11 +45,13 @@ class MainApp extends Component{
     */
     let pageLocation = this.props.location.pathname;
     if (pageLocation !== defaultExtensionRoute) {
-      this.props.onChangePage(pageLocation);
+      this.props.onChangePage(pageLocation,{config:{onAppStart:true,}});
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('nextProps', nextProps);
+    // console.log('COMPONENT WILL RECIEVE PROPS');
+
+    // console.log('componentWillReceiveProps nextProps', nextProps);
     /**
      *THIS WILL HANDLE BROWSER NAVIGATION
     */
@@ -119,6 +121,7 @@ class MainApp extends Component{
     this.onChangeExtension(el.props.path, options);
   }
   onChangeExtension(path, options) {
+    console.log('onChangeExtension',{path},{options})
     let pageLocation = this.props.location.pathname;
     if (pageLocation !== defaultExtensionRoute) {
       this.previousRoute = { path:pageLocation, };
@@ -130,10 +133,17 @@ class MainApp extends Component{
     }
     this.loadExtensionRoute(path, options);
   }
+  getCurrentScenePath() {
+    if (this.refs && this.refs.AppNavigator) {
+      return this.refs.AppNavigator.state.paths.slice(-1)[ 0 ];
+    } else{
+      return null;
+    }
+  }
   loadExtensionRoute(path, options = {}) {
-    // console.log('loadExtensionRoute ', { path, }, { options, });
+    // console.log('loadExtensionRoute ', { path, }, { options, }, 'this.props.location',this.props.location,'this.refs.AppNavigator',this.refs.AppNavigator);
     // console.log('this.props', this.props);
-
+    // console.log('this.getCurrentScenePath()', this.getCurrentScenePath());
     // window.appnav = this.refs.AppNavigator;
     if (!MessageBarManager.getRegisteredMessageBar()) {
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
@@ -144,7 +154,7 @@ class MainApp extends Component{
       console.log('ABOUT TO GO BACK');
       this.refs.AppNavigator.goback();
     } else */
-    if (!this.props.location || this.props.location.pathname !== path || (this.refs && this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length === 0)) {
+    if ( path!==this.getCurrentScenePath()  && (!this.props.location || this.props.location.pathname !== path) || (this.refs && this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length === 0)) {
         
       let location = path || '/home';//'/stats/items/3423242';
       let matchedRoute = false;
@@ -212,7 +222,8 @@ class MainApp extends Component{
         }
       }      
 
-      if (this.refs.AppNavigator) {
+      if (this.refs.AppNavigator && navigationRoute !== this.getCurrentScenePath()) {
+        console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
         this.refs.AppNavigator.goto(navigationRoute, {
           props: Object.assign({},
             this.props,
@@ -234,9 +245,10 @@ class MainApp extends Component{
       // console.log('skipping componet update');
     }
   }
-  componentWillUpdate (nextProps, nextState){
-    // console.log('COMPONENT WILL UPDATE', { nextProps }, { nextState })
-    this.loadExtensionRoute(nextProps.location.pathname);
+  componentWillUpdate(nextProps, nextState) {
+    // console.log('COMPONENT WILL UPDATE');
+    // console.log('COMPONENT WILL UPDATE',{refs:this.refs}, { nextProps }, { nextState })
+    // this.loadExtensionRoute(nextProps.location.pathname);
     // perform any preparations for an upcoming update
   }
   render() {

@@ -24,6 +24,15 @@ function getMenuItem(props, propertyName) {
   }
 }
 
+function getMenuTitle(props) {
+  let title = (props.title) ?
+    (<Text style={layoutStyles.menuBarTitle}>
+    { pluralize(capitalize(props.title)) }
+    </Text>) : null ;
+  
+  return title;
+}
+
 class MenuBar extends Component{
   constructor(props) {
     super(props);
@@ -35,9 +44,7 @@ class MenuBar extends Component{
     return (<View style={layoutStyles.menuBarContentWrapper}>
       <View style={layoutStyles.menuBarItemWrapper}>
         {leftMenuItem} 
-        <Text style={layoutStyles.menuBarTitle}>
-          { pluralize(capitalize(this.props.title)) }
-        </Text> 
+        {getMenuTitle(this.props)}
         {rightMenuItem}
       </View>
     </View>);
