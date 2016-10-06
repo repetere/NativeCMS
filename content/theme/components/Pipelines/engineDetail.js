@@ -19,10 +19,10 @@ class EngineDetail extends Component {
       modalExtensionRefs: this.props.modalExtensionRefs,
     };
     this.detailViewModalComponents = null;
-    console.log('EngineDetail',{props,})
+    console.log('EngineDetail',{props,},this.state )
   }
   componentDidMount() { 
-    if (this.refs) {
+    if (this.refs && !this.state.modalExtensionRefs) {
       this.setState({
         modalExtensionRefs: this.refs,
       });
@@ -44,7 +44,7 @@ class EngineDetail extends Component {
   }
 
   render() {
-    // let detailViewModalComponents = (this.props.detailViewModals) ? this.props.detailViewModals() : null;
+    let detailViewModalComponents = (this.props.detailViewModals) ? this.props.detailViewModals.call(this, this.props.GroupListDetail.detail.actions, this.props) : null;
     let menuBarContentWrapperStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? layoutStyles.menuBarContentBottomtWrapperOverrride : {};
     let menuBarContentItemStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? {} : { paddingLeft: 20, };
     let menuBarItemWrapperStyle = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? {
@@ -78,7 +78,7 @@ class EngineDetail extends Component {
           <Text>height ReactPropTypes.number height sets the height of this component.</Text>
         </ScrollView>
         {bottomActionBar}
-        {this.props.detailViewModals.call(this, this.props.GroupListDetail.detail.actions, this.props) }  
+        {detailViewModalComponents}  
       </View>
     );
   }

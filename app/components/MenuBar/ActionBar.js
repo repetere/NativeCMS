@@ -11,6 +11,7 @@ function getMenuItem(props, index, menuBarContentItemStyle = {}, modalExtensionR
   let onPressProp = {};
   if (props) {
     if (props.type === 'modal') {
+      // console.log('getMenuItem ',{props, modalExtensionRefs})
       onPressProp = {
         onPress: () => { modalExtensionRefs[ props.modalOptions.ref ].open(); }
       };

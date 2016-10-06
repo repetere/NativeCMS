@@ -293,7 +293,7 @@ function closeModal(name) {
   this.refs[ name ].close();
 }
 
-function generateModals(actions, props, context) {
+function generateModals(actions, props) {
   let { width, height, } = Dimensions.get('window');
   // console.log('Dimensions',{ width, height, })
   let modals = actions.map((action, i) => {
@@ -315,7 +315,7 @@ function generateModals(actions, props, context) {
 
 
     modalOptions.passProps = Object.assign({}, modalOptions.passProps, {
-      // closeExtensionModal: closeModal.bind(context || this, modalOptions.ref),
+      closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
     modalOptions.style = Object.assign({
       justifyContent: 'center',
