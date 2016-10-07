@@ -87,7 +87,7 @@ function getRefreshData() {
 }
 
 function getDataForLists(config, options = {}) {
-  console.log('getDataForLists CALLDED this.props',this.props,'this.state',this.state,{config})
+  // console.log('getDataForLists CALLDED this.props',this.props,'this.state',this.state,{config})
   let queryString = '?'+querystring.stringify(Object.assign({}, options.query, {
     format: 'json',
   }));
@@ -96,9 +96,10 @@ function getDataForLists(config, options = {}) {
     dataLoaded: false,
   };
   let stateDataProp = {};
+  let selectedGroupListProp = this.props[ config.componentPropsName ].entities[ this.state.GroupListDetailStateData.selectedGroup ];
   // request(this.props.GroupListDetail.list.fetchUrl, {
   return new Promise((resolve, reject) => {
-    request(this.props[config.componentPropsName].entities[this.state.GroupListDetailStateData.selectedGroup].list.fetchUrl+queryString, {
+    request(selectedGroupListProp.list.fetchUrl+queryString, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -107,12 +108,12 @@ function getDataForLists(config, options = {}) {
       },
     })
     .then(responseData => {
-      console.log({responseData})
+      // console.log({responseData})
 
       stateData.dataLoaded = true;
-      stateData.pages = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.pagesProp ];
-      stateData.rows = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.dataProp ];
-      stateData.totalcount = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.countProp ];
+      stateData.pages = responseData[ selectedGroupListProp[config.componentDataName].listProps.pagesProp ];
+      stateData.rows = responseData[ selectedGroupListProp[config.componentDataName].listProps.dataProp ];
+      stateData.totalcount = responseData[ selectedGroupListProp[config.componentDataName].listProps.countProp ];
       // stateData  
       stateDataProp[config.componentStateDataName] = stateData;
       
@@ -122,9 +123,11 @@ function getDataForLists(config, options = {}) {
       resolve(responseData);
     })
     .catch(error => {
-      console.log({error})
+      // console.log({error})
       stateData.dataLoaded = true;
       stateData.dataError = error;
+      stateDataProp[config.componentStateDataName] = stateData;
+
       this.setState({
         GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
       });
@@ -218,9 +221,10 @@ class GroupList extends Component{
     this.state = getInitialListStateFromProps(props.GroupListDetailStateData.listData);
   }
   componentWillReceiveProps(nextProps) {
+    // console.log('GROUP LIST', { nextProps },'this.state',this.state);
     // console.log('GROUP LIST componentWillReceiveProps nextProps',nextProps,'this.state',this.state,'nextProps.GroupListDetail.list && this.state.rowscount < 0',Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1 )
     let newProps = nextProps.GroupListDetailStateData.listData;
-    if (Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1) {
+    if (typeof nextProps.GroupListDetail.list ==='object' && Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1 &&(nextProps.GroupListDetailStateData.listData && nextProps.GroupListDetailStateData.listData.dataLoaded!==true)) {
       this.props.getGroupListDetailFunctions.getListData();
     } else if (newProps.rows) {
       this.setState(getListStateFromProps(newProps));
@@ -498,7 +502,7 @@ class GroupListDetail extends Component{
     };
     let GLDpassProps = {};
     GLDpassProps.GroupListDetail = Object.assign({}, this.props.GroupListDetail, this.getSelectedGroupList());
-    let passProps = Object.assign({}, this.props, GLDpassProps);
+    let passProps = Object.assign({}, this.props, GLDpassProps,this.state);
     let dataView = (width > 600) ?
       (<MultiColumn  {...passProps} {...this.state} {...getDataFunctions}/>)
       : (<SingleColumn {...passProps} {...this.state} {...getDataFunctions}/>);

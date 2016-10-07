@@ -8,19 +8,19 @@ export default {
       GET_INDEX:'engines',
     },
     resources: {
-      GET_INDEX:'resources?format=json',
+      GET_INDEX:'resources',
     },
     parsers: {
-      GET_INDEX:'parsers?format=json',
+      GET_INDEX:'parsers',
     },
     segments: {
-      GET_INDEX:'segments?format=json',
+      GET_INDEX:'segments',
     },
     customers: {
-      GET_INDEX:'customers?format=json',
+      GET_INDEX:'customers',
     },
     applications: {
-      GET_INDEX:'applications?format=json',
+      GET_INDEX:'applications',
     },
     items: {
       GET_INDEX:'items?format=json',
