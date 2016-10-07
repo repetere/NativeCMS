@@ -16,8 +16,13 @@ import pluralize from 'pluralize';
 import debounce from 'debounce';
 import { request, } from '../../util/request';
 import querystring from 'querystring';
+import * as Animatable from 'react-native-animatable';
 
 const GROUP_LIST_MASTER_WIDTH = 350;
+
+function getScenePath(groupName, context) {
+  return context.props.GroupListDetail.baseURL+(context.props.GroupListDetail.entities[ groupName ].path || '/' + groupName).toLowerCase();
+}
 
 function getDataSource() {
   return new ListView.DataSource({
@@ -157,11 +162,19 @@ class Group extends Component{
     };
   }
   componentWillReceiveProps(nextProps) {
-    console.log('GROUP ', { nextProps });
-    this.setState(nextProps.GroupListDetail);
+    // console.log('GROUP componentWillReceiveProps this.state.GroupListDetailStateData',this.state.GroupListDetailStateData, { propsGroupListStateData:nextProps.GroupListDetailStateData },'this.refs',this.refs);
+    this.setState({
+      GroupListDetail: nextProps.GroupListDetail,
+      GroupListDetailStateData: nextProps.GroupListDetailStateData,
+    });
+    if (nextProps.GroupListDetailStateData.showGroupSidebar && this.refs.sidebarGroupView.props.style.left!==0) {
+      this.refs.sidebarGroupView.transitionTo({left: 0},300,'ease-out');
+    } else if (nextProps.GroupListDetailStateData.showGroupSidebar===false && this.refs.sidebarGroupView.props.style.left!==(-1*GROUP_LIST_MASTER_WIDTH)) {
+      this.refs.sidebarGroupView.transitionTo({left: (-1*GROUP_LIST_MASTER_WIDTH)},300,'ease-in');
+    }
   }
   render() {
-    console.log('Group props', this.props);
+    // console.log('Group props', this.props);
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
@@ -169,12 +182,13 @@ class Group extends Component{
       title: this.props.GroupListDetail.groupTitle,
     };
     let loadedDataView = (
-      <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,{
+      <Animatable.View ref="sidebarGroupView" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,{
         width: GROUP_LIST_MASTER_WIDTH,
         borderRightWidth:1,
         borderRightColor: 'lightgray',
         position: 'absolute',
-        left: (this.props.GroupListDetailStateData.showGroupSidebar)?0:(-1*GROUP_LIST_MASTER_WIDTH),
+        left:0,
+        // left: (this.props.GroupListDetailStateData.showGroupSidebar)?0:(-1*GROUP_LIST_MASTER_WIDTH),
         top: 0,
         bottom: 0,
         zIndex: 90,
@@ -183,14 +197,11 @@ class Group extends Component{
         ]}  >
         <MenuBar {...groupMenuBarProps}/>
         {this.getGroups()}
-      </View>
+      </Animatable.View>
     );  
     return loadedDataView;     
   }
   getGroups() {
-    function getPath(groupName, context) {
-      return context.props.GroupListDetail.baseURL+(context.props.GroupListDetail.entities[ groupName ].path || '/' + groupName).toLowerCase();
-    }
     return (<List style={{
       backgroundColor: 'white',
       marginTop: 20,
@@ -201,10 +212,10 @@ class Group extends Component{
           title={group}
           key={i}
           onPress={() => {
-            this.props.onChangeExtension(getPath(group, this), { skipSceneChange: true, });
+            this.props.onChangeExtension(getScenePath(group, this), { skipSceneChange: true, });
             this.props.getGroupListDetailFunctions.setSelectedGroup(group);
             this.props.getGroupListDetailFunctions.showGroupSidebar(false);
-            console.log('pressed group', group);
+            // console.log('pressed group', group);
           } }
           />);
       })}
@@ -226,6 +237,8 @@ class GroupList extends Component{
     let newProps = nextProps.GroupListDetailStateData.listData;
     if (typeof nextProps.GroupListDetail.list ==='object' && Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1 &&(nextProps.GroupListDetailStateData.listData && nextProps.GroupListDetailStateData.listData.dataLoaded!==true)) {
       this.props.getGroupListDetailFunctions.getListData();
+    } else if (typeof nextProps.GroupListDetailStateData.listData ==='object' && nextProps.GroupListDetailStateData.listData.dataError === false && nextProps.GroupListDetailStateData.listData.dataLoaded === false ){ 
+      this.props.getGroupListDetailFunctions.getListData();
     } else if (newProps.rows) {
       this.setState(getListStateFromProps(newProps));
     }
@@ -239,13 +252,28 @@ class GroupList extends Component{
   render() {
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
-       
+
     if (this.props.GroupListDetail.list) {
-      let emptyView = (<EmptyDisplay message={'No '+capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title+' found'))}/>);
+      let groupListMenuBar = this.props.GroupListDetail.list.menuBar;
+      groupListMenuBar.leftItem = {
+        textIcon: {
+          icontype: 'Ionicons',
+          name: 'ios-arrow-back-outline',
+        },
+        itemType: 'text',
+        onPress: () => {
+          this.props.getGroupListDetailFunctions.showGroupSidebar(true);
+          this.props.onChangeExtension(this.props.GroupListDetail.baseURL, { skipSceneChange: true, });
+          // console.log('show sidebar');
+        },
+        label: capitalize(pluralize(this.props.GroupListDetail.groupTitle)),
+      };
+      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found')) }/>);
+      let useLoadingView = (typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false);
       let loadedDataView = (
         <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
         ]}  >
-          <MenuBar {...this.props.GroupListDetail.list.menuBar} />
+          <MenuBar {...groupListMenuBar} />
           <View style={styles.stretchBox}>
             <SearchBar
               lightTheme
@@ -258,8 +286,10 @@ class GroupList extends Component{
                 borderBottomWidth: 0,
                 borderTopWidth: 0,
               }}
-              containerStyle={{ backgroundColor: 'darkgray', borderWidth:0, }}/>
-            {(this.state.rowscount < 1) ? emptyView : (
+              containerStyle={{ backgroundColor: 'darkgray', borderWidth: 0, }}/>
+            {(useLoadingView) ? loadingView : null }
+            {(!useLoadingView && this.state.rowscount < 1) ? emptyView : null }
+            {(!useLoadingView && this.state.rowscount > 0) ? (
               <ListView
                 style={[ styles.flexBox, ]}
                 contentContainerStyle={layoutStyles.positionRelative}
@@ -280,7 +310,7 @@ class GroupList extends Component{
                   }>
                 >
               </ListView>
-            )}
+            ) : null}
           </View>
         </View>
         );
@@ -421,6 +451,13 @@ class MultiColumn extends Component{
       modals:{},
     };
   }
+  componentWillReceiveProps(props) {
+    this.setState({
+      modals: {
+        modalExtensionRefs: this.refs,
+      },
+    });
+  }
   componentDidMount() {
     // console.log('group list this.refs', this.refs)
     this.setState({
@@ -431,6 +468,7 @@ class MultiColumn extends Component{
     // setTimeout(()=>{this.refs.modal1.open();},2000)
   }
   render() {
+    console.log('MULIT COLUM RENDER PROPS',this.props)
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
@@ -451,7 +489,7 @@ class MultiColumn extends Component{
 class GroupListDetail extends Component{
   constructor(props) {
     super(props);
-    console.log('GroupListDetail props', props);
+    // console.log('GroupListDetail props', props);
     this.state = {
       GroupListDetailStateData: {
         groupData:(props.GroupListDetailStateData && props.GroupListDetailStateData.groupData)?props.GroupListDetailStateData.groupData:{},
@@ -469,7 +507,13 @@ class GroupListDetail extends Component{
   }
   setSelectedGroup(groupName) {
     this.setState({
-      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { selectedGroup: groupName, }),
+      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, {
+        selectedGroup: groupName,
+        listData: {
+          dataLoaded: false,
+          dataError: false,
+        },
+      }),
     });
   }
   getSelectedGroupList() {
@@ -486,7 +530,7 @@ class GroupListDetail extends Component{
   }
   render() {
     let { width, /*height,*/ } = Dimensions.get('window');
-    let getDataFunctions = {
+    let getDataFunctions = { 
       getGroupListDetailFunctions: {
         getListData: getDataForLists.bind(this,
           {
@@ -502,7 +546,7 @@ class GroupListDetail extends Component{
     };
     let GLDpassProps = {};
     GLDpassProps.GroupListDetail = Object.assign({}, this.props.GroupListDetail, this.getSelectedGroupList());
-    let passProps = Object.assign({}, this.props, GLDpassProps,this.state);
+    let passProps = Object.assign({}, this.props, GLDpassProps, this.state);
     let dataView = (width > 600) ?
       (<MultiColumn  {...passProps} {...this.state} {...getDataFunctions}/>)
       : (<SingleColumn {...passProps} {...this.state} {...getDataFunctions}/>);

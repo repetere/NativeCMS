@@ -126,10 +126,12 @@ class EngineDetail extends Component {
     return (
       <View style={[ styles.scrollViewStandardContainer,  {paddingBottom:60} ]}  >
         {topActionBar}
-        {this.getMenuBar()}
-        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer} className="engineScrollView">
-          {this.props.children}
-        </ScrollView>
+        {this.getMenuBar() }
+        <View style={{flex:1,alignSelf:'stretch'}}>
+          <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer} className="engineScrollView">
+            {this.props.children}
+          </ScrollView>
+        </View>
         {bottomActionBar}
         {detailViewModalComponents}  
       </View>
