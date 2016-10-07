@@ -120,7 +120,7 @@ class MainApp extends Component{
   onChangeScene(el, options) {
     this.onChangeExtension(el.props.path, options);
   }
-  onChangeExtension(path, options) {
+  onChangeExtension(path, options = {}) {
     console.log('onChangeExtension',{path},{options})
     let pageLocation = this.props.location.pathname;
     if (pageLocation !== defaultExtensionRoute) {
@@ -143,7 +143,7 @@ class MainApp extends Component{
     }
   }
   loadExtensionRoute(path, options = {}) {
-    // console.log('loadExtensionRoute ', { path, }, { options, }, 'this.props.location',this.props.location,'this.refs.AppNavigator',this.refs.AppNavigator);
+    console.log('loadExtensionRoute ', { path, }, { options, }, 'this.props.location',this.props.location,'this.refs.AppNavigator',this.refs.AppNavigator);
     // console.log('this.props', this.props);
     // console.log('this.getCurrentScenePath()', this.getCurrentScenePath());
     // window.appnav = this.refs.AppNavigator;
@@ -225,7 +225,7 @@ class MainApp extends Component{
       }      
 
       if (this.refs.AppNavigator && navigationRoute !== this.getCurrentScenePath()) {
-        // console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
+        console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
         this.refs.AppNavigator.goto(navigationRoute, {
           props: Object.assign({},
             this.props,
@@ -238,13 +238,16 @@ class MainApp extends Component{
           opts: navigatorOptions,
         });
       }
+      else{
+        console.log('SKIPPIPNG APP NAVIGATOR, ALREADY ON SCENE PATH')
+      }
       // // console.log('this.props.showInfo',this.props.showInfo)
       // // this.props.showInfo({ title: 'new page', message: 'time stamp ' + new Date(), });
       // if (this.refs.AlertNotification) {
       //   MessageBarManager.showAlert({title:'some titile', message: 'time stamp ' + new Date(), });
       // }  
     } else {
-      // console.log('skipping componet update');
+      console.log('skipping componet update',{path},'this.getCurrentScenePath()',this.getCurrentScenePath());
     }
   }
   componentWillUpdate(nextProps, nextState) {

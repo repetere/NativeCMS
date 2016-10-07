@@ -42,16 +42,21 @@ function getBlankDefaultHeader() {
 }
 
 function getListStateFromProps(props) {
+  console.log('getListStateFromProps', { props });
   let ds = getDataSource();
   return {
     pages: props.pages || 1,
     rows: ds.cloneWithRows(Object.assign([], props.rows)),
     rowscount: (props.rows) ? props.rows.length : 0,
     totalcount: props.totalcount || (props.rows) ? props.rows.length : 0,
+    selectedGroup: props.selectedGroup,
+    dataError: props.dataError,
+    dataLoaded: props.dataLoaded,
   };
 }
 
 function getInitialListStateFromProps(props) {
+  console.log('getInitialListStateFromProps', { props });
   return Object.assign({
     isRefreshing: false,
     dataError: false,
@@ -120,7 +125,8 @@ function getDataForLists(config, options = {}) {
       stateData.rows = responseData[ selectedGroupListProp[config.componentDataName].listProps.dataProp ];
       stateData.totalcount = responseData[ selectedGroupListProp[config.componentDataName].listProps.countProp ];
       // stateData  
-      stateDataProp[config.componentStateDataName] = stateData;
+      stateData.selectedGroup = this.state.GroupListDetailStateData.selectedGroup;
+      stateDataProp[ config.componentStateDataName ] = stateData;
       
       this.setState({
         GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
@@ -131,6 +137,7 @@ function getDataForLists(config, options = {}) {
       // console.log({error})
       stateData.dataLoaded = true;
       stateData.dataError = error;
+      stateData.selectedGroup = this.state.GroupListDetailStateData.selectedGroup;
       stateDataProp[config.componentStateDataName] = stateData;
 
       this.setState({
@@ -143,14 +150,19 @@ function getDataForLists(config, options = {}) {
 }
 
 function getDetailState(context, nextProps) {
-  // console.log('getDetailState', { nextProps });
+  console.log('getDetailState', { nextProps, });
+  let passProps = {
+    GroupListDetailStateData: Object.assign({},
+      nextProps.GroupListDetailStateData, { detailData: {}, }),
+  };
+  console.log('goBackToExtension',{passProps})
   return Object.assign({},
     nextProps.GroupListDetailStateData.detailData, {
       goBackToExtension: nextProps.onChangeExtension.bind(context, '/pipelines', {
-        passProps: {
-          GroupListDetailStateData: Object.assign({}, nextProps.GroupListDetailStateData, { detailData: {},}),
+        passProps,
+        config: {
+          transitionDirection: 'left',
         },
-        config: { transitionDirection: 'left', },
       }),
     });
 }
@@ -162,18 +174,22 @@ class Group extends Component{
     };
   }
   componentWillReceiveProps(nextProps) {
+    const { width, } = Dimensions.get('window');
+    const MAX_CONTAINER_WIDTH = (this.props.getGroupListDetailFunctions.useSingleViewHelpers())?width:GROUP_LIST_MASTER_WIDTH;
     // console.log('GROUP componentWillReceiveProps this.state.GroupListDetailStateData',this.state.GroupListDetailStateData, { propsGroupListStateData:nextProps.GroupListDetailStateData },'this.refs',this.refs);
     this.setState({
       GroupListDetail: nextProps.GroupListDetail,
       GroupListDetailStateData: nextProps.GroupListDetailStateData,
     });
     if (nextProps.GroupListDetailStateData.showGroupSidebar && this.refs.sidebarGroupView.props.style.left!==0) {
-      this.refs.sidebarGroupView.transitionTo({left: 0},300,'ease-out');
-    } else if (nextProps.GroupListDetailStateData.showGroupSidebar===false && this.refs.sidebarGroupView.props.style.left!==(-1*GROUP_LIST_MASTER_WIDTH)) {
-      this.refs.sidebarGroupView.transitionTo({left: (-1*GROUP_LIST_MASTER_WIDTH)},300,'ease-in');
+      this.refs.sidebarGroupView.transitionTo({ left: 0, }, 300, 'ease-out');
+    } else if (nextProps.GroupListDetailStateData.showGroupSidebar===false && this.refs.sidebarGroupView.props.style.left!==(-1*MAX_CONTAINER_WIDTH)) {
+      this.refs.sidebarGroupView.transitionTo({ left: (-1*MAX_CONTAINER_WIDTH), }, 300, 'ease-in');
     }
   }
   render() {
+    const { width, } = Dimensions.get('window');
+    const MAX_CONTAINER_WIDTH = (this.props.getGroupListDetailFunctions.useSingleViewHelpers())?width:GROUP_LIST_MASTER_WIDTH;
     // console.log('Group props', this.props);
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
@@ -182,13 +198,13 @@ class Group extends Component{
       title: this.props.GroupListDetail.groupTitle,
     };
     let loadedDataView = (
-      <Animatable.View ref="sidebarGroupView" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,{
-        width: GROUP_LIST_MASTER_WIDTH,
+      <Animatable.View ref="sidebarGroupView" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder, {
+        width: MAX_CONTAINER_WIDTH,
         borderRightWidth:1,
         borderRightColor: 'lightgray',
         position: 'absolute',
-        left:0,
-        // left: (this.props.GroupListDetailStateData.showGroupSidebar)?0:(-1*GROUP_LIST_MASTER_WIDTH),
+        // left:0,
+        left: (this.props.GroupListDetailStateData.showGroupSidebar)?0:(-1*MAX_CONTAINER_WIDTH),
         top: 0,
         bottom: 0,
         zIndex: 90,
@@ -213,8 +229,8 @@ class Group extends Component{
           key={i}
           onPress={() => {
             this.props.onChangeExtension(getScenePath(group, this), { skipSceneChange: true, });
-            this.props.getGroupListDetailFunctions.setSelectedGroup(group);
-            this.props.getGroupListDetailFunctions.showGroupSidebar(false);
+            // this.props.getGroupListDetailFunctions.setSelectedGroup(group);
+            this.props.getGroupListDetailFunctions.showGroupSidebar(false,group);
             // console.log('pressed group', group);
           } }
           />);
@@ -232,15 +248,27 @@ class GroupList extends Component{
     this.state = getInitialListStateFromProps(props.GroupListDetailStateData.listData);
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('GROUP LIST', { nextProps },'this.state',this.state);
+    // console.log('GROUP LIST componentWillReceiveProps', { nextProps },'this.state',this.state);
     // console.log('GROUP LIST componentWillReceiveProps nextProps',nextProps,'this.state',this.state,'nextProps.GroupListDetail.list && this.state.rowscount < 0',Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1 )
     let newProps = nextProps.GroupListDetailStateData.listData;
-    if (typeof nextProps.GroupListDetail.list ==='object' && Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1 &&(nextProps.GroupListDetailStateData.listData && nextProps.GroupListDetailStateData.listData.dataLoaded!==true)) {
+    if (typeof nextProps.GroupListDetail.list === 'object' && Object.keys(nextProps.GroupListDetail.list).length > 0 && this.state.rowscount < 1 && (nextProps.GroupListDetailStateData.listData && nextProps.GroupListDetailStateData.listData.dataLoaded !== true)) {
+      // console.log('GROUP LIST DATA REQUESSSTTTTTT - NO DATA')
       this.props.getGroupListDetailFunctions.getListData();
     } else if (typeof nextProps.GroupListDetailStateData.listData ==='object' && nextProps.GroupListDetailStateData.listData.dataError === false && nextProps.GroupListDetailStateData.listData.dataLoaded === false ){ 
+      // console.log('GROUP LIST DATA REQUESSSTTTTTT - DATA ERROR FALSE DATA LOADED FALSE')
+      this.props.getGroupListDetailFunctions.getListData();
+    } else if (nextProps.GroupListDetailStateData && typeof nextProps.GroupListDetailStateData.selectedGroup === 'string' && typeof this.state.selectedGroup === 'string' && nextProps.GroupListDetailStateData.selectedGroup !== this.state.selectedGroup && this.state.dataError === false && this.state.dataLoaded === true ) {
+      // console.log('GROUP LIST HAS DIFFRENT SELECTED GROUP nextProps.GroupListDetailStateData.selectedGroup', nextProps.GroupListDetailStateData.selectedGroup, 'this.state.selectedGroup', this.state.selectedGroup)
+      this.setState({
+        dataError: false,
+        dataLoaded: false,
+      });
       this.props.getGroupListDetailFunctions.getListData();
     } else if (newProps.rows) {
+      // console.log('GROUP LIST HAS NEW ROWS PROPS nextProps.GroupListDetailStateData.selectedGroup',nextProps.GroupListDetailStateData.selectedGroup, 'this.state.selectedGroup', this.state.selectedGroup)
       this.setState(getListStateFromProps(newProps));
+    } else {
+      console.log('GROUP LIST NO STATE UPDATE OR DATA REQUEST')
     }
   }
   componentDidMount() {
@@ -250,6 +278,7 @@ class GroupList extends Component{
     // }
   }
   render() {
+    console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
 
@@ -263,13 +292,13 @@ class GroupList extends Component{
         itemType: 'text',
         onPress: () => {
           this.props.getGroupListDetailFunctions.showGroupSidebar(true);
-          this.props.onChangeExtension(this.props.GroupListDetail.baseURL, { skipSceneChange: true, });
-          // console.log('show sidebar');
+          // this.props.onChangeExtension(this.props.GroupListDetail.baseURL, { skipSceneChange: true, });
+          console.log('show sidebar');
         },
         label: capitalize(pluralize(this.props.GroupListDetail.groupTitle)),
       };
       let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found')) }/>);
-      let useLoadingView = (typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false);
+      let useLoadingView = ((typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false) || (this.state.dataLoaded===false && this.state.dataError===false));
       let loadedDataView = (
         <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
         ]}  >
@@ -346,8 +375,7 @@ class GroupList extends Component{
 class GroupDetail extends Component{
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = getDetailState(this, this.props);
   }
   componentWillReceiveProps(nextProps) {
     let groupDetailOptions = getDetailState(this, nextProps);
@@ -355,6 +383,7 @@ class GroupDetail extends Component{
     // console.log('nextProps.getGroupListDetailFunctions.useSingleViewHelpers()', nextProps.getGroupListDetailFunctions.useSingleViewHelpers());
   }
   render() {
+    // console.log('GroupDetail RENDER this.props',this.props)
     // let loadingView = (<LoadingView/>);
     let emptyMessage = (this.props.GroupListDetail.list) ? 'No '+capitalize(this.props.GroupListDetail.list.componentProps.title)+' selected' : ' ' ;
     let emptyView = (<EmptyDisplay message={emptyMessage}/>);
@@ -424,22 +453,48 @@ class SingleColumn extends Component{
     };
   }
   componentWillReceiveProps(nextProps) {
+    console.log('SINGLE COLUMN componentWillReceiveProps nextProps', nextProps);
     if (nextProps.GroupListDetailStateData.detailData && nextProps.GroupListDetailStateData.detailData.detailData && nextProps.GroupListDetailStateData.detailData.detailData._id) {
       let groupDetailOptions = getDetailState(this, nextProps);
       let singleDetailPath = nextProps.GroupListDetail.detail.detailExtensionRoute.replace(':id', nextProps.GroupListDetailStateData.detailData.detailData._id);
-      // console.log({groupDetailOptions})
-      this.props.onChangeExtension(singleDetailPath, {
-        passProps: Object.assign({detailViewModals:generateModals, }, nextProps, groupDetailOptions),
-        config: { transitionDirection: 'top', },
-      });
+      // console.log({groupDetailOptions,singleDetailPath})
+      // this.props.onChangeExtension(singleDetailPath, {
+      //   passProps: Object.assign({
+      //     detailViewModals: generateModals,
+      //   },
+      //   nextProps,
+      //   groupDetailOptions),
+      //   config: { transitionDirection: 'top', },
+      // });
     }
   }
   render() {
-    let loadingView = (<LoadingView/>);
-    let emptyView = (<LoadingView/>);
-    let errorView = (<LoadingView/>);
-    let loadedDataView = (<GroupList {...this.props}/>);
-    return loadedDataView;     
+    // let loadingView = (<LoadingView/>);
+    // let emptyView = (<LoadingView/>);
+    // let errorView = (<LoadingView/>);
+    // let loadedDataView = (<Group {...this.props}/>);
+    // console.log('SINGLE COLUMN RENDERRRRRR this.props', this.props);
+    if (this.props.GroupListDetailStateData.detailData && this.props.GroupListDetailStateData.detailData.detailData && this.props.GroupListDetailStateData.detailData.detailData._id) {
+      let groupDetailOptions = getDetailState(this, this.props);
+      let singleDetailPath = this.props.GroupListDetail.detail.detailExtensionRoute.replace(':id', this.props.GroupListDetailStateData.detailData.detailData._id);
+      let passProps = Object.assign({ detailViewModals: generateModals, }, this.props, groupDetailOptions);
+      this.props.onChangeExtension(singleDetailPath, {
+        passProps,
+        config: {
+          transitionDirection: 'top',
+          skipSceneChange: true,
+        },
+      });
+      return (<GroupDetail {...this.props} />);
+    } else {
+      return (<ScrollView style={[ styles.scrollViewHorizontal, styles.stretchBox, ]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} horizontal={true}>
+        {(this.props.GroupListDetail.options.useGroups) ? <Group {...this.props} /> : null}
+        <GroupList  {...this.props}/>
+       
+      </ScrollView>);
+    }
+
+  
   }
 }
 
@@ -495,14 +550,32 @@ class GroupListDetail extends Component{
         groupData:(props.GroupListDetailStateData && props.GroupListDetailStateData.groupData)?props.GroupListDetailStateData.groupData:{},
         listData:(props.GroupListDetailStateData && props.GroupListDetailStateData.listData)?props.GroupListDetailStateData.listData:{},
         detailData: (props.GroupListDetailStateData && props.GroupListDetailStateData.detailData) ? props.GroupListDetailStateData.detailData : {},
-        selectedGroup: {},
-        showGroupSidebar: true,
+        selectedGroup: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.selectedGroup!=='undefined') ?props.GroupListDetailStateData.selectedGroup : {},
+        showGroupSidebar: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.showGroupSidebar!=='undefined') ?props.GroupListDetailStateData.showGroupSidebar : true,
       },
     };
   }
+  componentWillReceiveProps(nextProps) {
+    // console.log('COMPONENT WILL RECEIVE PROPS GroupListDetail ', { nextProps },'this.state',this.state);
+    if (nextProps.GroupListDetailStateData) {
+      this.setState({
+        GroupListDetailStateData: {
+          groupData: Object.assign(this.state.GroupListDetailStateData.groupData, nextProps.GroupListDetailStateData.groupData),
+          listData: Object.assign(this.state.GroupListDetailStateData.listData, nextProps.GroupListDetailStateData.listData),
+          detailData: Object.assign(this.state.GroupListDetailStateData.detailData, nextProps.GroupListDetailStateData.detailData),
+          selectedGroup: this.state.GroupListDetailStateData.selectedGroup,
+          showGroupSidebar: this.state.GroupListDetailStateData.showGroupSidebar,
+        },
+      });
+    }
+  }
   setDetailData(data) {
+    // console.log('SET DETAIL DATA', { data });
+    let mergedDetailData = Object.assign({}, this.state.GroupListDetailStateData.detailData, this.props.GroupListDetail.entities[this.state.GroupListDetailStateData.selectedGroup].detail, data);
+    let GroupListDetailStateData = Object.assign(this.state.GroupListDetailStateData, { detailData: mergedDetailData, });
+    // console.log('SET DETAIL ',{GroupListDetailStateData})
     this.setState({
-      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { detailData:data, }),
+      GroupListDetailStateData,
     });
   }
   setSelectedGroup(groupName) {
@@ -523,12 +596,18 @@ class GroupListDetail extends Component{
       return {};
     }
   }
-  showGroupSidebar(shouldShowGroupSidebar) {
-    this.setState({
+  showGroupSidebar(shouldShowGroupSidebar, selectedGroup) {
+    // console.log({ shouldShowGroupSidebar, selectedGroup, });
+    let newState = {
       GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { showGroupSidebar: shouldShowGroupSidebar, }),
-    });
+    };
+    if (selectedGroup) {
+      newState.GroupListDetailStateData.selectedGroup = selectedGroup;
+    }
+    this.setState(newState);
   }
   render() {
+    // console.log('GroupDetail REDNER this.state', this.state);
     let { width, /*height,*/ } = Dimensions.get('window');
     let getDataFunctions = { 
       getGroupListDetailFunctions: {
@@ -547,9 +626,10 @@ class GroupListDetail extends Component{
     let GLDpassProps = {};
     GLDpassProps.GroupListDetail = Object.assign({}, this.props.GroupListDetail, this.getSelectedGroupList());
     let passProps = Object.assign({}, this.props, GLDpassProps, this.state);
+    // console.log('GROUPLISTDETAILLLLLLLLLL ',{passProps})
     let dataView = (width > 600) ?
-      (<MultiColumn  {...passProps} {...this.state} {...getDataFunctions}/>)
-      : (<SingleColumn {...passProps} {...this.state} {...getDataFunctions}/>);
+      (<MultiColumn  {...passProps} {...getDataFunctions}/>)
+      : (<SingleColumn {...passProps}  {...getDataFunctions}/>);
     return dataView;     
   }
 }
