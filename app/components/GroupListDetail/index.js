@@ -86,7 +86,8 @@ function getRefreshData() {
   }, 1000);
 }
 
-function getDataForLists(config, options ={}) {
+function getDataForLists(config, options = {}) {
+  console.log('getDataForLists CALLDED this.props',this.props,'this.state',this.state,{config})
   let queryString = '?'+querystring.stringify(Object.assign({}, options.query, {
     format: 'json',
   }));
@@ -97,7 +98,7 @@ function getDataForLists(config, options ={}) {
   let stateDataProp = {};
   // request(this.props.GroupListDetail.list.fetchUrl, {
   return new Promise((resolve, reject) => {
-    request(this.props[config.componentPropsName].list.fetchUrl+queryString, {
+    request(this.props[config.componentPropsName].entities[this.state.GroupListDetailStateData.selectedGroup].list.fetchUrl+queryString, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -106,6 +107,8 @@ function getDataForLists(config, options ={}) {
       },
     })
     .then(responseData => {
+      console.log({responseData})
+
       stateData.dataLoaded = true;
       stateData.pages = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.pagesProp ];
       stateData.rows = responseData[ this.props[config.componentPropsName][config.componentDataName].listProps.dataProp ];
@@ -119,6 +122,7 @@ function getDataForLists(config, options ={}) {
       resolve(responseData);
     })
     .catch(error => {
+      console.log({error})
       stateData.dataLoaded = true;
       stateData.dataError = error;
       this.setState({
@@ -149,33 +153,59 @@ class Group extends Component{
     this.state = {
     };
   }
+  componentWillReceiveProps(nextProps) {
+    console.log('GROUP ', { nextProps });
+    this.setState(nextProps.GroupListDetail);
+  }
   render() {
+    console.log('Group props', this.props);
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
+    let groupMenuBarProps = {
+      title: this.props.GroupListDetail.groupTitle,
+    };
     let loadedDataView = (
-      <View style={[styles.scrollViewStandardContainer,{flex:1},{
-        flex: 1, 
+      <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,{
+        width: GROUP_LIST_MASTER_WIDTH,
         borderRightWidth:1,
         borderRightColor: 'lightgray',
-      }]}  >
-       <Text style={{marginBottom: 10}}>
-            group 
-          </Text>
-        {
-          /*<ListView
-          style={[ styles.flexBox, { paddingLeft:6, paddingRight:6, } ]}
-          contentContainerStyle={{ position:'relative', }}
-          dataSource={this.state.rows}
-          renderRow={this.renderRow.bind(this, this.getRenderRowData) }
-          renderHeader={this.renderHeader.bind(this) }
-          initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
-          >
-        </ListView>
-        */}
-      </View>  
-    );
+        position: 'absolute',
+        left: (this.props.GroupListDetailStateData.showGroupSidebar)?0:(-1*GROUP_LIST_MASTER_WIDTH),
+        top: 0,
+        bottom: 0,
+        zIndex: 90,
+        backgroundColor:'whitesmoke',
+      },
+        ]}  >
+        <MenuBar {...groupMenuBarProps}/>
+        {this.getGroups()}
+      </View>
+    );  
     return loadedDataView;     
+  }
+  getGroups() {
+    function getPath(groupName, context) {
+      return context.props.GroupListDetail.baseURL+(context.props.GroupListDetail.entities[ groupName ].path || '/' + groupName).toLowerCase();
+    }
+    return (<List style={{
+      backgroundColor: 'white',
+      marginTop: 20,
+      marginBottom: 20,
+    }}>
+      {Object.keys(this.props.GroupListDetail.entities).map((group, i) => { 
+        return (<ListItem
+          title={group}
+          key={i}
+          onPress={() => {
+            this.props.onChangeExtension(getPath(group, this), { skipSceneChange: true, });
+            this.props.getGroupListDetailFunctions.setSelectedGroup(group);
+            this.props.getGroupListDetailFunctions.showGroupSidebar(false);
+            console.log('pressed group', group);
+          } }
+          />);
+      })}
+    </List>);
   }
 }
 
@@ -188,63 +218,79 @@ class GroupList extends Component{
     this.state = getInitialListStateFromProps(props.GroupListDetailStateData.listData);
   }
   componentWillReceiveProps(nextProps) {
+    // console.log('GROUP LIST componentWillReceiveProps nextProps',nextProps,'this.state',this.state,'nextProps.GroupListDetail.list && this.state.rowscount < 0',Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1 )
     let newProps = nextProps.GroupListDetailStateData.listData;
-    if (newProps.rows) {
+    if (Object.keys(nextProps.GroupListDetail.list).length>0 && this.state.rowscount <1) {
+      this.props.getGroupListDetailFunctions.getListData();
+    } else if (newProps.rows) {
       this.setState(getListStateFromProps(newProps));
     }
   }
   componentDidMount() {
-    if (this.state.rowscount < 1) {
-      this.props.getGroupListDetailFunctions.getListData();
-    }
+    // console.log('GROUP LIST props',this.props)
+    // if (this.props.GroupListDetail.list && this.state.rowscount < 1) {
+    //   this.props.getGroupListDetailFunctions.getListData();
+    // }
   }
   render() {
     let loadingView = (<LoadingView/>);
-    let emptyView = (<EmptyDisplay message={'No '+capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title+' found'))}/>);
     let errorView = (<LoadingView/>);
-    let loadedDataView = (
-      <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
-      ]}  >
-        <MenuBar {...this.props.GroupListDetail.list.menuBar} />
-        <View style={styles.stretchBox}>
-          <SearchBar
-            lightTheme
-            onChangeText={(data) => {
-              this.searchFunction({ query: { search: data, }, });
-            } }
-            placeholder={'Search for '+pluralize(capitalize(this.props.GroupListDetail.list.componentProps.title))+'...'}
-            inputStyle={{
-              backgroundColor: 'white',
-              borderBottomWidth: 0,
-              borderTopWidth: 0,
-            }}
-            containerStyle={{ backgroundColor: 'darkgray', borderWidth:0, }}/>
-          {(this.state.rowscount < 1) ? emptyView : (
-            <ListView
-              style={[ styles.flexBox, ]}
-              contentContainerStyle={layoutStyles.positionRelative}
-              enableEmptySections={true}
-              dataSource={this.state.rows}
-              renderRow={this.renderRow.bind(this, this.getRenderRowData) }
-              initialListSize={(Platform.OS === 'web' && this.state.rowscount < 20) ? 100000000 : undefined}
-              refreshControl={
-                  <RefreshControl
-                    refreshing={this.state.isRefreshing}
-                    onRefresh={getRefreshData.bind(this)}
-                    tintColor="slategrey"
-                    title="Loading"
-                    titleColor="slategrey"
-                    colors={['lightslategray', ]}
-                    progressBackgroundColor="lightsteelblue"
-                  />
-                }>
-              >
-            </ListView>
-          )}
+       
+    if (this.props.GroupListDetail.list) {
+      let emptyView = (<EmptyDisplay message={'No '+capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title+' found'))}/>);
+      let loadedDataView = (
+        <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
+        ]}  >
+          <MenuBar {...this.props.GroupListDetail.list.menuBar} />
+          <View style={styles.stretchBox}>
+            <SearchBar
+              lightTheme
+              onChangeText={(data) => {
+                this.searchFunction({ query: { search: data, }, });
+              } }
+              placeholder={'Search for '+pluralize(capitalize(this.props.GroupListDetail.list.componentProps.title))+'...'}
+              inputStyle={{
+                backgroundColor: 'white',
+                borderBottomWidth: 0,
+                borderTopWidth: 0,
+              }}
+              containerStyle={{ backgroundColor: 'darkgray', borderWidth:0, }}/>
+            {(this.state.rowscount < 1) ? emptyView : (
+              <ListView
+                style={[ styles.flexBox, ]}
+                contentContainerStyle={layoutStyles.positionRelative}
+                enableEmptySections={true}
+                dataSource={this.state.rows}
+                renderRow={this.renderRow.bind(this, this.getRenderRowData) }
+                initialListSize={(Platform.OS === 'web' && this.state.rowscount < 20) ? 100000000 : undefined}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.isRefreshing}
+                      onRefresh={getRefreshData.bind(this)}
+                      tintColor="slategrey"
+                      title="Loading"
+                      titleColor="slategrey"
+                      colors={['lightslategray', ]}
+                      progressBackgroundColor="lightsteelblue"
+                    />
+                  }>
+                >
+              </ListView>
+            )}
+          </View>
         </View>
-      </View>
-      );
-    return loadedDataView;     
+        );
+   
+      return loadedDataView;     
+    } else {
+      let emptyView = (
+        <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,
+        ]}  >
+          <MenuBar />
+          <EmptyDisplay message=" " />
+        </View>);   
+      return emptyView;
+    }
   }
   renderRow(tranformFunction, data) {
     // console.log('groupList renderRow', { tranformFunction }, { data })
@@ -276,12 +322,13 @@ class GroupDetail extends Component{
   }
   render() {
     // let loadingView = (<LoadingView/>);
-    let emptyView = (<EmptyDisplay message={'No '+capitalize(this.props.GroupListDetail.list.componentProps.title+' selected')}/>);
+    let emptyMessage = (this.props.GroupListDetail.list) ? 'No '+capitalize(this.props.GroupListDetail.list.componentProps.title)+' selected' : ' ' ;
+    let emptyView = (<EmptyDisplay message={emptyMessage}/>);
     // let errorView = (<LoadingView/>);
-    let CustomDetailComponent = this.props.GroupListDetail.detail.detailComponent;
     // console.log({ CustomDetailComponent });
 
-    if (CustomDetailComponent && this.state.detailData){
+    if (this.props.GroupListDetail.detail && this.props.GroupListDetail.detail.detailComponent && this.state.detailData){
+      let CustomDetailComponent = this.props.GroupListDetail.detail.detailComponent;
       return <CustomDetailComponent {...this.state} {...this.props}/>;     
     } else {
       return emptyView;     
@@ -390,7 +437,7 @@ class MultiColumn extends Component{
           <GroupList  {...this.props} {...this.state.modals}/>
         </View>  
         <GroupDetail {...this.props} {...this.state.modals}/>
-        {generateModals.call(this, this.props.GroupListDetail.detail.actions, this.props)}  
+        {(this.props.GroupListDetail.detail && this.props.GroupListDetail.detail.actions)?generateModals.call(this, this.props.GroupListDetail.detail.actions, this.props):null}  
       </ScrollView>
     );
     return loadedDataView;     
@@ -405,13 +452,32 @@ class GroupListDetail extends Component{
       GroupListDetailStateData: {
         groupData:(props.GroupListDetailStateData && props.GroupListDetailStateData.groupData)?props.GroupListDetailStateData.groupData:{},
         listData:(props.GroupListDetailStateData && props.GroupListDetailStateData.listData)?props.GroupListDetailStateData.listData:{},
-        detailData:(props.GroupListDetailStateData && props.GroupListDetailStateData.detailData)?props.GroupListDetailStateData.detailData:{},
+        detailData: (props.GroupListDetailStateData && props.GroupListDetailStateData.detailData) ? props.GroupListDetailStateData.detailData : {},
+        selectedGroup: {},
+        showGroupSidebar: true,
       },
     };
   }
   setDetailData(data) {
     this.setState({
       GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { detailData:data, }),
+    });
+  }
+  setSelectedGroup(groupName) {
+    this.setState({
+      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { selectedGroup: groupName, }),
+    });
+  }
+  getSelectedGroupList() {
+    if (this.state.GroupListDetailStateData.selectedGroup) {
+      return this.props.GroupListDetail.entities[ this.state.GroupListDetailStateData.selectedGroup ];
+    } else {
+      return {};
+    }
+  }
+  showGroupSidebar(shouldShowGroupSidebar) {
+    this.setState({
+      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, { showGroupSidebar: shouldShowGroupSidebar, }),
     });
   }
   render() {
@@ -425,12 +491,17 @@ class GroupListDetail extends Component{
             componentStateDataName: 'listData',
           }),
         setDetailData: this.setDetailData.bind(this),
+        setSelectedGroup: this.setSelectedGroup.bind(this),
+        showGroupSidebar: this.showGroupSidebar.bind(this),
         useSingleViewHelpers: ()=>width < 600,
       },
     };
+    let GLDpassProps = {};
+    GLDpassProps.GroupListDetail = Object.assign({}, this.props.GroupListDetail, this.getSelectedGroupList());
+    let passProps = Object.assign({}, this.props, GLDpassProps);
     let dataView = (width > 600) ?
-      (<MultiColumn  {...this.props} {...this.state} {...getDataFunctions}/>)
-      : (<SingleColumn {...this.props} {...this.state} {...getDataFunctions}/>);
+      (<MultiColumn  {...passProps} {...this.state} {...getDataFunctions}/>)
+      : (<SingleColumn {...passProps} {...this.state} {...getDataFunctions}/>);
     return dataView;     
   }
 }

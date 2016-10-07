@@ -131,7 +131,9 @@ class MainApp extends Component{
     } else {
       this.context.router.push(path);
     }
-    this.loadExtensionRoute(path, options);
+    if(!options.skipSceneChange){
+      this.loadExtensionRoute(path, options);
+    }
   }
   getCurrentScenePath() {
     if (this.refs && this.refs.AppNavigator) {

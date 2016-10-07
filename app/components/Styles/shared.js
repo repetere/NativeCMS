@@ -104,7 +104,8 @@ const styles = StyleSheet.create(Object.assign({
     backgroundColor:'whitesmoke',
     borderTopWidth:1,
     borderTopColor:'lightgray',
-    height:60,
+    height: 60,
+    zIndex:100,
   },
   tabBarText:{
     fontSize:12,
