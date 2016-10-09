@@ -49,9 +49,9 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('COMPONENT WILL RECIEVE PROPS');
+    console.log('COMPONENT WILL RECIEVE PROPS');
 
-    // console.log('componentWillReceiveProps nextProps', nextProps);
+    console.log('componentWillReceiveProps nextProps', nextProps);
     /**
      *THIS WILL HANDLE BROWSER NAVIGATION
     */
@@ -257,56 +257,38 @@ class MainApp extends Component{
     // perform any preparations for an upcoming update
   }
   render() {
-    // console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname);
-    let displayContent = (
-      <View style={[styles.container,{backgroundColor:'white'}]}>
-        {/*<CurrentApp {...this.props}  />*/}
-        <View style={styles.stretchContainer}>
-          <Area
-            ref="AppNavigator"
-            style={styles.stretchBox}
-            onLoad={this.loadExtensionRoute.bind(this, (this.props.location)?this.props.location.pathname:'/')}
-            >
-            <LoadingView/>
-          </Area>
-        </View>
-        <Tabs 
-          style={styles.tabBar}>
-            {this.props.tabBarExtensions.map((ext)=>{
-              return (<TabIcon 
-                {...ext}  
-                key={ext.name} 
-                ext={ext}  
-                location={this.props.location}
-                location_path={getRouteExtensionFromLocation(this.props.location.pathname)}
-                selected={getRouteExtensionFromLocation(this.props.location.pathname)===ext.path}
-                // changePage={this.onChangeScene.bind(this)}
-                onSelect={this.onChangeScene.bind(this)}
-                />);
-            })}
-        </Tabs>
-        <MessageBar ref="AlertNotification" />
+    console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname,'this.props',this.props,'this.state',this.state);
+
+
+    return (<View style={[ styles.container, { backgroundColor: 'white' }]}>
+      {/*<CurrentApp {...this.props}  />*/}
+      <View style={styles.stretchContainer}>
+        <Area
+          ref="AppNavigator"
+          style={styles.stretchBox}
+          onLoad={(this.props.user.isLoggedIn!==true)? this.loadExtensionRoute.bind(this, '/login') :this.loadExtensionRoute.bind(this, (this.props.location) ? this.props.location.pathname : '/') }
+          >
+          <LoadingView/>
+        </Area>
       </View>
-    );
-    let displayLogin = (
-      <View style={[styles.container,]}>
-        <AppExtensions.Login {...this.props}  />
-      </View>
-    );
-    let displayLoading = (
-      <LoadingView/>
-    );
-    // console.log('MAIN APP: this.props', this.props);
-    if (this.props.page.initial_app_state_loaded === false) {
-      // console.log('MAIN APP: this.props.page.initial_app_state_loaded', this.props.page.initial_app_state_loaded);
-      return displayLoading;
-    } else if (this.props.user.isLoggedIn) {
-      // console.log('MAIN APP: this.props.user.isLoggedIn', this.props.user.isLoggedIn);
-      return displayContent;
-    } else {
-      // console.log('MAIN APP: displayLogin');
-      return displayLogin;      
-    }
+      {(this.props.user.isLoggedIn===true)? (<Tabs
+        style={styles.tabBar}>
+        {this.props.tabBarExtensions.map((ext) => {
+          return (<TabIcon
+            {...ext}
+            key={ext.name}
+            ext={ext}
+            location={this.props.location}
+            location_path={getRouteExtensionFromLocation(this.props.location.pathname) }
+            selected={getRouteExtensionFromLocation(this.props.location.pathname) === ext.path}
+            // changePage={this.onChangeScene.bind(this)}
+            onSelect={this.onChangeScene.bind(this) }
+            />);
+        }) }
+      </Tabs>) : null}
+      
+      <MessageBar ref="AlertNotification" />
+    </View>);
   }
 }
 MainApp.contextTypes = {

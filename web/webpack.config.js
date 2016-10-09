@@ -2,7 +2,7 @@
 
 const path = require('path');
 var webpack = require('webpack');
-var HtmlPlugin = require('webpack-html-plugin');
+var HtmlPlugin = require('html-webpack-plugin');
 var HasteResolverPlugin = require('haste-resolver-webpack-plugin');
 const fs = require('fs-extra');
 const CUSTOM_NODE_MODULES = fs.readJSONSync(path.resolve(__dirname, '../content/config/custom_node_modules.json'));
@@ -74,7 +74,7 @@ module.exports = {
         // 'Access-Control-Allow-Credentials': 'true',
       },
     }),
-    new webpack.NoErrorsPlugin(),
+    // new webpack.NoErrorsPlugin(),
     new HtmlPlugin(),
   ],
   module: {
@@ -97,6 +97,19 @@ module.exports = {
       exclude: [/node_modules/],
     }, {
       test: /\.js?$/,
+      loader: 'babel',
+      query: {
+        presets: ['es2015', 'react','react-native', 'latest'],
+        plugins: CUSTOM_NODE_MODULES['babel-plugins'],
+      },
+      //add your modules here
+      include:  CUSTOM_NODE_MODULES['react-native-components'].map((native_component)=>{
+        // console.log('list of mods',path.join(ROOT_PATH, `node_modules/${native_component.name}`))
+        return path.join(ROOT_PATH, `node_modules/${native_component.name}`);
+      }),
+      // exclude:[/\.png$/gi]
+    }, {
+      test: /\.jsx?$/,
       loader: 'babel',
       query: {
         presets: ['es2015', 'react','react-native', 'latest'],
