@@ -49,9 +49,9 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log('COMPONENT WILL RECIEVE PROPS');
+    // console.log('COMPONENT WILL RECIEVE PROPS');
 
-    console.log('componentWillReceiveProps nextProps', nextProps);
+    // console.log('componentWillReceiveProps nextProps', nextProps);
     /**
      *THIS WILL HANDLE BROWSER NAVIGATION
     */
@@ -257,7 +257,7 @@ class MainApp extends Component{
     // perform any preparations for an upcoming update
   }
   render() {
-    console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname,'this.props',this.props,'this.state',this.state);
+    // console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname,'this.props',this.props,'this.state',this.state);
 
 
     return (<View style={[ styles.container, { backgroundColor: 'white' }]}>

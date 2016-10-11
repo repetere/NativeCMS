@@ -22,7 +22,7 @@ class EngineDetail extends Component {
       modalExtensionRefs: this.props.modalExtensionRefs,
     };
     this.detailViewModalComponents = null;
-    console.log('EngineDetail',{props,},this.state )
+    // console.log('EngineDetail',{props,},this.state )
   }
   componentDidMount() { 
     if (this.refs && !this.state.modalExtensionRefs) {

@@ -42,7 +42,7 @@ function getBlankDefaultHeader() {
 }
 
 function getListStateFromProps(props) {
-  console.log('getListStateFromProps', { props });
+  // console.log('getListStateFromProps', { props });
   let ds = getDataSource();
   return {
     pages: props.pages || 1,
@@ -56,7 +56,7 @@ function getListStateFromProps(props) {
 }
 
 function getInitialListStateFromProps(props) {
-  console.log('getInitialListStateFromProps', { props });
+  // console.log('getInitialListStateFromProps', { props });
   return Object.assign({
     isRefreshing: false,
     dataError: false,
@@ -150,12 +150,12 @@ function getDataForLists(config, options = {}) {
 }
 
 function getDetailState(context, nextProps) {
-  console.log('getDetailState', { nextProps, });
+  // console.log('getDetailState', { nextProps, });
   let passProps = {
     GroupListDetailStateData: Object.assign({},
       nextProps.GroupListDetailStateData, { detailData: {}, }),
   };
-  console.log('goBackToExtension',{passProps})
+  // console.log('goBackToExtension',{passProps})
   return Object.assign({},
     nextProps.GroupListDetailStateData.detailData, {
       goBackToExtension: nextProps.onChangeExtension.bind(context, '/pipelines', {
@@ -268,7 +268,7 @@ class GroupList extends Component{
       // console.log('GROUP LIST HAS NEW ROWS PROPS nextProps.GroupListDetailStateData.selectedGroup',nextProps.GroupListDetailStateData.selectedGroup, 'this.state.selectedGroup', this.state.selectedGroup)
       this.setState(getListStateFromProps(newProps));
     } else {
-      console.log('GROUP LIST NO STATE UPDATE OR DATA REQUEST')
+      // console.log('GROUP LIST NO STATE UPDATE OR DATA REQUEST')
     }
   }
   componentDidMount() {
@@ -278,7 +278,7 @@ class GroupList extends Component{
     // }
   }
   render() {
-    console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
+    // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
 
@@ -453,7 +453,7 @@ class SingleColumn extends Component{
     };
   }
   componentWillReceiveProps(nextProps) {
-    console.log('SINGLE COLUMN componentWillReceiveProps nextProps', nextProps);
+    // console.log('SINGLE COLUMN componentWillReceiveProps nextProps', nextProps);
     if (nextProps.GroupListDetailStateData.detailData && nextProps.GroupListDetailStateData.detailData.detailData && nextProps.GroupListDetailStateData.detailData.detailData._id) {
       let groupDetailOptions = getDetailState(this, nextProps);
       let singleDetailPath = nextProps.GroupListDetail.detail.detailExtensionRoute.replace(':id', nextProps.GroupListDetailStateData.detailData.detailData._id);
@@ -523,7 +523,7 @@ class MultiColumn extends Component{
     // setTimeout(()=>{this.refs.modal1.open();},2000)
   }
   render() {
-    console.log('MULIT COLUM RENDER PROPS',this.props)
+    // console.log('MULIT COLUM RENDER PROPS',this.props)
     let loadingView = (<LoadingView/>);
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);

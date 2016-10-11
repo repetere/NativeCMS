@@ -214,6 +214,30 @@ const styles = StyleSheet.create(Object.assign({
     justifyContent: 'center',
     alignSelf: 'center', 
   },
+  detail_widthPadding: {
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  detail_containerBottomPaddingMargin: {
+    paddingBottom:10,
+    marginBottom:5,
+  },
+  detail_h1: {
+    color: 'black',
+    fontSize: 32,
+    fontWeight: 'bold',
+    paddingBottom:10,
+    marginBottom:5,
+    borderBottomColor: 'lightgrey',
+    borderBottomWidth: StyleSheet.hairlineWidth || 1,
+  },
+  detail_h2: {
+    color: 'black',
+    fontSize: 24,
+    fontWeight: 'bold',
+    paddingBottom:5,
+    marginBottom:2,
+  },
 }, webFixes));
 
 export default styles;
