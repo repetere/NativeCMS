@@ -60,7 +60,7 @@ class EngineDetail extends Component {
               <FormInput editable={false} multiline={true} value={this.props.detailData.content || 'n/a'}/>
             </View>
           </RESPONSIVE_TWO_COLUMN>
-          <H2>Resources</H2>
+          <H2>Resources https://github.com/thewei/react-native-grid</H2>
           <RESPONSIVE_GRID columns={2}>
             {[ 1, 2, 3, 4, 5, 6, 7, 8, 9 ].map((elm,i) => {
               return <View key={i} style={{ padding:50,margin:10, backgroundColor:'grey'}}><Text>{elm}</Text></View>;
