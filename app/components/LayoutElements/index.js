@@ -28,7 +28,7 @@ exports.H1 = class H1 extends Component {
     super(props);
   }
   render() {
-    return <View style={{flex:1, 
+    return <View style={{flex:0, 
 }}><Text {...this.props} style={[ layoutStyles.detail_h1, this.props.style, ]}>{this.props.children}</Text></View>;
   }
 };
@@ -38,7 +38,7 @@ exports.H2 = class H2 extends Component {
     super(props);
   }
   render() {
-    return <View style={{flex:1,  
+    return <View style={{flex:0,  
 }}><Text {...this.props} style={[ layoutStyles.detail_h2, this.props.style, ]}>{this.props.children}</Text></View>;
   }
 };
@@ -78,20 +78,21 @@ exports.GRID_ITEM = class GRID_ITEM extends Component {
     super(props);
   }
   render() {
-    return (<View style={{
-      justifyContent: 'space-around',
-      // alignItems: 'space-around',
-      alignSelf: 'stretch', 
-      borderTopColor: 'lightgrey',
-      borderTopWidth: StyleSheet.hairlineWidth || 1,
-      marginBottom: 5,
-      marginLeft: 5,
-      marginRight: 5,
-      paddingTop:5,
-      paddingBottom:5,
-    }}>
-      <Text numberOfLines={1} style={{ fontSize:16, padding:3, }}>{this.props.title}</Text>
-      <Text numberOfLines={1} style={{ fontSize:12, color:'gray', padding:3, }}>{this.props.description}</Text>
+    let reverseItems = (this.props.useLabel) ? { flexDirection:'column-reverse', } : {} ;
+    return (<View style={layoutStyles.gridItemContainer}>  
+      {(this.props.icon) ? (
+        <View style={layoutStyles.gridItemIconWrapper}><Icons {...this.props.icon} size={24}/></View>)
+        : null}  
+        {(this.props.children) ? 
+          <View style={[layoutStyles.gridItemContent,this.props.gridItemContentStyle]}>
+            {this.props.children}
+          </View>  : (
+          <View style={[layoutStyles.gridItemContent,reverseItems]}>
+            <Text numberOfLines={1} style={layoutStyles.gridItemTitle}>{this.props.title}</Text>
+            <Text numberOfLines={1} style={layoutStyles.gridItemDescription}>{this.props.description}</Text>
+          </View>  
+        )}
+      
     </View>);  
   }
 };
@@ -121,7 +122,7 @@ exports.RESPONSIVE_GRID = class RESPONSIVE_GRID extends Component {
     // console.log('this.props.children',this.props.children)
     // console.log({gridItems})
     return (
-      <Grid>
+      <Grid style={{alignSelf:'stretch',alignItems:'stretch'}}>
         {gridItems}
       </Grid>);
   }

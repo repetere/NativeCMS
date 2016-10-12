@@ -140,7 +140,8 @@ class Table extends Component {
     let { /* height,*/ width, } = Dimensions.get('window');
     return (
       <View style={[ layoutStyles.listContainer, layoutStyles.tableHeaderContainer]} >
-        <View style={[layoutStyles.listImageWrapper,layoutStyles.tableHeaderImageContainer]}></View>
+        {(this.props.noImage === true) ? null : (<View style={[layoutStyles.listImageWrapper,layoutStyles.tableHeaderImageContainer]}></View>)}
+        
         <View style={[ layoutStyles.listTextWrapper, layoutStyles.tableHeaderTextWrapper]}>
           <View style={[layoutStyles.listTextContainer,{ maxWidth:(width-110), }]}>
             {renderData.columns.map((column, i) => {
@@ -149,9 +150,8 @@ class Table extends Component {
               );
             }) }
           </View>  
-          <View style={[layoutStyles.listItemIconWrapper,{height:10}]}>
-            
-          </View>
+          {(this.props.noAction === true) ? null : (
+            <View style={[ layoutStyles.listItemIconWrapper, { height: 10 }]}></View>)}
         </View>  
       </View>
     );
@@ -163,9 +163,10 @@ class Table extends Component {
     // console.log('width-100', width-100 ,{width});
     return (
       <View style={layoutStyles.listContainer} >
-        <View style={layoutStyles.listImageWrapper}>
+        {(this.props.noImage===true)?null:(<View style={layoutStyles.listImageWrapper}>
           <Image source={{ uri: renderData.image.uri, }} style={layoutStyles.listImage} resizeMode="cover" />
-        </View>
+        </View>)}
+        
         <View style={layoutStyles.listTextWrapper}>
           <View style={[layoutStyles.listTextContainer, { maxWidth:(width-110), }]}>
             {renderData.columns.map(( column, i) => {
@@ -173,10 +174,12 @@ class Table extends Component {
                 <Text key={i} style={[layoutStyles.listText, column.style, ]} numberOfLines={1}>{column.label} </Text>
               );
             }) }
-          </View>  
+          </View>
+          
+          {(this.props.noAction===true) ? null : (
           <TouchableOpacity style={layoutStyles.listItemIconWrapper} onPress={this.loadDetail.bind(this, data, renderData)}>
             <Icons name={renderData.action.icon.name} size={22} style={layoutStyles.listItemIcon} />
-          </TouchableOpacity>
+          </TouchableOpacity>)}
         </View>  
       </View>
     );
