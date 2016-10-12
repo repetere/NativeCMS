@@ -4,7 +4,7 @@ import styles from '../../../../app/components/Styles/shared';
 import layoutStyles from '../../../../app/components/Styles/layout';
 import Icons from '../../../../app/components/Icons';
 import HTMLText from '../../../../app/components/HTMLText';
-import { HR, H1, H2, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '../../../../app/components/LayoutElements';
+import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '../../../../app/components/LayoutElements';
 import DetailView from '../../../../app/components/GroupListDetail/DetailView';
 // import ActionBar from '../../../../app/components/MenuBar/ActionBar';
 import MenuBar, { ActionBar, } from '../../../../app/components/MenuBar';
@@ -60,12 +60,22 @@ class EngineDetail extends Component {
               <FormInput editable={false} multiline={true} value={this.props.detailData.content || 'n/a'}/>
             </View>
           </RESPONSIVE_TWO_COLUMN>
-          <H2>Resources https://github.com/thewei/react-native-grid</H2>
+
+          <H2 style={{marginTop:20}}>Resources</H2>
           <RESPONSIVE_GRID columns={2}>
-            {[ 1, 2, 3, 4, 5, 6, 7, 8, 9 ].map((elm,i) => {
-              return <View key={i} style={{ padding:50,margin:10, backgroundColor:'grey'}}><Text>{elm}</Text></View>;
+            {this.props.detailData.system_of_record_associated_data.resources.map((resource, i) => {
+              return <GRID_ITEM key={i} {...resource} description={`(${resource.source_configuration.data_source}) ${resource.description}`} />;
             })}
           </RESPONSIVE_GRID>
+
+          <H2 style={{marginTop:20}}>Parser</H2>
+          <RESPONSIVE_GRID columns={1}>
+            <GRID_ITEM 
+              {...this.props.detailData.system_of_record_associated_data.parser}
+              />
+          </RESPONSIVE_GRID>
+          <H2 style={{marginTop:20}}>Segments</H2>
+          <Text>{JSON.stringify(this.props.detailData,'',2)}</Text>
         </View>
       </DetailView>
     );
