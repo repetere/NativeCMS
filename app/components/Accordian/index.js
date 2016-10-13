@@ -9,6 +9,7 @@ import colorStyles from '../Styles/colors';
 'use strict';
 
 // import Icon from 'react-native-vector-icons/FontAwesome';
+// https://github.com/caroaguilar/react-native-bar-collapsible
 
 let styles = StyleSheet.create({
   bar: {

@@ -79,23 +79,16 @@ class Login extends Component {
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', width:400, }}>
             <Form ref="loginForm" error={this.props.user.error}
             submitFunction={this.props.loginUser}
-            formElements={[
-              <FormLabel>Email / Username</FormLabel>,
-              <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus={true} autoCapitalize="none" formTextChange={true} returnKeyType="next" />,
-              <FormLabel>Password</FormLabel>,
+              >
+              <FormLabel>Email / Username</FormLabel>
+              <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus={true} autoCapitalize="none" formTextChange={true} returnKeyType="next" />
+              <FormLabel>Password</FormLabel>
               <FormInput name="password" placeholder="Please enter your Password" secureTextEntry={true}  formTextChange={true} returnKeyType="done"
                 onSubmitEditing={() => { this.sendFormToLogin('onSubmitEditing').bind(this); } }
-                onEndEditing={()=>{ this.sendFormToLogin('onEndEditing').bind(this); }}
-                containerStyle={{ marginBottom: 10, }}/>,
-              // <Switch
-              //   // onValueChange={(value) => this.setState({falseSwitchIsOn: value})}
-              //   formSwitchChange="true"
-              //   name="rememberme"
-              //   // style={{marginBottom: 10}}
-              //   value={false}
-              //   />,
-              <Button title="Login" submitOnPress="true" />,
-            ]}/>  
+                onEndEditing={() => { this.sendFormToLogin('onEndEditing').bind(this); } }
+                containerStyle={{ marginBottom: 10, }}/>
+              <Button title="Login" submitOnPress="true" />
+            </Form>
           </View>  
           
         </View>

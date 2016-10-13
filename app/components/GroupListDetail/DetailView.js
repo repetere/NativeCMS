@@ -112,7 +112,7 @@ class EngineDetail extends Component {
     {
       justifyContent: 'flex-end',
     };
-
+    console.log('detailView',{detailViewModalComponents})
     let ActionBarComponent = (<ActionBar
       {...this.props.GroupListDetail.detail}
       menuBarContentWrapperStyle={menuBarContentWrapperStyle}

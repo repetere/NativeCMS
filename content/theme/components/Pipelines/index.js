@@ -7,6 +7,7 @@ import GroupListDetail from '../../../../app/components/GroupListDetail';
 import { Button, Text, SearchBar } from 'react-native-elements';
 import constants from '../../constants';
 import EngineDetail from './engineDetail';
+import EngineDetailCompose from './engineDetailCompose';
 import moment from 'moment';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
@@ -123,8 +124,8 @@ class Pipelines extends Component {
             list: getListFromEntityName('engine', 'pipeline'),
             detail: getDetailFromEntityName('engine', 'pipeline', {
               detailComponent: EngineDetail,
-              createModalComponent: LoadingView,
-              editModalComponent:LoadingView,
+              createModalComponent: EngineDetailCompose,
+              editModalComponent:EngineDetailCompose,
             }),
           },
           Resources: {

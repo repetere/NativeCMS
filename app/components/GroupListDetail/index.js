@@ -424,7 +424,7 @@ function generateModals(actions, props) {
     }, action.modalOptions);
 
 
-    modalOptions.passProps = Object.assign({}, modalOptions.passProps, {
+    modalOptions.passProps = Object.assign({}, props, modalOptions.passProps, {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
     modalOptions.style = Object.assign({
