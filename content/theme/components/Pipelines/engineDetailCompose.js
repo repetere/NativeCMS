@@ -75,7 +75,12 @@ class EngineDetailCompose extends Component {
           label: 'PTU',
           value:'PTU',  
         }, ],
-      }, ],
+      }, {
+        type:'checkbox',
+        label:'Active',
+        name:'active2',
+        // value:'text',
+      },],
     }, {
       layoutColumns: 2,
       formElements: [{

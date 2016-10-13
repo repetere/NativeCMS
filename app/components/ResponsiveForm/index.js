@@ -4,9 +4,12 @@
  * @flow
  */
 import React, { cloneElement, Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Switch, Picker } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Switch, Picker, Platform, } from 'react-native';
 import { Button, } from 'react-native-elements';
 import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '../LayoutElements';
+// let NativeSelect = (Platform.OS === 'web') ? {} : require('react-native-dropdown') ;
+import ModalDropdown from 'react-native-modal-dropdown';
+
 
 // import {} from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';
@@ -23,6 +26,9 @@ class ResponsiveForm extends Component {
     if (this.props.onChange) {
       this.props.onChange(prevState);
     }
+  }
+  _getOptionList(name) {
+    return this.refs['OPTIONLIST'+name];
   }
   render() {
     let formGroupData = this.props.formgroups.map((formgroup, i) => {
@@ -57,14 +63,37 @@ class ResponsiveForm extends Component {
             </GRID_ITEM>);
           } else if (formElement.type === 'select') {
             return (<GRID_ITEM key={i}
+              
               description={formElement.label}
               >
-              <Picker
-                selectedValue={this.state.language}
-                onValueChange={(lang) => this.setState({language: lang})}>
-                <Picker.Item label="Java" value="java" />
-                <Picker.Item label="JavaScript" value="js" />
-              </Picker>
+              {(Platform.OS === 'web') ? (
+                <Picker 
+                  selectedValue={formElement.value}
+                  onValueChange={(value) => {
+                    let updatedStateProp = {};
+                    updatedStateProp[ formElement.name ] = value;
+                    this.setState(updatedStateProp);
+                  } }>
+                  {formElement.options.map(option => {
+                    return (<Picker.Item label={option.label} value={option.value} />);
+                  })}
+                </Picker>
+              ) : (
+                  <ModalDropdown 
+                    onSelect={(value) => {
+                      let updatedStateProp = {};
+                      updatedStateProp[ formElement.name ] = value;
+                      this.setState(updatedStateProp);
+                    }}
+                    style={{
+                      height: 40, borderColor: 'gray', borderWidth: 1, justifyContent:'center'
+                    }}
+                    textStyle={{ justifyContent:'center', flex:1 }}
+                    dropdownStyle={{
+                      borderColor: 'gray', borderWidth: 1, flex: 1, alignSelf: 'stretch',
+                    }}
+                    options={formElement.options.map(option => option.value)} />
+              )}
             </GRID_ITEM>);
           } else if (formElement.type === 'button') {
             return (<View key={i} style={{ padding:10, }}

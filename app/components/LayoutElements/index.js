@@ -79,7 +79,7 @@ exports.GRID_ITEM = class GRID_ITEM extends Component {
   }
   render() {
     let reverseItems = (this.props.useLabel) ? { flexDirection:'column-reverse', } : {} ;
-    return (<View style={layoutStyles.gridItemContainer}>  
+    return (<View style={[layoutStyles.gridItemContainer,this.props.style]}>  
       {(this.props.icon) ? (
         <View style={layoutStyles.gridItemIconWrapper}><Icons {...this.props.icon} size={24}/></View>)
         : null}  
