@@ -28,7 +28,7 @@ exports.H1 = class H1 extends Component {
     super(props);
   }
   render() {
-    return <View style={{flex:0, 
+    return <View style={{flex:-1, 
 }}><Text {...this.props} style={[ layoutStyles.detail_h1, this.props.style, ]}>{this.props.children}</Text></View>;
   }
 };
@@ -38,7 +38,7 @@ exports.H2 = class H2 extends Component {
     super(props);
   }
   render() {
-    return <View style={{flex:0,  
+    return <View style={{flex:-1,  
 }}><Text {...this.props} style={[ layoutStyles.detail_h2, this.props.style, ]}>{this.props.children}</Text></View>;
   }
 };
@@ -83,16 +83,11 @@ exports.GRID_ITEM = class GRID_ITEM extends Component {
       {(this.props.icon) ? (
         <View style={layoutStyles.gridItemIconWrapper}><Icons {...this.props.icon} size={24}/></View>)
         : null}  
-        {(this.props.children) ? 
-          <View style={[layoutStyles.gridItemContent,this.props.gridItemContentStyle]}>
-            {this.props.children}
-          </View>  : (
-          <View style={[layoutStyles.gridItemContent,reverseItems]}>
-            <Text numberOfLines={1} style={layoutStyles.gridItemTitle}>{this.props.title}</Text>
-            <Text numberOfLines={1} style={layoutStyles.gridItemDescription}>{this.props.description}</Text>
-          </View>  
-        )}
-      
+        <View style={[ layoutStyles.gridItemContent, this.props.gridItemContentStyle, reverseItems, ]}>
+          {(this.props.title)?(<Text numberOfLines={1} style={layoutStyles.gridItemTitle}>{this.props.title}</Text>):null}
+          {(this.props.description)?(<Text numberOfLines={1} style={layoutStyles.gridItemDescription}>{this.props.description}</Text>):null}
+          {(this.props.children) ? this.props.children: null}
+        </View> 
     </View>);  
   }
 };

@@ -438,7 +438,7 @@ function generateModals(actions, props) {
     let ModalOptionComponent = modalOptions.component;
     let ModelContent = (modalOptions.component) ? (<ModalOptionComponent {...modalOptions.passProps}/>):null;
 
-    return (modalOptions.component===false) ? null : (<Modal style={modalOptions.style} backdrop={modalOptions.backdrop} key={modalOptions.key}  position={modalOptions.position} ref={modalOptions.ref}>
+    return (modalOptions.component===false) ? null : (<Modal style={modalOptions.style} backdrop={modalOptions.backdrop} key={modalOptions.key} swipeToClose={false} position={modalOptions.position} ref={modalOptions.ref}>
       {ModelContent}
     </Modal>);
   });
@@ -528,7 +528,7 @@ class MultiColumn extends Component{
     let emptyView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
     let loadedDataView = (
-      <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} horizontal={true}>
+      <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} alwaysBounceHorizontal={false} horizontal={true}>
         {(this.props.GroupListDetail.options.useGroups) ? <Group style={layoutStyles.multiColumnWidthContainer} {...this.props} /> : null}
         <View style={layoutStyles.multiColumnWidthContainer}>
           <GroupList  {...this.props} {...this.state.modals}/>
@@ -607,7 +607,7 @@ class GroupListDetail extends Component{
     this.setState(newState);
   }
   render() {
-    // console.log('GroupDetail REDNER this.state', this.state);
+    // console.log('GroupDetail REDNER this.state', this.state,Dimensions.get('window'));
     let { width, /*height,*/ } = Dimensions.get('window');
     let getDataFunctions = { 
       getGroupListDetailFunctions: {

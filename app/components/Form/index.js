@@ -7,15 +7,16 @@ import React, { cloneElement, Component } from 'react';
 import { StyleSheet, View, Text, } from 'react-native';
 // import {} from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';
-
+// let formKeyCounter = 0;
 function getBindedFormElement(formElement, i) {
-  console.log({formElement,i})
+  // formKeyCounter++;
+  // console.log({formElement,i,formKeyCounter})
   if (formElement.props && formElement.props.children && Array.isArray(formElement.props.children)) {
     return (<formElement {...formElement.props}>
       { formElement.props.children.map(getBindedFormElement.bind(this)) }</formElement>);
   }
   else {
-    let formDataProps = Object.assign({}, formElement.props);
+    let formDataProps = Object.assign({ key:i, }, formElement.props);
     if (formElement.props.submitOnPress) {
       formDataProps.onPress = this.onSubmit.bind(this);
     }
@@ -76,7 +77,7 @@ class Form extends Component{
     );
   }
   componentDidUpdate() {
-    console.log('componentDidUpdate this.props.error', this.props.error);
+    // console.log('componentDidUpdate this.props.error', this.props.error);
     if (this.props.error) {
       switch (this.props.errorNotification) {
         case 'bounce':

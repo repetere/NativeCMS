@@ -55,7 +55,7 @@ function getSegmentRulesRenderRowData(data) {
         width: 500,
       },
       heading: 'Defaults',
-      label: JSON.stringify(data.default_state,'',2),
+      label: JSON.stringify(data.default_state),
     },],
     action: {
       icon: {
@@ -272,8 +272,6 @@ class EngineDetail extends Component {
             { this.props.detailData.system_of_record_associated_data.segments.map((segment, i) => {
               return (
               <GRID_ITEM key={i} {...segment} >
-                <Text numberOfLines={1} style={layoutStyles.gridItemTitle}>{segment.title}</Text>
-                <Text numberOfLines={1} style={layoutStyles.gridItemDescription}>{segment.description}</Text>
                 <Accordian
                   title="Conditions"
                   collapsible={true}
