@@ -84,8 +84,12 @@ class Login extends Component {
               <FormInput name="username" placeholder="Please enter your username or email" selectTextOnFocus={true} autoCapitalize="none" formTextChange={true} returnKeyType="next" />
               <FormLabel>Password</FormLabel>
               <FormInput name="password" placeholder="Please enter your Password" secureTextEntry={true}  formTextChange={true} returnKeyType="done"
-                onSubmitEditing={() => { this.sendFormToLogin('onSubmitEditing').bind(this); } }
-                onEndEditing={() => { this.sendFormToLogin('onEndEditing').bind(this); } }
+                onSubmitEditing={() => {
+                  this.sendFormToLogin.call(this, 'onSubmitEditing');
+                } }
+                onEndEditing={() => {
+                  this.sendFormToLogin.call(this, 'onEndEditing');
+                } }
                 containerStyle={{ marginBottom: 10, }}/>
               <Button title="Login" submitOnPress="true" />
             </Form>

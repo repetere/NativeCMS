@@ -52,11 +52,31 @@ class MainApp extends Component{
     console.log('componentWillReceiveProps this.getCurrentScenePath()',this.getCurrentScenePath())
     console.log('componentWillReceiveProps this.state.location.pathname', this.state.location.pathname)
     console.log('componentWillReceiveProps this.state.user.isLoggedIn', this.state.user.isLoggedIn)
+    console.log('componentWillReceiveProps nextProps.user.isLoggedIn', nextProps.user.isLoggedIn)
     console.log('componentWillReceiveProps this.state.user.isLoggedIn !== true', this.state.user.isLoggedIn !== true)
     console.log('componentWillReceiveProps this.getCurrentScenePath() !== \'/login\'',this.getCurrentScenePath() !== '/login')
     console.log('componentWillReceiveProps this.state.location.pathname !== \'/login\'',this.state.location.pathname !== '/login')
     if (this.state.user.isLoggedIn !== true && (this.getCurrentScenePath() !== '/login' || this.state.location.pathname !== '/login')) {
-      this.onChangeExtension.call(this, '/login', { initialLoad: 'recievedPropLogin', loginStatus: this.state.user.isLoggedIn, });
+      console.log('LOGGED OUT AND NOT ON LOGIN EXT');
+      this.onChangeExtension.call(this, '/login', {
+        initialLoad: 'recievedPropLogin',
+        loginStatus: this.state.user.isLoggedIn,
+        config: {
+          transitionDirection:'top',
+        },
+      });
+    } else if (nextProps.user.isLoggedIn === true && this.getCurrentScenePath() === '/login' && this.getCurrentScenePath() !== defaultExtensionRoute && nextProps.location.pathname !== defaultExtensionRoute) {
+      console.log('LOGGED IN AND STILL ON LOGIN EXT');
+      this.onChangeExtension(defaultExtensionRoute, {
+        initialLoad: 'recievedPropLogin',
+        loginStatus: this.state.user.isLoggedIn,
+        config: {
+          transitionDirection:'bottom',
+        },
+      });
+    }
+    else {
+      console.log('NOT DEALING WITH LOGIN')
     }
     // 
     this.setState(nextProps);
@@ -291,11 +311,6 @@ class MainApp extends Component{
         <Area
           ref="AppNavigator"
           style={styles.stretchBox}
-          onLoad={
-            (this.state.user.isLoggedIn === true)
-              ? this.onChangeExtension.bind(this, initialPath, { initialLoad: 'fromRender', loginStatus: this.state.user.isLoggedIn, })
-              : this.onChangeExtension.bind(this, '/login', { initialLoad: 'fromRender', loginStatus: this.state.user.isLoggedIn, })
-            }
           >
           <LoadingView/>
         </Area>
