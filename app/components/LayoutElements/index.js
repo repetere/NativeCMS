@@ -73,6 +73,29 @@ exports.RESPONSIVE_TWO_COLUMN = class TWO_COLUMN extends Component {
   }
 };
 
+let defaultColumnMargins = function (width) {
+  return {
+    twoColumnMargins: (width > 600) ? {
+      left: {
+        marginRight: 40,
+      },
+    } : {
+      right: {
+        marginLeft: 40,
+      },
+    },
+  };
+};
+
+exports.getGridMarginStyle = function (options) {
+  let { width, formgroup, i, columnMargins, } = options;
+  let twoColumnMargins = (columnMargins && columnMargins.twoColumnMargins) ? columnMargins.twoColumnMargins : defaultColumnMargins(width).twoColumnMargins;
+  return (formgroup.layoutColumns === 2)
+    ?
+    (i % 2 === 0) ? twoColumnMargins.left : twoColumnMargins.right
+    : {};
+};
+
 exports.GRID_ITEM = class GRID_ITEM extends Component {
   constructor(props) {
     super(props);

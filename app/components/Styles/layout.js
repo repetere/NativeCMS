@@ -41,7 +41,7 @@ const styles = StyleSheet.create(Object.assign({
   },
   hr: {
     borderBottomColor: 'lightgrey',
-    borderBottomWidth: StyleSheet.hairlineWidth || 1,
+    borderBottomWidth: 1,
     paddingTop: 1,
     bottom:1,
   },

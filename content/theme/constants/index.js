@@ -2,7 +2,7 @@
 export default {
   pipelines: {
     all: {
-      BASE_URL: 'https://pas-dev.promisefinancial.net:8885/pas/data/v2/',
+      BASE_URL: 'https://pas-development.promisefinancial.net/pas/data/v2/',
     },
     engines: {
       GET_INDEX:'engines',

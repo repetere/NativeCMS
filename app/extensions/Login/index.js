@@ -67,6 +67,7 @@ class Login extends Component {
   sendFormToLogin(eventMethod) {
     console.log('sendFormToLogin',{ eventMethod, }, 'this.refs', this.refs);
   }
+  
   render() {
     // console.log('LOGIN this.props',this.props);
     return (

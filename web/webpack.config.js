@@ -33,8 +33,12 @@ module.exports = {
     extensions: ['', '.js', '.jsx'],
   },
   entry: isProd? [
+    'whatwg-fetch',
+    'babel-polyfill',
     config.paths.index,
   ]: [
+    'whatwg-fetch',
+    'babel-polyfill',
     'webpack-dev-server/client?http://' + IP + ':' + PORT,
     'webpack/hot/only-dev-server',
     config.paths.index,

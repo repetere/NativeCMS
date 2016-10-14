@@ -23,9 +23,7 @@ import pluralize from 'pluralize';
 class EngineDetailCompose extends Component {
   constructor(props){
     super(props);
-    this.state = {
-      engine: this.props.GroupListDetailStateData.detailData.detailData,
-    };
+    this.state = this.props.GroupListDetailStateData.detailData.detailData;
   }
   getFormLayoutData() {
     return [{
@@ -110,19 +108,23 @@ class EngineDetailCompose extends Component {
     console.log('editEngine formdata', {formdata} );
   }
   changeEngine(formdata) {
-    console.log('changeEngine formdata', {formdata} );
+    console.log('changeEngine formdata', { formdata });
+    if (formdata.title !== this.state.title) {
+      this.setState({ title: formdata.title, });
+    }
   }
   render() {
-    let _engine = this.state.engine;
+    let _engine = this.state;
     console.log('ENGINE DETAIL Compose this.props', this.props, { _engine, });
     return (
       <View style={{flex:1,alignSelf:'stretch'}}>
         <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={[ styles.scrollViewStandardContentContainer, {padding:10, paddingBottom:120}]} className="engineScrollView">
-          <H2>Edit {_engine.title}</H2>
+          <H2>{_engine.title}</H2>
+          <HR style={{marginBottom:20}}/>
           <ResponsiveForm 
             ref="engineComposeForm"
             onSubmit={this.editEngine.bind(this)}
-            // onChange={this.changeEngine.bind(this)}
+            onChange={this.changeEngine.bind(this)}
             formdata={_engine}
             formgroups={this.getFormLayoutData.call(this)}
             />

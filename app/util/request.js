@@ -1,8 +1,5 @@
 import { Platform, } from 'react-native';
-require('whatwg-fetch');
-if (Platform.OS === 'web') {
-  require('babel-polyfill');
-}
+
 // import Immutable from 'immutable';
 
 let checkStatus = function(response) {

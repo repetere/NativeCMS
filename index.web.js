@@ -13,6 +13,8 @@ import Main from './app/components/Main';
 
 AppRegistry.registerComponent('Main', () => Main);
 if (Platform.OS == 'web') {
+  require('whatwg-fetch');
+  require('babel-polyfill');
   require('./web/custom_node_modules/react-native-vector-icons/css/stylesheet.css');
   let app = document.createElement('div');
   let metaViewport = document.createElement('meta');
