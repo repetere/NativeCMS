@@ -23,7 +23,8 @@ import pluralize from 'pluralize';
 class EngineDetailCompose extends Component {
   constructor(props){
     super(props);
-    this.state = this.props.GroupListDetailStateData.detailData.detailData;
+    let engineData = (this.props.GroupListDetailStateData && this.props.GroupListDetailStateData.detailData && this.props.GroupListDetailStateData.detailData.detailData) ? this.props.GroupListDetailStateData.detailData.detailData : {};
+    this.state = engineData;
   }
   getFormLayoutData() {
     return [{
@@ -44,10 +45,17 @@ class EngineDetailCompose extends Component {
         name:'category',
         // value:'text',
       }, {
-        type:'text',
+        type: 'select',
         label:'Primary Application',
-        name:'primary_application',
-        // value:'text',
+        name: 'primary_application',
+        // value: 'ECS',
+        options: [{
+          label: 'ECS',
+          value: 'ECS',
+        }, {
+          label: 'PTU',
+          value:'PTU',  
+        }, ],
       }, {
         type:'textarea',
         label:'Description',
@@ -62,21 +70,20 @@ class EngineDetailCompose extends Component {
     }, {
       layoutColumns: 1,
       formElements: [{
-        type: 'select',
-        label: 'category',
-        name: 'category2',
-        value: 'ECS',
-        options: [{
-          label: 'ECS',
-          value: 'ECS',
-        }, {
-          label: 'PTU',
-          value:'PTU',  
-        }, ],
+        type: 'datalist',
+        label: 'Parser',
+        name: 'system_of_record_associated_data.parser',
+        idSelector: '_id',
+        // value: 'ECS',
+        data:[],
       }, {
-        type:'checkbox',
-        label:'Active',
-        name:'active2',
+        type:'datalist',
+        label:'Resources',
+        name: 'system_of_record_associated_data.resources',
+        idSelector: '_id',
+        idLabel: 'title',
+        data: [],
+        multi: true,
         // value:'text',
       },],
     }, {

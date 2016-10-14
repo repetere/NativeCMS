@@ -4,15 +4,206 @@
  * @flow
  */
 import React, { cloneElement, Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Switch, Picker, Platform, Dimensions, } from 'react-native';
-import { Button, } from 'react-native-elements';
+import { StyleSheet, View, Text, TextInput, Switch, Picker, Platform, Dimensions, TouchableOpacity, } from 'react-native';
+import { Button, CheckBox } from 'react-native-elements';
 import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridMarginStyle, } from '../LayoutElements';
 // let NativeSelect = (Platform.OS === 'web') ? {} : require('react-native-dropdown') ;
+import Icons from '../Icons';
 import ModalDropdown from 'react-native-modal-dropdown';
-
-
-// import {} from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';
+
+function getPropertyAttribute(options) {
+  let { property, element } = options;
+  let attribute = element.name;
+  let selector = element.idSelector;
+  // console.log({ options });
+  let returnVal; 
+  if (attribute.indexOf('.') === -1) {
+    returnVal = property[ attribute ];
+  } else {
+    let attrArray = attribute.split('.');
+    returnVal = property[ attrArray[ 0 ] ][ attrArray[ 1 ] ];
+  }
+  
+  if (selector && !options.skipSelector) {
+    return returnVal[ selector ]; 
+  } else {
+    return returnVal;
+  }
+}
+
+function getFormTextInputArea(options) {
+  let { formElement, i, formgroup, width, } = options;
+  return (<GRID_ITEM key={i}
+    description={formElement.label}
+    style={getGridMarginStyle({
+      formgroup,
+      i,
+      width,
+    })}
+    gridItemContentStyle={{ borderTopWidth:0, }}
+    >
+    <TextInput {...formElement.passProps}
+      style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
+      multiline={(formElement.type==='textarea')?true:false}
+      onChangeText={(text) => {
+        let updatedStateProp = {};
+        updatedStateProp[ formElement.name ] = text;
+        this.setState(updatedStateProp);
+      } }
+      value={formElement.value || this.state[formElement.name]} />
+  </GRID_ITEM>);
+}
+
+function getFormCheckbox(options) {
+  let { formElement, i, formgroup, width, } = options;
+  return (<GRID_ITEM key={i}
+    description={formElement.label}
+    style={getGridMarginStyle({
+      formgroup,
+      i,
+      width,
+    })}
+    gridItemContentStyle={{ borderTopWidth:0, }}
+    >
+    <Switch {...formElement.passProps}
+      onValueChange={(value) => {
+        let updatedStateProp = {};
+        updatedStateProp[ formElement.name ] = value;
+        this.setState(updatedStateProp);
+      } }
+      // style={{marginBottom: 10}}
+      value={formElement.value || this.state[formElement.name]} />
+  </GRID_ITEM>);
+}
+
+function getFormSelect(options) {
+  let { formElement, i, formgroup, width, } = options;
+  return (<GRID_ITEM key={i}
+    description={formElement.label}
+    style={getGridMarginStyle({
+      formgroup,
+      i,
+      width,
+    })}
+    gridItemContentStyle={{ borderTopWidth:0, }}
+    >
+    {(Platform.OS === 'web') ? (
+      <Picker 
+        selectedValue={formElement.value}
+        onValueChange={(value) => {
+          let updatedStateProp = {};
+          updatedStateProp[ formElement.name ] = value;
+          this.setState(updatedStateProp);
+        } }>
+        {formElement.options.map(option => {
+          return (<Picker.Item label={option.label} value={option.value} />);
+        })}
+      </Picker>
+    ) : (
+        <ModalDropdown 
+          onSelect={(value) => {
+            let updatedStateProp = {};
+            updatedStateProp[ formElement.name ] = value;
+            this.setState(updatedStateProp);
+          } }
+          defaultValue={formElement.value}
+          style={{
+            height: 40, borderColor: 'lightgrey', borderWidth: 1, justifyContent: 'center', borderRadius: 3,
+            padding:5,
+          }}
+          textStyle={{ justifyContent:'center', flex:1 }}
+          dropdownStyle={{
+            borderColor: 'gray', borderWidth: 1, minWidth:300, alignItems:'stretch', alignSelf: 'stretch',
+          }}
+          options={formElement.options.map(option => option.value)} />
+    )}
+  </GRID_ITEM>);
+}
+
+function getFormButton(options) {
+  let { formElement, i, formgroup, width, } = options;
+  return (<View key={i} style={{ padding:10, }} >
+    <Button {...formElement.passProps}
+      buttonStyle={{ borderRadius:5, }}
+      title={formElement.value}
+      onPress={formElement.onPress} />
+  </View>);
+}
+
+function getFormSubmit(options) {
+  let { formElement, i, formgroup, width, } = options;
+  return (<View key={i} style={{ padding:10, }} >
+    <Button {...formElement.passProps}
+      buttonStyle={{borderRadius:5, }}
+      title={formElement.value}
+      onPress={this.submitForm.bind(this)} />
+  </View>);
+}
+
+class FromTag extends Component{
+  render() {
+    let childComponents = (this.props.document)
+      ? (
+        <Text>{this.props.document.title}</Text>
+      )
+      : this.props.children;
+    
+    return (childComponents) ? (<TouchableOpacity  {...this.props.button}>
+      <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', margin:10 }} {...this.props.container}>
+        <Icons style={{marginRight:10}} size={24}
+          {...this.props.icon}
+          ></Icons>
+        {childComponents}
+      </View>
+    </TouchableOpacity>) : null;
+  }
+}
+
+function getFormDatalist(options) {
+  let { formElement, i, formgroup, width, } = options;
+  return (<GRID_ITEM key={i}
+    description={formElement.label}
+    style={getGridMarginStyle({
+      formgroup,
+      i,
+      width,
+    })}
+    gridItemContentStyle={{ borderTopWidth:0, }}
+    >
+    <TextInput {...formElement.passProps}
+      style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
+      multiline={(formElement.type==='textarea')?true:false}
+      onChangeText={(text) => {
+        let updatedStateProp = {};
+        updatedStateProp[ formElement.name ] = text;
+        this.setState(updatedStateProp);
+      } }
+      // value={formElement.value || getPropertyAttribute({
+      //   property: this.state, element: formElement,
+      // })}
+      />
+    <View style={{ flexDirection: 'row', }}>
+      {(!formElement.mutli) ? (<FromTag
+          icon={{
+            name: 'ios-close', 
+          }}
+          button={{
+            onPress: this.setFormSingleProp.bind(this, {
+              attribute: formElement.name,
+              value: undefined,
+            }),
+          }}  
+          document={getPropertyAttribute({
+            property: this.state, element: formElement, skipSelector:true,
+          })}
+          />)
+        : null
+      }
+    </View>
+  </GRID_ITEM>);
+}
+
 // let formKeyCounter = 0;
 class ResponsiveForm extends Component {
   constructor(props) {
@@ -27,116 +218,43 @@ class ResponsiveForm extends Component {
       this.props.onChange(prevState);
     }
   }
-  _getOptionList(name) {
-    return this.refs['OPTIONLIST'+name];
+  removeFormSingleProp(options) {
+    let { value, attribute, } = options;
+    console.log('remove prop form state', { value, attribute, });
+  }
+  setFormSingleProp(options) {
+    let { value, attribute, } = options;
+    let updatedStateProp = {};
+    console.log('setFormSingleProp prop form state', { value, attribute, });
+
+    if (attribute.indexOf('.') === -1) {
+      updatedStateProp[ attribute ] = value;
+      this.setState(updatedStateProp);
+    } else {
+      let attrArray = attribute.split('.');
+      let stateToSet = Object.assign({}, this.state[ attrArray[ 0 ] ]);
+      stateToSet[attrArray[1]]=value;
+      this.setState({ [attrArray[0]] : stateToSet, });
+    }
   }
   render() {
     let { width,  } = Dimensions.get('window');
-    let twoColumnMargins = (width > 600) ? {
-      left: {
-        marginRight:40, 
-      },
-    } : {
-      right: {
-        marginLeft:40,
-      },
-    };
-    function getGridMargins(formgroup, i) {
-      return (formgroup.layoutColumns === 2)
-        ?
-        (i % 2 === 0) ? twoColumnMargins.left : twoColumnMargins.right
-        : {};
-    }
 
     let formGroupData = this.props.formgroups.map((formgroup, i) => {
       return (<RESPONSIVE_GRID key={i} columns={formgroup.layoutColumns || 2}>
         {formgroup.formElements.map((formElement, i) => {
           if (formElement.type === 'text' || formElement.type === 'textarea') {
-            return (<GRID_ITEM key={i}
-              description={formElement.label}
-              style={getGridMarginStyle({
-                formgroup,
-                i,
-                width,
-              })}
-              gridItemContentStyle={{ borderTopWidth:0, }}
-              >
-              <TextInput {...formElement.passProps}
-                style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
-                multiline={(formElement.type==='textarea')?true:false}
-                onChangeText={(text) => {
-                  let updatedStateProp = {};
-                  updatedStateProp[ formElement.name ] = text;
-                  this.setState(updatedStateProp);
-                } }
-                value={formElement.value || this.state[formElement.name]} />
-            </GRID_ITEM>);
+            return getFormTextInputArea.call(this, { formElement, i, formgroup, width, });
           } else if (formElement.type === 'checkbox') {
-            return (<GRID_ITEM key={i}
-              description={formElement.label}
-              style={getGridMargins(formgroup, i)}
-              gridItemContentStyle={{ borderTopWidth:0, }}
-              >
-              <Switch {...formElement.passProps}
-                onValueChange={(value) => {
-                  let updatedStateProp = {};
-                  updatedStateProp[ formElement.name ] = value;
-                  this.setState(updatedStateProp);
-                } }
-                // style={{marginBottom: 10}}
-                value={formElement.value || this.state[formElement.name]} />
-            </GRID_ITEM>);
+            return getFormCheckbox.call(this, { formElement, i, formgroup, width, });
           } else if (formElement.type === 'select') {
-            return (<GRID_ITEM key={i}
-              description={formElement.label}
-              style={getGridMargins(formgroup, i)}
-              gridItemContentStyle={{ borderTopWidth:0, }}
-              >
-              {(Platform.OS === 'web') ? (
-                <Picker 
-                  selectedValue={formElement.value}
-                  onValueChange={(value) => {
-                    let updatedStateProp = {};
-                    updatedStateProp[ formElement.name ] = value;
-                    this.setState(updatedStateProp);
-                  } }>
-                  {formElement.options.map(option => {
-                    return (<Picker.Item label={option.label} value={option.value} />);
-                  })}
-                </Picker>
-              ) : (
-                  <ModalDropdown 
-                    onSelect={(value) => {
-                      let updatedStateProp = {};
-                      updatedStateProp[ formElement.name ] = value;
-                      this.setState(updatedStateProp);
-                    }}
-                    style={{
-                      height: 40, borderColor: 'lightgrey', borderWidth: 1, justifyContent:'center',
-                    }}
-                    textStyle={{ justifyContent:'center', flex:1 }}
-                    dropdownStyle={{
-                      borderColor: 'gray', borderWidth: 1, flex: 1, alignSelf: 'stretch',
-                    }}
-                    options={formElement.options.map(option => option.value)} />
-              )}
-            </GRID_ITEM>);
+            return getFormSelect.call(this, { formElement, i, formgroup, width, });
           } else if (formElement.type === 'button') {
-            return (<View key={i} style={{ padding:10, }}
-              >
-              <Button {...formElement.passProps}
-                buttonStyle={{borderRadius:5, }}
-                title={formElement.value}
-                onPress={formElement.onPress} />
-            </View>);
+            return getFormButton.call(this, { formElement, i, formgroup, width, });
           } else if (formElement.type === 'submit') {
-            return (<View key={i} style={{ padding:10, }}
-              >
-              <Button {...formElement.passProps}
-                buttonStyle={{borderRadius:5, }}
-                title={formElement.value}
-                onPress={this.submitForm.bind(this)} />
-            </View>);
+            return getFormSubmit.call(this, { formElement, i, formgroup, width, });
+          } else if (formElement.type === 'datalist') {
+            return getFormDatalist.call(this, { formElement, i, formgroup, width, });
           } else {
             return <View key={i} />;
           }
@@ -165,3 +283,9 @@ class ResponsiveForm extends Component {
   }
 }
 export default ResponsiveForm;
+exports.getFormTextInputArea = getFormTextInputArea;
+exports.getFormCheckbox = getFormCheckbox;
+exports.getFormSelect = getFormSelect;
+exports.getFormButton = getFormButton;
+exports.getFormSubmit = getFormSubmit;
+exports.getFormDatalist = getFormDatalist;

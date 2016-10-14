@@ -77,13 +77,12 @@ let defaultColumnMargins = function (width) {
   return {
     twoColumnMargins: (width > 600) ? {
       left: {
-        marginRight: 40,
+        marginRight: 20,
       },
-    } : {
       right: {
-        marginLeft: 40,
+        marginLeft: 20,
       },
-    },
+    } : { },
   };
 };
 

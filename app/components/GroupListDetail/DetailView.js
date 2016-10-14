@@ -112,7 +112,7 @@ class EngineDetail extends Component {
     {
       justifyContent: 'flex-end',
     };
-    console.log('detailView',{detailViewModalComponents})
+    // console.log('detailView',{detailViewModalComponents})
     let ActionBarComponent = (<ActionBar
       {...this.props.GroupListDetail.detail}
       menuBarContentWrapperStyle={menuBarContentWrapperStyle}
@@ -124,7 +124,7 @@ class EngineDetail extends Component {
     let topActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? null : ActionBarComponent;
     let bottomActionBar = (this.props.getGroupListDetailFunctions.useSingleViewHelpers()) ? ActionBarComponent : null;
     return (
-      <View style={[ styles.scrollViewStandardContainer,  {paddingBottom:60} ]}  >
+      <View className="scrollContainerViewFix" style={[ styles.scrollViewStandardContainer,  {paddingBottom:60, flex:1} ]}  >
         {topActionBar}
         {this.getMenuBar() }
         <View style={{flex:1,alignSelf:'stretch'}}>
