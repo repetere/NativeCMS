@@ -35,7 +35,7 @@ const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || '/';
 class MainApp extends Component{
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = props;
     this.previousRoute = {};
   }
   componentWillMount() {
@@ -49,6 +49,17 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps this.getCurrentScenePath()',this.getCurrentScenePath())
+    console.log('componentWillReceiveProps this.state.location.pathname', this.state.location.pathname)
+    console.log('componentWillReceiveProps this.state.user.isLoggedIn', this.state.user.isLoggedIn)
+    console.log('componentWillReceiveProps this.state.user.isLoggedIn !== true', this.state.user.isLoggedIn !== true)
+    console.log('componentWillReceiveProps this.getCurrentScenePath() !== \'/login\'',this.getCurrentScenePath() !== '/login')
+    console.log('componentWillReceiveProps this.state.location.pathname !== \'/login\'',this.state.location.pathname !== '/login')
+    if (this.state.user.isLoggedIn !== true && (this.getCurrentScenePath() !== '/login' || this.state.location.pathname !== '/login')) {
+      this.onChangeExtension.call(this, '/login', { initialLoad: 'recievedPropLogin', loginStatus: this.state.user.isLoggedIn, });
+    }
+    // 
+    this.setState(nextProps);
     // console.log('COMPONENT WILL RECIEVE PROPS');
 
     // console.log('componentWillReceiveProps nextProps', nextProps);
@@ -143,7 +154,12 @@ class MainApp extends Component{
     }
   }
   loadExtensionRoute(path, options = {}) {
-    console.log('loadExtensionRoute ', { path, }, { options, }, 'this.props.location',this.props.location,'this.refs.AppNavigator',this.refs.AppNavigator);
+    console.log('loadExtensionRoute ',
+      { path, },
+      { options, } //,
+      // 'this.props.location', this.props.location,
+      // 'this.refs.AppNavigator', this.refs.AppNavigator,
+    );
     // console.log('this.props', this.props);
     // console.log('this.getCurrentScenePath()', this.getCurrentScenePath());
     // window.appnav = this.refs.AppNavigator;
@@ -156,7 +172,7 @@ class MainApp extends Component{
       console.log('ABOUT TO GO BACK');
       this.refs.AppNavigator.goback();
     } else */
-    if ( path!==this.getCurrentScenePath()  && (!this.props.location || this.props.location.pathname !== path) || (this.refs && this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length === 0)) {
+    if ( path!==this.getCurrentScenePath()  && (!this.state.location || this.state.location.pathname !== path) || (this.refs && this.refs.AppNavigator && this.refs.AppNavigator.state.paths.length === 0)) {
         
       let location = path || '/home';//'/stats/items/3423242';
       let matchedRoute = false;
@@ -228,7 +244,7 @@ class MainApp extends Component{
         console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
         this.refs.AppNavigator.goto(navigationRoute, {
           props: Object.assign({},
-            this.props,
+            this.state,
             passProps,
             {
               onChangeExtension: this.onChangeExtension.bind(this),
@@ -257,30 +273,43 @@ class MainApp extends Component{
     // perform any preparations for an upcoming update
   }
   render() {
-    // console.log('RENDER getRouteExtensionFromLocation(this.props.location.pathname)', getRouteExtensionFromLocation(this.props.location.pathname), 'this.props.location.pathname', this.props.location.pathname,'this.props',this.props,'this.state',this.state);
+    // console.log(
+    //   'RENDER getRouteExtensionFromLocation(this.props.location.pathname)',
+    //   getRouteExtensionFromLocation(this.props.location.pathname),
+    //   'this.props.location.pathname',
+    //   this.props.location.pathname,
+    //   // 'this.props', this.props //,
+    //   'this.state', this.state//,
+    // );
 
+    console.log('this.state.user.isLoggedIn', this.state.user.isLoggedIn);
+    let initialPath = (this.state.location) ? this.state.location.pathname : '/';
 
     return (<View style={[ styles.container, { backgroundColor: 'white' }]}>
-      {/*<CurrentApp {...this.props}  />*/}
+      {/*<CurrentApp {...this.state}  />*/}
       <View style={styles.stretchContainer}>
         <Area
           ref="AppNavigator"
           style={styles.stretchBox}
-          onLoad={(this.props.user.isLoggedIn!==true)? this.loadExtensionRoute.bind(this, '/login') :this.loadExtensionRoute.bind(this, (this.props.location) ? this.props.location.pathname : '/') }
+          onLoad={
+            (this.state.user.isLoggedIn === true)
+              ? this.onChangeExtension.bind(this, initialPath, { initialLoad: 'fromRender', loginStatus: this.state.user.isLoggedIn, })
+              : this.onChangeExtension.bind(this, '/login', { initialLoad: 'fromRender', loginStatus: this.state.user.isLoggedIn, })
+            }
           >
           <LoadingView/>
         </Area>
       </View>
-      {(this.props.user.isLoggedIn===true)? (<Tabs
+      {(this.state.user.isLoggedIn===true)? (<Tabs
         style={styles.tabBar}>
-        {this.props.tabBarExtensions.map((ext) => {
+        {this.state.tabBarExtensions.map((ext) => {
           return (<TabIcon
             {...ext}
             key={ext.name}
             ext={ext}
-            location={this.props.location}
-            location_path={getRouteExtensionFromLocation(this.props.location.pathname) }
-            selected={getRouteExtensionFromLocation(this.props.location.pathname) === ext.path}
+            location={this.state.location}
+            location_path={getRouteExtensionFromLocation(this.state.location.pathname) }
+            selected={getRouteExtensionFromLocation(this.state.location.pathname) === ext.path}
             // changePage={this.onChangeScene.bind(this)}
             onSelect={this.onChangeScene.bind(this) }
             />);
