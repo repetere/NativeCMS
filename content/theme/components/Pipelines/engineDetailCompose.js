@@ -85,7 +85,9 @@ class EngineDetailCompose extends Component {
         data: [],
         multi: true,
         // value:'text',
-      },],
+      }, {
+        type: 'divider',    
+      }],
     }, {
       layoutColumns: 2,
       formElements: [{

@@ -145,16 +145,16 @@ class FromTag extends Component{
   render() {
     let childComponents = (this.props.document)
       ? (
-        <Text>{this.props.document.title}</Text>
+        <Text numberOfLines={1}>{this.props.document.title}</Text>
       )
       : this.props.children;
     
     return (childComponents) ? (<TouchableOpacity  {...this.props.button}>
-      <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', margin:10 }} {...this.props.container}>
-        <Icons style={{marginRight:10}} size={24}
+      <View style={{ flexDirection:'row', justifyContent:'center', alignItems:'center', margin:10, }} {...this.props.container}>
+        <Icons style={{ marginRight:10, }} size={24}
           {...this.props.icon}
           ></Icons>
-        {childComponents}
+          {childComponents}
       </View>
     </TouchableOpacity>) : null;
   }
@@ -162,29 +162,35 @@ class FromTag extends Component{
 
 function getFormDatalist(options) {
   let { formElement, i, formgroup, width, } = options;
+  let datalistData = getPropertyAttribute({
+    property: this.state, element: formElement, skipSelector: true,
+  });
+  // console.log({ datalistData, });
   return (<GRID_ITEM key={i}
     description={formElement.label}
-    style={getGridMarginStyle({
+    style={[getGridMarginStyle({
       formgroup,
       i,
       width,
-    })}
+    }), {  }]}
     gridItemContentStyle={{ borderTopWidth:0, }}
     >
     <TextInput {...formElement.passProps}
       style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
       multiline={(formElement.type==='textarea')?true:false}
-      onChangeText={(text) => {
-        let updatedStateProp = {};
-        updatedStateProp[ formElement.name ] = text;
-        this.setState(updatedStateProp);
-      } }
+      // onChangeText={(text) => {
+      //   let updatedStateProp = {};
+      //   updatedStateProp[ formElement.name ] = text;
+      //   this.setState(updatedStateProp);
+      // } }
       // value={formElement.value || getPropertyAttribute({
       //   property: this.state, element: formElement,
       // })}
       />
-    <View style={{ flexDirection: 'row', }}>
-      {(!formElement.mutli) ? (<FromTag
+    
+    <View style={{ alignItems:'flex-start', flexDirection: 'row', flexWrap: 'wrap', flex:1, }}>
+      {(!formElement.mutli && Array.isArray(datalistData) === false)
+        ? (<FromTag
           icon={{
             name: 'ios-close', 
           }}
@@ -194,11 +200,25 @@ function getFormDatalist(options) {
               value: undefined,
             }),
           }}  
-          document={getPropertyAttribute({
-            property: this.state, element: formElement, skipSelector:true,
-          })}
+          document={datalistData}
           />)
-        : null
+        : datalistData.map((dlData, i) => {
+          return (<View style={{ flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start'}}>
+            <FromTag
+          key={i}
+          icon={{
+            name: 'ios-close', 
+          }}
+          button={{
+            onPress: this.removeFromSingleItemProp.bind(this, {
+              attribute: formElement.name,
+              value: i,
+            }),
+          }}  
+          document={dlData}
+              />
+            </View>);
+        })
       }
     </View>
   </GRID_ITEM>);
@@ -218,14 +238,20 @@ class ResponsiveForm extends Component {
       this.props.onChange(prevState);
     }
   }
-  removeFormSingleProp(options) {
+  removeFromSingleItemProp(options) {
     let { value, attribute, } = options;
-    console.log('remove prop form state', { value, attribute, });
+    let attrArray = attribute.split('.');
+    let arrayToSet = Object.assign([], this.state[ attrArray[ 0 ] ][ attrArray[ 1 ] ]);
+    // let removedItem = arrayToSet.splice(value, 1);
+    arrayToSet.splice(value, 1);
+
+    this.setFormSingleProp({ value: arrayToSet, attribute, });    
+    // console.log('remove prop form state', { value, attribute, arrayToSet, removedItem, });
   }
   setFormSingleProp(options) {
     let { value, attribute, } = options;
     let updatedStateProp = {};
-    console.log('setFormSingleProp prop form state', { value, attribute, });
+    // console.log('setFormSingleProp prop form state', { value, attribute, });
 
     if (attribute.indexOf('.') === -1) {
       updatedStateProp[ attribute ] = value;
@@ -255,6 +281,8 @@ class ResponsiveForm extends Component {
             return getFormSubmit.call(this, { formElement, i, formgroup, width, });
           } else if (formElement.type === 'datalist') {
             return getFormDatalist.call(this, { formElement, i, formgroup, width, });
+          } else if (formElement.type === 'divider') {
+            return (<HR key={i}/>);
           } else {
             return <View key={i} />;
           }
