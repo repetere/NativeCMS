@@ -146,7 +146,6 @@ function getDataForLists(config, options = {}) {
       reject(error);
     });
   });
-  
 }
 
 function getDetailState(context, nextProps) {
@@ -632,6 +631,100 @@ class GroupListDetail extends Component{
       : (<SingleColumn {...passProps}  {...getDataFunctions}/>);
     return dataView;     
   }
+}
+
+export function getGroupFromEntityName(entityName, groupName, options) {
+  let { constants, } = options;
+  return {
+    entityName: capitalize(entityName), //'Engine',
+    fetchUrl:constants[pluralize(groupName)/*pipelines*/].all.BASE_URL+constants[pluralize(groupName)/*pipelines*/][pluralize(entityName)/* `engines`*/].GET_INDEX,
+    listProps: {
+      pagesProp:`${entityName}pages`, //enginepages,
+      dataProp: pluralize(entityName), //'engines',
+      countProp: `${pluralize(entityName)}count`,//'enginescount',
+    },
+  };
+}
+
+export function getListFromEntityName(entityName, groupName, options) {
+  let { constants, } = options;
+  return {
+    fetchUrl: constants[pluralize(groupName)].all.BASE_URL + constants[pluralize(groupName)][pluralize(entityName)].GET_INDEX,
+    listProps: {
+      pagesProp:`${entityName}pages`, //enginepages,
+      dataProp: pluralize(entityName), //'engines',
+      countProp: `${pluralize(entityName)}count`,//'enginescount',
+    },
+    componentProps: {
+      title: capitalize(entityName), //'Engine',
+    },
+    detailLoad: {
+      method: 'passProps',
+    },
+    menuBar: {
+      title: capitalize(entityName), //'Engine',
+      // rightItem: {
+      //   icon: {
+      //     icontype: 'Ionicons',
+      //     name: 'ios-create-outline',
+      //   },
+      //   itemType: 'text',
+      //   label:'Edit'
+      // },
+    },
+  };
+}
+
+export function getDetailFromEntityName(entityName, groupName, options) {
+  let { constants, } = options;
+  return {
+    fetchUrl: constants[pluralize(groupName)].all.BASE_URL + constants[pluralize(groupName)][pluralize(entityName)].GET_INDEX,
+    detailComponent: options.detailComponent,
+    detailExtensionRoute: `/${pluralize(groupName)}/${pluralize(entityName)}/:id`,
+    actions: [{
+      icon: {
+        icontype: 'Ionicons',
+        name: 'ios-trash-outline', //   name: 'ios-settings-outline',
+      },
+      itemType: 'icon',
+      title: `Delete ${capitalize(entityName)}`, //'Delete Engine',
+      description: `delete ${groupName} ${entityName}`, //'delete pipeline engine',
+      type: 'confirmmodal',
+      params: {
+        path: '',
+        method:'',
+      },
+    }, {
+      icon: {
+        icontype: 'Ionicons',
+        name: 'ios-create-outline',
+      },
+      itemType: 'icon',
+      title: `Edit ${capitalize(entityName)}`, //'Edit Engine',
+      description: `edit ${pluralize(entityName)}`,//'create new engines',
+      type: 'modal',
+      modalOptions: {
+        component: options.editModalComponent,
+        ref: `edit_${entityName}_modal`, //'create_engine_modal',
+        style: {
+        },
+      },
+    }, {
+      icon: {
+        icontype: 'Ionicons',
+        name: 'ios-add-circle-outline',
+      },
+      itemType: 'icon',
+      title: `Create ${capitalize(entityName)}`,
+      description: `create new ${pluralize(entityName)}`,
+      type: 'modal',
+      modalOptions: {
+        component: options.createModalComponent,
+        ref:`credit_${entityName}_modal`,
+        style: { /* margin: 30, width:500, */ },
+      },
+    }, ],
+  };
 }
 
 export default GroupListDetail;

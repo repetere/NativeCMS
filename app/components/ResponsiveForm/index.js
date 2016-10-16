@@ -4,13 +4,34 @@
  * @flow
  */
 import React, { cloneElement, Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Switch, Picker, Platform, Dimensions, TouchableOpacity, } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Switch, Picker, Platform, Dimensions, TouchableOpacity, ListView, } from 'react-native';
 import { Button, CheckBox } from 'react-native-elements';
 import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridMarginStyle, } from '../LayoutElements';
 // let NativeSelect = (Platform.OS === 'web') ? {} : require('react-native-dropdown') ;
 import Icons from '../Icons';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as Animatable from 'react-native-animatable';
+import layoutStyles from '../Styles/layout';
+import styles from '../Styles/shared';
+
+function getDataSource() {
+  return new ListView.DataSource({
+    rowHasChanged: (r1, r2) => r1 !== r2,
+    // sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
+  });
+}
+
+function getDataListStateFromProps(props) {
+  let dataArray = (props && props.length > 10) ? props.slice(0, 9) : props;
+  // console.log('getListStateFromProps', { props });
+  let ds = getDataSource();
+  return {
+    pages: 1,
+    rows: ds.cloneWithRows(Object.assign([], dataArray)),
+    rowscount: (dataArray) ? dataArray.length : 0,
+    totalcount: (dataArray) ? dataArray.length : 0,
+  };
+}
 
 function getPropertyAttribute(options) {
   let { property, element } = options;
@@ -160,12 +181,20 @@ class FromTag extends Component{
   }
 }
 
+function searchDataList(options) {
+  let { arr, searchstring, } = options;
+  console.log({ arr, searchstring, })
+  return arr.filter((arrayItem) => {
+    return arrayItem.title.search(new RegExp(searchstring, 'i')) !== -1;
+  }); 
+}
+
 function getFormDatalist(options) {
   let { formElement, i, formgroup, width, } = options;
   let datalistData = getPropertyAttribute({
     property: this.state, element: formElement, skipSelector: true,
   });
-  // console.log({ datalistData, });
+  console.log({ formElement, }, 'this.datalists', this.datalists);
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={[getGridMarginStyle({
@@ -178,16 +207,25 @@ function getFormDatalist(options) {
     <TextInput {...formElement.passProps}
       style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
       multiline={(formElement.type==='textarea')?true:false}
-      // onChangeText={(text) => {
-      //   let updatedStateProp = {};
-      //   updatedStateProp[ formElement.name ] = text;
-      //   this.setState(updatedStateProp);
-      // } }
+      onChangeText={(text) => {
+        let filteredResults = searchDataList.call(this, { searchstring: text, arr: this.datalists[ formElement.name ].data, });
+        console.log({ filteredResults, });
+      } }
       // value={formElement.value || getPropertyAttribute({
       //   property: this.state, element: formElement,
       // })}
       />
-    
+{/*}
+    <ListView
+      style={[ styles.flexBox, ]}
+      contentContainerStyle={layoutStyles.positionRelative}
+      enableEmptySections={true}
+      dataSource={this.state.rows}
+      renderRow={this.renderRow.bind(this, this.getRenderRowData) }
+      initialListSize={(Platform.OS === 'web' && this.state.rowscount < 20) ? 100000000 : undefined}
+      >
+    </ListView>
+*/}
     <View style={{ alignItems:'flex-start', flexDirection: 'row', flexWrap: 'wrap', flex:1, }}>
       {(!formElement.mutli && Array.isArray(datalistData) === false)
         ? (<FromTag
@@ -228,7 +266,21 @@ function getFormDatalist(options) {
 class ResponsiveForm extends Component {
   constructor(props) {
     super(props);
-    this.state = Object.assign({}, props.formdata);
+    this.state = Object.assign({
+      formDataError: null,
+      formDataStatusDate: new Date(),
+    }, props.formdata);
+    this.datalists = {};
+    props.formgroups.forEach((formgroup) => {
+      formgroup.formElements.forEach((formelement) => {
+        if (formelement.type === 'datalist') {
+          this.datalists[ formelement.name ] = {
+            data: formelement.data || [],
+            status: null,
+          };
+        }
+      });
+    });
   }
   submitForm() {
     this.props.onSubmit(this.state);
