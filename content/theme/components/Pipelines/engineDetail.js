@@ -237,14 +237,14 @@ class EngineDetail extends Component {
               />
             <GRID_ITEM 
               useLabel={true}
-              title={this.props.detailData.content || 'n/a'}
+              title={this.props.detailData.description || 'n/a'}
               description="Description"
               />
           </RESPONSIVE_GRID>
 
           <H2 style={{ marginTop:20, }}>Resources</H2>
-          <RESPONSIVE_GRID columns={2}>
-            { this.props.detailData.system_of_record_associated_data.resources.map((resource, i) => {
+          <RESPONSIVE_GRID columns={(this.props.detailData.system_of_record_associated_data.resources.length%2===0 && this.props.detailData.system_of_record_associated_data.resources.length>1)?2:1}>
+            {this.props.detailData.system_of_record_associated_data.resources.map((resource, i) => {
               return <GRID_ITEM key={i} {...resource} icon={
                 { icontype: 'Octicons', name: 'database', }} description={`(${resource.source_configuration.data_source}) ${resource.description}`} />;
             })}

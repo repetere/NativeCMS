@@ -9,10 +9,13 @@ import { Button, CheckBox } from 'react-native-elements';
 import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridMarginStyle, } from '../LayoutElements';
 // let NativeSelect = (Platform.OS === 'web') ? {} : require('react-native-dropdown') ;
 import Icons from '../Icons';
+import debounce from 'debounce';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as Animatable from 'react-native-animatable';
 import layoutStyles from '../Styles/layout';
 import styles from '../Styles/shared';
+import { request, } from '../../util/request';
+import querystring from 'querystring';
 
 function getDataSource() {
   return new ListView.DataSource({
@@ -55,6 +58,7 @@ function getPropertyAttribute(options) {
 
 function getFormTextInputArea(options) {
   let { formElement, i, formgroup, width, } = options;
+ 
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={getGridMarginStyle({
@@ -125,10 +129,10 @@ function getFormSelect(options) {
         <ModalDropdown 
           onSelect={(value) => {
             let updatedStateProp = {};
-            updatedStateProp[ formElement.name ] = value;
+            updatedStateProp[ formElement.name ] = formElement.options[value].value;
             this.setState(updatedStateProp);
           } }
-          defaultValue={formElement.value}
+          defaultValue={this.state[formElement.name] || formElement.value}
           style={{
             height: 40, borderColor: 'lightgrey', borderWidth: 1, justifyContent: 'center', borderRadius: 3,
             padding:5,
@@ -137,7 +141,7 @@ function getFormSelect(options) {
           dropdownStyle={{
             borderColor: 'gray', borderWidth: 1, minWidth:300, alignItems:'stretch', alignSelf: 'stretch',
           }}
-          options={formElement.options.map(option => option.value)} />
+          options={formElement.options.map(option => option.label)} />
     )}
   </GRID_ITEM>);
 }
@@ -166,13 +170,13 @@ class FromTag extends Component{
   render() {
     let childComponents = (this.props.document)
       ? (
-        <Text numberOfLines={1}>{this.props.document.title}</Text>
+        <Text style={{justifyContent:'center',alignSelf:'center',fontSize:14}} numberOfLines={1}>{this.props.document.title}</Text>
       )
       : this.props.children;
     
     return (childComponents) ? (<TouchableOpacity  {...this.props.button}>
-      <View style={{ flexDirection:'row', justifyContent:'center', alignItems:'center', margin:10, }} {...this.props.container}>
-        <Icons style={{ marginRight:10, }} size={24}
+      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 10, backgroundColor:'gainsboro', padding:3, paddingLeft:10, paddingRight:10, borderRadius:3, }} {...this.props.container}>
+        <Icons style={{ marginRight:10, alignSelf:'center', alignItems:'center',top:2 }} size={24}
           {...this.props.icon}
           ></Icons>
           {childComponents}
@@ -189,19 +193,68 @@ function searchDataList(options) {
   }); 
 }
 
-function renderFormDataListItem(options, dataItem) {
-  console.log('renderFormDataListItem', { options, });
+function renderFormDataListItem(options, dataItem, sectionId, rowId) {
+  // console.log({ sectionId, rowId, });
+  let renderDataListFormatter = (options.formatter) ? options.formatter :
+    function (data) {
+      return (<View>
+        <Text style={layoutStyles.gridItemTitle}>{data.title}</Text>
+        <Text style={layoutStyles.gridItemDescription}>{data.description}</Text>
+      </View>);
+    };
+  // console.log('renderFormDataListItem', { options, });
   return (
-    <TouchableOpacity onPress={() => {
+    <TouchableOpacity key={rowId} onPress={() => {
+      console.log('multi',options.multi)
       options.onPress({
         value: dataItem,
         attribute: options.attribute,
       });
     }}>
-      <View style={{ flex: 1, }}>
-        <Text>{JSON.stringify(dataItem) }</Text>
+      <View style={{
+        flex: 1,
+        borderTopWidth: 1,
+        borderColor: 'lightgrey',
+        padding: 5,
+      }}>
+       {renderDataListFormatter(dataItem)}
       </View>
     </TouchableOpacity>);
+}
+
+function searchForDataListData(options) {
+  let { text, formElement, } = options;
+  return new Promise((resolve, reject)=>{
+    try {
+      let searchText = (text.length < 1) ? '!!!INVALID!!!' : text;  
+      if (formElement.dataQuery) {
+        let queryString = '?'+querystring.stringify(Object.assign({ search:searchText, }, {
+          format: 'json',
+        }));
+        request(formElement.dataQuery.url + queryString, formElement.dataQuery.options)
+          .then(responseData => {
+            // console.log('GOT AJAX RESPONSE');
+            // console.log({ responseData });
+            let filteredResults = searchDataList.call(this, {
+              searchstring: searchText,
+              arr: responseData[ formElement.dataQuery.resultArray ],
+            });
+            resolve(filteredResults);
+          })
+          .catch(e => {
+            reject(e);
+          });
+      } else {
+        let filteredResults = searchDataList.call(this, {
+          searchstring: searchText,
+          arr: this.datalists[ formElement.name ].data,
+        });
+        resolve(filteredResults);
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
 }
 
 function getFormDatalist(options) {
@@ -209,51 +262,68 @@ function getFormDatalist(options) {
   let datalistData = getPropertyAttribute({
     property: this.state, element: formElement, skipSelector: true,
   });
-  let dataListItems = getDataListStateFromProps(this.state.formDataLists[ formElement.name ].data);
-  // console.log({ formElement, }, 'this.datalists', this.datalists);
+  let dataFromState = this.state.formDataLists[ formElement.name ].data;
+  let dataListItems = getDataListStateFromProps(dataFromState);
+  let emptyListStyle = (dataFromState.length > 0) ? {
+    borderColor: 'lightgrey',
+    borderWidth: 1,
+    top: -11,
+    paddingTop: 8,
+    paddingBottom: 8,
+  } : {};
+  let updateListData = (text) => {
+    searchForDataListData.call(this, { text, formElement, })
+      .then((filteredResults) => {
+        let updatedFormData = this.state.formDataLists;
+        updatedFormData[ formElement.name ].data = filteredResults;
+        this.setState({
+          formDataError: null,
+          formDataLists: updatedFormData,
+          formDataStatusDate: new Date(),
+        });
+      })
+      .catch(e => {
+        this.setState({
+          formDataError: e,
+          formDataStatusDate: new Date(),
+        });
+      });
+  };
+  let updateListSearchData = debounce(updateListData, 200);
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={[getGridMarginStyle({
       formgroup,
       i,
       width,
-    }), {  }]}
+    }), ]}
     gridItemContentStyle={{ borderTopWidth:0, }}
     >
     <TextInput {...formElement.passProps}
       style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
       multiline={(formElement.type==='textarea')?true:false}
-      onChangeText={(text) => {
-        let filteredResults = searchDataList.call(this, { searchstring: text, arr: this.datalists[ formElement.name ].data, });
-        console.log({ filteredResults, });
-        let updatedFormData = this.state.formDataLists;
-        updatedFormData[ formElement.name ].data = filteredResults;
-        this.setState({
-          formDataLists: updatedFormData,
-          formDataStatusDate: new Date(),
-        });
-      } }
+      onChangeText={updateListSearchData}
       // value={formElement.value || getPropertyAttribute({
       //   property: this.state, element: formElement,
       // })}
       />
     <ListView
-      style={[ { flex:-1, } ]}
-      contentContainerStyle={[ layoutStyles.positionRelative, {
-        borderColor: 'lightgrey',
-        borderWidth: 1,
-        top: -5,
-        paddingTop: 5,
-        paddingBottom: 8,
-      }]}
+      style={[ { flex:-1, },]}
+      contentContainerStyle={[layoutStyles.positionRelative, emptyListStyle, ]}
       enableEmptySections={true}
       dataSource={dataListItems.rows}
-      renderRow={(formElement.mutli)
+      renderRow={(formElement.multi ===true)
         ? renderFormDataListItem.bind(this, {
-          onPress: this.setFormSingleProp.bind(this), attribute: formElement.name,
+          onPress: this.addSingleItemProp.bind(this),
+          attribute: formElement.name,
+          formatter: formElement.formatter,
+          multi:formElement.multi,
         })
         : renderFormDataListItem.bind(this, {
-          onPress: this.addSingleItemProp.bind(this), attribute: formElement.name,
+          onPress: this.setFormSingleProp.bind(this),
+          attribute: formElement.name,
+          formatter: formElement.formatter,
+          multi:formElement.multi,
         })
       }
       initialListSize={(Platform.OS === 'web' && dataListItems.rowscount < 20) ? 100000000 : undefined}
@@ -313,7 +383,7 @@ class ResponsiveForm extends Component {
             status: null,
           };
           this.state.formDataLists[ formelement.name ] = {
-            data: formelement.data || [],
+            data: [], //formelement.data || [],
             status: null,
           };
         }
@@ -321,7 +391,11 @@ class ResponsiveForm extends Component {
     });
   }
   submitForm() {
-    this.props.onSubmit(this.state);
+    let formdata = Object.assign({}, this.state);
+    delete formdata.formDataError;
+    delete formdata.formDataLists;
+    delete formdata.formDataStatusDate;
+    this.props.onSubmit(formdata);
   }
   componentWillUpdate(prevProps, prevState) {
     if (this.props.onChange) {
@@ -351,16 +425,23 @@ class ResponsiveForm extends Component {
   setFormSingleProp(options) {
     let { value, attribute, } = options;
     let updatedStateProp = {};
-    // console.log('setFormSingleProp prop form state', { value, attribute, });
+    // console.log('setFormSingleProp prop form state', { value, attribute, }, 'this.state.formDataLists', this.state.formDataLists);
+    let updatedFormData = Object.assign({}, this.state.formDataLists);
+    updatedFormData[ attribute ].data = [];
+    // let dataFromState = this.state.formDataLists[ formElement.name ].data;
 
     if (attribute.indexOf('.') === -1) {
       updatedStateProp[ attribute ] = value;
+      updatedStateProp.formDataLists = updatedFormData;
       this.setState(updatedStateProp);
     } else {
       let attrArray = attribute.split('.');
       let stateToSet = Object.assign({}, this.state[ attrArray[ 0 ] ]);
       stateToSet[attrArray[1]]=value;
-      this.setState({ [attrArray[0]] : stateToSet, });
+      this.setState({
+        [ attrArray[ 0 ] ]: stateToSet,
+        formDataLists: updatedFormData,
+      });
     }
   }
   render() {
@@ -368,23 +449,23 @@ class ResponsiveForm extends Component {
 
     let formGroupData = this.props.formgroups.map((formgroup, i) => {
       return (<RESPONSIVE_GRID key={i} columns={formgroup.layoutColumns || 2}>
-        {formgroup.formElements.map((formElement, i) => {
+        {formgroup.formElements.map((formElement, j) => {
           if (formElement.type === 'text' || formElement.type === 'textarea') {
-            return getFormTextInputArea.call(this, { formElement, i, formgroup, width, });
+            return getFormTextInputArea.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'checkbox') {
-            return getFormCheckbox.call(this, { formElement, i, formgroup, width, });
+            return getFormCheckbox.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'select') {
-            return getFormSelect.call(this, { formElement, i, formgroup, width, });
+            return getFormSelect.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'button') {
-            return getFormButton.call(this, { formElement, i, formgroup, width, });
+            return getFormButton.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'submit') {
-            return getFormSubmit.call(this, { formElement, i, formgroup, width, });
+            return getFormSubmit.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'datalist') {
-            return getFormDatalist.call(this, { formElement, i, formgroup, width, });
+            return getFormDatalist.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'divider') {
-            return (<HR key={i}/>);
+            return (<HR key={j}/>);
           } else {
-            return <View key={i} />;
+            return <View key={j} />;
           }
         })}
       </RESPONSIVE_GRID>);
