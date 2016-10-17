@@ -189,12 +189,28 @@ function searchDataList(options) {
   }); 
 }
 
+function renderFormDataListItem(options, dataItem) {
+  console.log('renderFormDataListItem', { options, });
+  return (
+    <TouchableOpacity onPress={() => {
+      options.onPress({
+        value: dataItem,
+        attribute: options.attribute,
+      });
+    }}>
+      <View style={{ flex: 1, }}>
+        <Text>{JSON.stringify(dataItem) }</Text>
+      </View>
+    </TouchableOpacity>);
+}
+
 function getFormDatalist(options) {
   let { formElement, i, formgroup, width, } = options;
   let datalistData = getPropertyAttribute({
     property: this.state, element: formElement, skipSelector: true,
   });
-  console.log({ formElement, }, 'this.datalists', this.datalists);
+  let dataListItems = getDataListStateFromProps(this.state.formDataLists[ formElement.name ].data);
+  // console.log({ formElement, }, 'this.datalists', this.datalists);
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={[getGridMarginStyle({
@@ -210,22 +226,39 @@ function getFormDatalist(options) {
       onChangeText={(text) => {
         let filteredResults = searchDataList.call(this, { searchstring: text, arr: this.datalists[ formElement.name ].data, });
         console.log({ filteredResults, });
+        let updatedFormData = this.state.formDataLists;
+        updatedFormData[ formElement.name ].data = filteredResults;
+        this.setState({
+          formDataLists: updatedFormData,
+          formDataStatusDate: new Date(),
+        });
       } }
       // value={formElement.value || getPropertyAttribute({
       //   property: this.state, element: formElement,
       // })}
       />
-{/*}
     <ListView
-      style={[ styles.flexBox, ]}
-      contentContainerStyle={layoutStyles.positionRelative}
+      style={[ { flex:-1, } ]}
+      contentContainerStyle={[ layoutStyles.positionRelative, {
+        borderColor: 'lightgrey',
+        borderWidth: 1,
+        top: -5,
+        paddingTop: 5,
+        paddingBottom: 8,
+      }]}
       enableEmptySections={true}
-      dataSource={this.state.rows}
-      renderRow={this.renderRow.bind(this, this.getRenderRowData) }
-      initialListSize={(Platform.OS === 'web' && this.state.rowscount < 20) ? 100000000 : undefined}
+      dataSource={dataListItems.rows}
+      renderRow={(formElement.mutli)
+        ? renderFormDataListItem.bind(this, {
+          onPress: this.setFormSingleProp.bind(this), attribute: formElement.name,
+        })
+        : renderFormDataListItem.bind(this, {
+          onPress: this.addSingleItemProp.bind(this), attribute: formElement.name,
+        })
+      }
+      initialListSize={(Platform.OS === 'web' && dataListItems.rowscount < 20) ? 100000000 : undefined}
       >
     </ListView>
-*/}
     <View style={{ alignItems:'flex-start', flexDirection: 'row', flexWrap: 'wrap', flex:1, }}>
       {(!formElement.mutli && Array.isArray(datalistData) === false)
         ? (<FromTag
@@ -269,12 +302,17 @@ class ResponsiveForm extends Component {
     this.state = Object.assign({
       formDataError: null,
       formDataStatusDate: new Date(),
+      formDataLists:{},
     }, props.formdata);
     this.datalists = {};
     props.formgroups.forEach((formgroup) => {
       formgroup.formElements.forEach((formelement) => {
         if (formelement.type === 'datalist') {
           this.datalists[ formelement.name ] = {
+            data: formelement.data || [],
+            status: null,
+          };
+          this.state.formDataLists[ formelement.name ] = {
             data: formelement.data || [],
             status: null,
           };
@@ -296,6 +334,16 @@ class ResponsiveForm extends Component {
     let arrayToSet = Object.assign([], this.state[ attrArray[ 0 ] ][ attrArray[ 1 ] ]);
     // let removedItem = arrayToSet.splice(value, 1);
     arrayToSet.splice(value, 1);
+
+    this.setFormSingleProp({ value: arrayToSet, attribute, });    
+    // console.log('remove prop form state', { value, attribute, arrayToSet, removedItem, });
+  }
+  addSingleItemProp(options) {
+    let { value, attribute, } = options;
+    let attrArray = attribute.split('.');
+    let arrayToSet = Object.assign([], this.state[ attrArray[ 0 ] ][ attrArray[ 1 ] ]);
+    // let removedItem = arrayToSet.splice(value, 1);
+    arrayToSet.push(value);
 
     this.setFormSingleProp({ value: arrayToSet, attribute, });    
     // console.log('remove prop form state', { value, attribute, arrayToSet, removedItem, });

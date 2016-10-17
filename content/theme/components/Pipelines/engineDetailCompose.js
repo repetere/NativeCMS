@@ -100,7 +100,25 @@ class EngineDetailCompose extends Component {
         name: 'system_of_record_associated_data.resources',
         idSelector: '_id',
         idLabel: 'title',
-        data: [],
+        data: [ {
+          _id:'jf09ajh80hv420ds',
+          title: 'my parser 1',
+          name: 'my-parser-1',
+          description: 'this is another parser',
+          createdat: new Date(),
+        }, {
+          _id:'0j293jhlkzdjf',
+          title: 'is another parse two',
+          name: 'is-another-parser-two',
+          description: 'another parser to put in a list',
+          createdat: new Date(),
+        }, {
+          _id:'nlij3049j0gsdg',
+          title: 'three pence parser',
+          name: 'three-pence-parser',
+          description: 'Parsing three variables',
+          createdat: new Date(),
+        },],
         multi: true,
         // value:'text',
       }, {
