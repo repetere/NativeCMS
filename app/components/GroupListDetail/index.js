@@ -44,15 +44,19 @@ function getBlankDefaultHeader() {
 function getListStateFromProps(props) {
   // console.log('getListStateFromProps', { props });
   let ds = getDataSource();
-  return {
+  let returnProps = {
     pages: props.pages || 1,
     rows: ds.cloneWithRows(Object.assign([], props.rows)),
     rowscount: (props.rows) ? props.rows.length : 0,
     totalcount: props.totalcount || (props.rows) ? props.rows.length : 0,
     selectedGroup: props.selectedGroup,
-    dataError: props.dataError,
-    dataLoaded: props.dataLoaded,
   };
+  if (typeof props.dataError !== 'undefined') {
+    returnProps.dataError = props.dataError;
+    returnProps.dataLoaded = props.dataLoaded;
+
+  }
+  return returnProps;
 }
 
 function getInitialListStateFromProps(props) {
@@ -121,6 +125,7 @@ function getDataForLists(config, options = {}) {
       // console.log({responseData})
 
       stateData.dataLoaded = true;
+      stateData.dataError = false;
       stateData.pages = responseData[ selectedGroupListProp[config.componentDataName].listProps.pagesProp ];
       stateData.rows = responseData[ selectedGroupListProp[config.componentDataName].listProps.dataProp ];
       stateData.totalcount = responseData[ selectedGroupListProp[config.componentDataName].listProps.countProp ];
@@ -296,8 +301,10 @@ class GroupList extends Component{
         },
         label: capitalize(pluralize(this.props.GroupListDetail.groupTitle)),
       };
-      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found')) }/>);
-      let useLoadingView = ((typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false) || (this.state.dataLoaded===false && this.state.dataError===false));
+      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
+
+      let useLoadingView = ((typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false) || (this.state.dataLoaded === false && this.state.dataError === false));
+      // console.log({ useLoadingView });
       let loadedDataView = (
         <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
         ]}  >
@@ -403,6 +410,7 @@ function closeModal(name) {
 }
 
 function generateModals(actions, props) {
+  console.log('generateModals', { actions });
   let { width, height, } = Dimensions.get('window');
   // console.log('Dimensions',{ width, height, })
   let modals = actions.map((action, i) => {
@@ -422,10 +430,15 @@ function generateModals(actions, props) {
       passProps: {},
     }, action.modalOptions);
 
-
     modalOptions.passProps = Object.assign({}, props, modalOptions.passProps, {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
+
+    if (modalOptions.ref.search(new RegExp('create_', 'i'))) {
+      // modalOptions.passProps
+      console.log('modalOptions.passProps', modalOptions.passProps);
+      // modalOptions.passProps.GroupListDetailStateData.detailData.detailData = {};
+    }
     modalOptions.style = Object.assign({
       justifyContent: 'center',
       alignItems: 'center',
@@ -605,6 +618,54 @@ class GroupListDetail extends Component{
     }
     this.setState(newState);
   }
+  updateListDetailFromCompose(data) {
+    console.log('new detail data', { data },this.state.GroupListDetailStateData);
+    let stateData = {
+      dataLoaded: true,
+      dataError: false,
+    };
+    let detailData = Object.assign({}, this.state.GroupListDetailStateData.detailData);
+    detailData.detailData = data;
+    let listData = Object.assign({}, this.state.GroupListDetailStateData.listData);
+    listData.rows.forEach((listRow, i) => {
+      if (listRow._id === data._id) {
+        listData.rows[ i ] = data;
+      }
+    });
+    
+    this.setState({
+      GroupListDetailStateData: Object.assign(
+        {},
+        this.state.GroupListDetailStateData,
+        {
+          detailData,
+          listData,
+        }
+      ),
+    });
+  }
+  appendListDetailFromCompose(data) {
+    console.log('new detail data', { data },this.state.GroupListDetailStateData);
+    let stateData = {
+      dataLoaded: true,
+      dataError: false,
+    };
+    let detailData = Object.assign({}, this.state.GroupListDetailStateData.detailData);
+    detailData.detailData = data;
+    let listData = Object.assign({}, this.state.GroupListDetailStateData.listData);
+    listData.rows.push(data);
+    
+    this.setState({
+      GroupListDetailStateData: Object.assign(
+        {},
+        this.state.GroupListDetailStateData,
+        {
+          detailData,
+          listData,
+        }
+      ),
+    });
+  }
   render() {
     // console.log('GroupDetail REDNER this.state', this.state,Dimensions.get('window'));
     let { width, /*height,*/ } = Dimensions.get('window');
@@ -619,6 +680,8 @@ class GroupListDetail extends Component{
         setDetailData: this.setDetailData.bind(this),
         setSelectedGroup: this.setSelectedGroup.bind(this),
         showGroupSidebar: this.showGroupSidebar.bind(this),
+        updateListDetailFromCompose: this.updateListDetailFromCompose.bind(this),
+        appendListDetailFromCompose: this.appendListDetailFromCompose.bind(this),
         useSingleViewHelpers: ()=>width < 600,
       },
     };

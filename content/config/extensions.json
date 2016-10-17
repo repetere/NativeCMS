@@ -7,11 +7,12 @@
       "initial":"ios-git-network-outline"
     }
   },{
-    "name":"stats",
-    "path":"/stats",
+    "name":"credit-engines",
+    "path":"/credit-engines",
+    "title":"Credit Engines",
     "icon":{
-      "selected":"ios-pulse",
-      "initial":"ios-pulse-outline"
+      "selected":"md-list",
+      "initial":"md-list"
     }
   },{
     "name":"credit",

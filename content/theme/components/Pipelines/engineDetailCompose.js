@@ -169,7 +169,7 @@ class EngineDetailCompose extends Component {
     }];
   }
   editEngine(formdata) {
-    console.log('editEngine formdata', { formdata });
+    // console.log('editEngine formdata', { formdata });
     request(constants.pipelines.all.BASE_URL + constants.pipelines.engines.POST_UPDATE+formdata._id,
       {
         method: 'PUT',
@@ -181,7 +181,9 @@ class EngineDetailCompose extends Component {
         body: JSON.stringify(formdata),
       })
       .then(updatedStatus => {
-        console.log('post updated', { updatedStatus });
+        this.props.getGroupListDetailFunctions.updateListDetailFromCompose(formdata);
+        this.props.closeExtensionModal();
+        // console.log('post updated', { updatedStatus });
       })
       .catch(e => { console.log('engine post update', e) });
   }
