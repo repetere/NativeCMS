@@ -7,6 +7,7 @@ import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 import LoadingView from '../LoadingIndicator/LoadingView';
 import EmptyDisplay from '../EmptyDisplay';
+import ConfirmModal from './ConfirmModal';
 import MenuBar, { ActionBar, } from '../MenuBar';
 import Icons from '../Icons';
 import moment from 'moment';
@@ -454,9 +455,33 @@ function generateModals(actions, props) {
     let ModalOptionComponent = modalOptions.component;
     let ModelContent = (modalOptions.component) ? (<ModalOptionComponent {...modalOptions.passProps}/>):null;
 
-    return (modalOptions.component===false) ? null : (<Modal style={modalOptions.style} backdrop={modalOptions.backdrop} key={modalOptions.key} swipeToClose={false} position={modalOptions.position} ref={modalOptions.ref}>
-      {ModelContent}
-    </Modal>);
+
+    // modalOptions.deleteConfirm
+    if (modalOptions.component===false){
+      return null;
+    } else if (modalOptions.deleteConfirm) { 
+      let ModelContent = (<ConfirmModal {...modalOptions.passProps} />);
+      return (
+        <Modal style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'stretch',
+          maxHeight: 200,
+          maxWidth: 350,
+          marginTop: (height > 700) ? 50 : 20,
+          overflow: 'hidden',
+          borderRadius:5,
+        }} backdrop={modalOptions.backdrop} key={modalOptions.key} swipeToClose={false} position={modalOptions.position} ref={modalOptions.ref}>
+          {ModelContent}
+        </Modal>
+      );
+    } else {
+      return (
+        <Modal style={modalOptions.style} backdrop={modalOptions.backdrop} key={modalOptions.key} swipeToClose={false} position={modalOptions.position} ref={modalOptions.ref}>
+          {ModelContent}
+        </Modal>
+      );
+    }
   });
   return modals;
 }
@@ -648,12 +673,40 @@ class GroupListDetail extends Component{
       ),
     });
   }
-  appendListDetailFromCompose(data) {
-    console.log('new detail data', { data },this.state.GroupListDetailStateData);
+  removeListDetailFromCompose(data) {
+    console.log('new detail data', { data, }, this.state.GroupListDetailStateData);
     let stateData = {
       dataLoaded: true,
       dataError: false,
     };
+    let detailData = Object.assign({}, this.state.GroupListDetailStateData.detailData);
+    detailData.detailData = undefined;
+    let listData = Object.assign({}, this.state.GroupListDetailStateData.listData);
+    let removeIndex;
+    listData.rows.forEach((listRow, i) => {
+      if (listRow._id === data._id) {
+        removeIndex = i;
+      }
+    });
+    listData.rows.splice(removeIndex, 1);
+    
+    this.setState({
+      GroupListDetailStateData: Object.assign(
+        {},
+        this.state.GroupListDetailStateData,
+        {
+          detailData,
+          listData,
+        }
+      ),
+    });
+  }
+  appendListDetailFromCompose(data) {
+    // console.log('new detail data', { data, }, this.state.GroupListDetailStateData);
+    // let stateData = {
+    //   dataLoaded: true,
+    //   dataError: false,
+    // };
     let detailData = Object.assign({}, this.state.GroupListDetailStateData.detailData);
     detailData.detailData = data;
     let listData = Object.assign({}, this.state.GroupListDetailStateData.listData);
@@ -685,6 +738,7 @@ class GroupListDetail extends Component{
         setSelectedGroup: this.setSelectedGroup.bind(this),
         showGroupSidebar: this.showGroupSidebar.bind(this),
         updateListDetailFromCompose: this.updateListDetailFromCompose.bind(this),
+        removeListDetailFromCompose: this.removeListDetailFromCompose.bind(this),
         appendListDetailFromCompose: this.appendListDetailFromCompose.bind(this),
         useSingleViewHelpers: ()=>width < 600,
       },
@@ -756,10 +810,27 @@ export function getDetailFromEntityName(entityName, groupName, options) {
       itemType: 'icon',
       title: `Delete ${capitalize(entityName)}`, //'Delete Engine',
       description: `delete ${groupName} ${entityName}`, //'delete pipeline engine',
-      type: 'confirmmodal',
-      params: {
-        path: '',
-        method:'',
+      // type: 'confirmmodal',
+      // params: {
+      //   path: '',
+      //   method:'',
+      // },
+      type: 'modal',
+      modalOptions: {
+        deleteConfirm: true,
+        component: options.deleteModalComponent,
+        ref: `delete_${entityName}_modal`, //'create_engine_modal',
+        style: {
+          height: 300,
+          width: 350,
+        },
+        passProps:{
+          confirmModal: {
+            postUrl:'',
+            postMethod: 'DELETE',
+            constants,
+          },
+        },
       },
     }, {
       icon: {

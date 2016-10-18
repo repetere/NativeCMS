@@ -467,6 +467,8 @@ class ResponsiveForm extends Component {
             return getFormDatalist.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'divider') {
             return (<HR key={j}/>);
+          } else if (formElement.type === 'textblock') {
+            return (<Text key={j} style={{ marginTop:10, marginBottom:10, }}>{formElement.value}</Text>);
           } else {
             return <View key={j} />;
           }

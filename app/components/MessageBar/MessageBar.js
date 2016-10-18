@@ -4,7 +4,7 @@
  * https://github.com/KBLNY/react-native-message-bar
  */
 
-import React, {Component} from 'react'
+import React, { Component, } from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,8 +12,11 @@ import {
   TouchableOpacity,
   Animated,
   Dimensions,
-  Image,
+  Image, 
+  Platform,
 } from 'react-native';
+import styles from '../Styles/shared';
+import layoutStyles from '../Styles/layout';
 
 let windowWidth = Dimensions.get('window').width
 let windowHeight = Dimensions.get('window').height
@@ -362,9 +365,10 @@ class MessageBar extends Component {
     // console.log('before this.initialLoad', this.initialLoad);
     this._apllyAnimationTypeTransformation();
     // console.log('after this.initialLoad', this.initialLoad);
-    let notificationStyle = (this.initialLoad || (!this.state.title && this.state.messsage))? { transform: this.animationTypeTransform, height:0, borderBottomWidth: 0}: { transform: this.animationTypeTransform, backgroundColor: this.state.backgroundColor, borderColor: this.state.strokeColor, borderBottomWidth: 1, position: 'absolute', top: this.state.viewTopOffset, bottom: this.state.viewBottomOffset, left: this.state.viewLeftOffset, right: this.state.viewRightOffset, paddingTop: this.state.viewTopInset, paddingBottom: this.state.viewBottomInset, paddingLeft: this.state.viewLeftInset, paddingRight: this.state.viewRightInset };
+    let notificationStyle = (this.initialLoad || (!this.state.title && this.state.messsage)) ? { transform: this.animationTypeTransform, height: 0, borderBottomWidth: 0 } : { transform: this.animationTypeTransform, backgroundColor: this.state.backgroundColor, borderColor: this.state.strokeColor, borderBottomWidth: 1, position: 'absolute', top: this.state.viewTopOffset, bottom: this.state.viewBottomOffset, left: this.state.viewLeftOffset, right: this.state.viewRightOffset, paddingTop: this.state.viewTopInset, paddingBottom: this.state.viewBottomInset, paddingLeft: this.state.viewLeftInset, paddingRight: this.state.viewRightInset };
+
     return (
-      <Animated.View style={notificationStyle}>
+      <Animated.View style={[notificationStyle,styles.statusBarPadding,{}]}>
         <TouchableOpacity onPress={()=>{this._alertTapped()}} style={{ flex: 1 }}>
           <View style={{
             flex: 1, flexDirection: 'row', alignItems: 'flex-end',

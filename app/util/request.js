@@ -15,10 +15,12 @@ let checkStatus = function(response) {
 
 let request = function (url, options, responseFormatter) {
   return new Promise((resolve, reject) => {
+    let fetchedRequest;
     try {
       fetch(url, options)
-        .then(checkStatus)
+        // .then(checkStatus)
         .then((response) => {
+          fetchedRequest = response;
           if (responseFormatter) {
             let formatterPromise = responseFormatter(response);
             if (formatterPromise instanceof Promise) {
@@ -31,7 +33,17 @@ let request = function (url, options, responseFormatter) {
           }
         })
         .then((responseData) => {
-          resolve(responseData);
+          if (fetchedRequest.status >= 200 && fetchedRequest.status < 300) { 
+            resolve(responseData);
+          } else {
+            let errorResponse = fetchedRequest.statusText;
+            if (responseData.data && typeof responseData.data.error === 'string') {
+              errorResponse = responseData.data.error;
+            } else if (responseData.data && typeof responseData.data === 'string') {
+              errorResponse = responseData.data;
+            }
+            reject(errorResponse);            
+          }
         })
         .catch((error) => {
           reject(error);

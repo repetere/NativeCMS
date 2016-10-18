@@ -214,7 +214,7 @@ class EngineDetail extends Component {
     };
   }
   render() {
-    console.log('ENGINE DETAIL this.props', this.props);
+    // console.log('ENGINE DETAIL this.props', this.props);
     return (
       <DetailView {...this.props}>
         <View style={layoutStyles.detail_widthPadding}>
@@ -243,7 +243,7 @@ class EngineDetail extends Component {
           </RESPONSIVE_GRID>
 
           <H2 style={{ marginTop:20, }}>Resources</H2>
-          <RESPONSIVE_GRID columns={(this.props.detailData.system_of_record_associated_data.resources.length%2===0 && this.props.detailData.system_of_record_associated_data.resources.length>1)?2:1}>
+          <RESPONSIVE_GRID columns={(this.props.detailData.system_of_record_associated_data.resources && this.props.detailData.system_of_record_associated_data.resources.length%2===0 && this.props.detailData.system_of_record_associated_data.resources.length>1)?2:1}>
             { (this.props.detailData.system_of_record_associated_data.resources && this.props.detailData.system_of_record_associated_data.resources.length>0)?(this.props.detailData.system_of_record_associated_data.resources.map((resource, i) => {
               return <GRID_ITEM key={i} {...resource} icon={
                 { icontype: 'Octicons', name: 'database', }} description={`(${resource.source_configuration.data_source}) ${resource.description}`} />;

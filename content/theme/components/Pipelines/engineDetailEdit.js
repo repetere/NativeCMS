@@ -55,7 +55,9 @@ class EngineDetailEdit extends Component {
         this.props.closeExtensionModal();
         // console.log('post updated', { updatedStatus });
       })
-      .catch(e => { console.log('engine post update', e) });
+      .catch(e => {
+        this.props.handleErrorNotification({ message:'Could not update Engine. '+e, }, e);
+      });
   }
   changeEngine(formdata) {
     // console.log('changeEngine formdata', { formdata });

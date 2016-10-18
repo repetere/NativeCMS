@@ -188,19 +188,30 @@ class MainApp extends Component{
       return null;
     }
   }
+  handleErrorNotification(options, error) {
+    console.log({ error, });
+    let notificationProps = Object.assign({
+      messageStyle:{margin:5, color:'white'},
+      titleStyle:{margin:5,},
+      // title: 'Error creating Engine',
+      alertType: 'error',
+    }, options);
+    MessageBarManager.showAlert(notificationProps);
+  }
   loadExtensionRoute(path, options = {}) {
-    console.log('loadExtensionRoute ',
-      { path, },
-      { options, } //,
-      // 'this.props.location', this.props.location,
-      // 'this.refs.AppNavigator', this.refs.AppNavigator,
-    );
+    // console.log('loadExtensionRoute ',
+    //   { path, },
+    //   { options, } //,
+    //   // 'this.props.location', this.props.location,
+    //   // 'this.refs.AppNavigator', this.refs.AppNavigator,
+    // );
     // console.log('this.props', this.props);
     // console.log('this.getCurrentScenePath()', this.getCurrentScenePath());
     // window.appnav = this.refs.AppNavigator;
     if (!MessageBarManager.getRegisteredMessageBar()) {
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
       MessageBarManager.hideAlert();
+      window.MessageBarManager = MessageBarManager;
     }
     /*
     if (options && options.config && options.config.action === 'goToPreviousExtension') {
@@ -276,7 +287,7 @@ class MainApp extends Component{
       }      
 
       if (this.refs.AppNavigator && navigationRoute !== this.getCurrentScenePath()) {
-        console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
+        // console.log('CHANGE NEW SCENE from',this.getCurrentScenePath(), {path}, { navigationRoute }, { navigatorOptions });
         this.refs.AppNavigator.goto(navigationRoute, {
           props: Object.assign({},
             this.state,
@@ -284,13 +295,13 @@ class MainApp extends Component{
             {
               onChangeExtension: this.onChangeExtension.bind(this),
               loadExtensionRoute: this.loadExtensionRoute.bind(this),
+              handleErrorNotification: this.handleErrorNotification.bind(this),
               MessageBarManager,
             }),
           opts: navigatorOptions,
         });
-      }
-      else{
-        console.log('SKIPPIPNG APP NAVIGATOR, ALREADY ON SCENE PATH')
+      } else {
+        console.log('SKIPPIPNG APP NAVIGATOR, ALREADY ON SCENE PATH');
       }
       // // console.log('this.props.showInfo',this.props.showInfo)
       // // this.props.showInfo({ title: 'new page', message: 'time stamp ' + new Date(), });
@@ -298,7 +309,7 @@ class MainApp extends Component{
       //   MessageBarManager.showAlert({title:'some titile', message: 'time stamp ' + new Date(), });
       // }  
     } else {
-      console.log('skipping componet update',{path},'this.getCurrentScenePath()',this.getCurrentScenePath());
+      console.log('skipping componet update', { path, }, 'this.getCurrentScenePath()', this.getCurrentScenePath());
     }
   }
   componentWillUpdate(nextProps, nextState) {
@@ -317,7 +328,7 @@ class MainApp extends Component{
     //   'this.state', this.state//,
     // );
 
-    console.log('this.state.user.isLoggedIn', this.state.user.isLoggedIn);
+    // console.log('this.state.user.isLoggedIn', this.state.user.isLoggedIn);
     let initialPath = (this.state.location) ? this.state.location.pathname : '/';
 
     return (<View style={[ styles.container, { backgroundColor: 'white' }]}>
