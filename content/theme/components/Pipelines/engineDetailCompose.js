@@ -26,6 +26,13 @@ class EngineDetailCompose extends Component {
     let engineData = (this.props.GroupListDetailStateData && this.props.GroupListDetailStateData.detailData && this.props.GroupListDetailStateData.detailData.detailData) ? this.props.GroupListDetailStateData.detailData.detailData : {};
     this.state = engineData;
   }
+  componentWillReceiveProps(nextProps) {
+    console.log({ nextProps, });
+    let engineData = (nextProps.GroupListDetailStateData && nextProps.GroupListDetailStateData.detailData && nextProps.GroupListDetailStateData.detailData.detailData) ? nextProps.GroupListDetailStateData.detailData.detailData : {};
+    // if (nextProps.fetchData.json) {
+    this.setState(engineData);
+    // }
+  }
   getFormLayoutData() {
     return [{
       layoutColumns: 2,

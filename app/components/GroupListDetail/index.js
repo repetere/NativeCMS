@@ -434,10 +434,14 @@ function generateModals(actions, props) {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
 
-    if (modalOptions.ref.search(new RegExp('create_', 'i'))) {
+    console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
+    if (modalOptions.ref.search(new RegExp('create_', 'i'))!==-1) {
       // modalOptions.passProps
-      console.log('modalOptions.passProps', modalOptions.passProps);
-      // modalOptions.passProps.GroupListDetailStateData.detailData.detailData = {};
+      modalOptions.passProps.GroupListDetailStateData.detailData.detailData = {};
+      console.log('create modalOptions.passProps', modalOptions.passProps);
+    }
+    else {
+      console.log('edit or delete modalOptions.passProps', modalOptions.passProps);
     }
     modalOptions.style = Object.assign({
       justifyContent: 'center',
@@ -783,7 +787,7 @@ export function getDetailFromEntityName(entityName, groupName, options) {
       type: 'modal',
       modalOptions: {
         component: options.createModalComponent,
-        ref:`credit_${entityName}_modal`,
+        ref:`create_${entityName}_modal`,
         style: { /* margin: 30, width:500, */ },
       },
     }, ],

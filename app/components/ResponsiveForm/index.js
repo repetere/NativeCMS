@@ -46,7 +46,7 @@ function getPropertyAttribute(options) {
     returnVal = property[ attribute ];
   } else {
     let attrArray = attribute.split('.');
-    returnVal = property[ attrArray[ 0 ] ][ attrArray[ 1 ] ];
+    returnVal = (property[ attrArray[ 0 ] ])? property[ attrArray[ 0 ] ][ attrArray[ 1 ] ]:undefined;
   }
   
   if (selector && !options.skipSelector) {
@@ -170,13 +170,13 @@ class FromTag extends Component{
   render() {
     let childComponents = (this.props.document)
       ? (
-        <Text style={{justifyContent:'center',alignSelf:'center',fontSize:14}} numberOfLines={1}>{this.props.document.title}</Text>
+        <Text style={{ justifyContent:'center', alignSelf:'center', fontSize:14, }} numberOfLines={1}>{this.props.document.title}</Text>
       )
       : this.props.children;
     
     return (childComponents) ? (<TouchableOpacity  {...this.props.button}>
       <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 10, backgroundColor:'gainsboro', padding:3, paddingLeft:10, paddingRight:10, borderRadius:3, }} {...this.props.container}>
-        <Icons style={{ marginRight:10, alignSelf:'center', alignItems:'center',top:2 }} size={24}
+        <Icons style={{ marginRight:10, alignSelf:'center', alignItems:'center', top:2, }} size={24}
           {...this.props.icon}
           ></Icons>
           {childComponents}
@@ -187,7 +187,7 @@ class FromTag extends Component{
 
 function searchDataList(options) {
   let { arr, searchstring, } = options;
-  console.log({ arr, searchstring, })
+  // console.log({ arr, searchstring, })
   return arr.filter((arrayItem) => {
     return arrayItem.title.search(new RegExp(searchstring, 'i')) !== -1;
   }); 
