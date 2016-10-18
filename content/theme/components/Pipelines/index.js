@@ -8,6 +8,7 @@ import { Button, Text, SearchBar } from 'react-native-elements';
 import constants from '../../constants';
 import EngineDetail from './engineDetail';
 import EngineDetailCompose from './engineDetailCompose';
+import EngineDetailEdit from './engineDetailEdit';
 import moment from 'moment';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
@@ -34,7 +35,7 @@ class Pipelines extends Component {
             detail: getDetailFromEntityName('engine', 'pipeline', {
               detailComponent: EngineDetail,
               createModalComponent: EngineDetailCompose,
-              editModalComponent:EngineDetailCompose,
+              editModalComponent: EngineDetailEdit,
               constants,
             }),
           },

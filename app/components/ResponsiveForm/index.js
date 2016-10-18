@@ -415,6 +415,9 @@ class ResponsiveForm extends Component {
   addSingleItemProp(options) {
     let { value, attribute, } = options;
     let attrArray = attribute.split('.');
+    if (!this.state[ attrArray[ 0 ] ]) {
+      this.state[ attrArray[ 0 ] ] = {};
+    }
     let arrayToSet = Object.assign([], this.state[ attrArray[ 0 ] ][ attrArray[ 1 ] ]);
     // let removedItem = arrayToSet.splice(value, 1);
     arrayToSet.push(value);

@@ -410,7 +410,7 @@ function closeModal(name) {
 }
 
 function generateModals(actions, props) {
-  console.log('generateModals', { actions });
+  // console.log('generateModals', { actions });
   let { width, height, } = Dimensions.get('window');
   // console.log('Dimensions',{ width, height, })
   let modals = actions.map((action, i) => {
@@ -434,14 +434,14 @@ function generateModals(actions, props) {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
 
-    console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
+    // console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
     if (modalOptions.ref.search(new RegExp('create_', 'i'))!==-1) {
       // modalOptions.passProps
-      modalOptions.passProps.GroupListDetailStateData.detailData.detailData = {};
-      console.log('create modalOptions.passProps', modalOptions.passProps);
-    }
-    else {
-      console.log('edit or delete modalOptions.passProps', modalOptions.passProps);
+      modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = false;
+      // console.log('create modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData );
+    } else {
+      modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = true;
+      // console.log('edit or delete modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData);
     }
     modalOptions.style = Object.assign({
       justifyContent: 'center',

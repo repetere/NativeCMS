@@ -214,7 +214,7 @@ class EngineDetail extends Component {
     };
   }
   render() {
-    console.log('ENGINE DETAIL this.props.detailData', this.props.detailData);
+    console.log('ENGINE DETAIL this.props', this.props);
     return (
       <DetailView {...this.props}>
         <View style={layoutStyles.detail_widthPadding}>
@@ -244,17 +244,17 @@ class EngineDetail extends Component {
 
           <H2 style={{ marginTop:20, }}>Resources</H2>
           <RESPONSIVE_GRID columns={(this.props.detailData.system_of_record_associated_data.resources.length%2===0 && this.props.detailData.system_of_record_associated_data.resources.length>1)?2:1}>
-            {this.props.detailData.system_of_record_associated_data.resources.map((resource, i) => {
+            { (this.props.detailData.system_of_record_associated_data.resources && this.props.detailData.system_of_record_associated_data.resources.length>0)?(this.props.detailData.system_of_record_associated_data.resources.map((resource, i) => {
               return <GRID_ITEM key={i} {...resource} icon={
                 { icontype: 'Octicons', name: 'database', }} description={`(${resource.source_configuration.data_source}) ${resource.description}`} />;
-            })}
+            })):(<GRID_ITEM gridItemContentStyle={{borderTopWidth:0}}><Text>No Resources selected</Text></GRID_ITEM>)}
           </RESPONSIVE_GRID>
           <H2 style={{ marginTop:20, }}>Parser</H2>
           <RESPONSIVE_GRID columns={1}>
             <GRID_ITEM 
               gridItemContentStyle={{borderTopWidth:0}}
               >
-            <Accordian
+              {(this.props.detailData.system_of_record_associated_data.parser && this.props.detailData.system_of_record_associated_data.parser.title)?(<Accordian
             title={this.props.detailData.system_of_record_associated_data.parser.title}
             collapsible={true}
             icontype="Octicons"
@@ -263,13 +263,13 @@ class EngineDetail extends Component {
             useLeftIcon={true}
             iconSize={14}
             containerStyle={[layoutStyles.gridItemContent, { marginTop:5, paddingTop:0, paddingBottom:0, }]}
-            children={getParserVariableTable.call(this, this.props.detailData.system_of_record_associated_data.parser.variables)}/>
+            children={getParserVariableTable.call(this, this.props.detailData.system_of_record_associated_data.parser.variables)}/>):(<Text>No Parser selected</Text>)}
             </GRID_ITEM>
           </RESPONSIVE_GRID>
           
           <H2 style={{ marginTop: 20, }}>Segments</H2>
           <RESPONSIVE_GRID columns={1}>
-            { this.props.detailData.system_of_record_associated_data.segments.map((segment, i) => {
+            {(this.props.detailData.system_of_record_associated_data.segments && this.props.detailData.system_of_record_associated_data.segments.length>0)?( this.props.detailData.system_of_record_associated_data.segments.map((segment, i) => {
               return (
               <GRID_ITEM key={i} {...segment} >
                 <Accordian
@@ -296,7 +296,7 @@ class EngineDetail extends Component {
                 </View>
                   
               </GRID_ITEM>);
-            })}
+            })):(<GRID_ITEM gridItemContentStyle={{borderTopWidth:0}}><Text>No Segements selected</Text></GRID_ITEM>)}
           </RESPONSIVE_GRID>
         </View>
       </DetailView>

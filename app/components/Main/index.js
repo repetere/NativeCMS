@@ -50,6 +50,7 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
+    console.log('MAIN componentWillReceiveProps',{nextProps,initialRouteChange,})
     if (nextProps.user.isLoggedIn !== true && (this.getCurrentScenePath() !== '/login' || this.state.location.pathname !== '/login')) {
       this.onChangeExtension.call(this, '/login', {
         initialLoad: 'recievedPropLogin',
@@ -71,6 +72,17 @@ class MainApp extends Component{
       console.log('HANDLE BROWSER NAV')
       initialRouteChange = true;
       this.onChangeExtension(nextProps.location.pathname, {
+        initialLoad: 'recievedPropLogin',
+        loginStatus: this.state.user.isLoggedIn,
+        config: {
+          transitionDirection:'bottom',
+        },
+      });
+    }
+    else if (Platform.OS !=='web' && initialRouteChange===false && nextProps.user.isLoggedIn === true && nextProps.page.initial_app_state_loaded === true){
+      initialRouteChange = true;
+      // console.log('CHANGE INITAL ROUTE, current route',this.getCurrentScenePath())
+      this.onChangeExtension(defaultExtensionRoute, {
         initialLoad: 'recievedPropLogin',
         loginStatus: this.state.user.isLoggedIn,
         config: {

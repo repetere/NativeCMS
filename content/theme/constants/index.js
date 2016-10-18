@@ -7,6 +7,7 @@ export default {
     },
     engines: {
       GET_INDEX:'engines',
+      POST_NEW:'engines',
       POST_UPDATE:'engines/',
     },
     resources: {

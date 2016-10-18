@@ -21,24 +21,28 @@ import moment from 'moment';
 import capitalize from 'capitalize';
 import pluralize from 'pluralize';
 
-class EngineDetailCompose extends Component {
+class EngineDetailEdit extends Component {
   constructor(props){
     super(props);
-    let engineData = {};
+    let engineData = (this.props.GroupListDetailStateData && this.props.GroupListDetailStateData.detailData && this.props.GroupListDetailStateData.detailData.detailData) ? this.props.GroupListDetailStateData.detailData.detailData : {};
     this.state = engineData;
+    // console.log('EngineDetailEdit constructor', { props, });
   }
   componentWillReceiveProps(nextProps) {
-    let engineData = {};
+    // console.log('EngineDetailEdit componentWillReceiveProps', { nextProps, });
+    let engineData = (nextProps.GroupListDetailStateData && nextProps.GroupListDetailStateData.detailData && nextProps.GroupListDetailStateData.detailData.detailData) ? nextProps.GroupListDetailStateData.detailData.detailData : {};
+    // if (nextProps.fetchData.json) {
     this.setState(engineData);
+    // }
   }
   getFormLayoutData() {
     return engineform(this.props);
   }
   editEngine(formdata) {
     // console.log('editEngine formdata', { formdata });
-    request(constants.pipelines.all.BASE_URL + constants.pipelines.engines.POST_NEW,
+    request(constants.pipelines.all.BASE_URL + constants.pipelines.engines.POST_UPDATE+formdata._id,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -47,7 +51,7 @@ class EngineDetailCompose extends Component {
         body: JSON.stringify(formdata),
       })
       .then(updatedStatus => {
-        this.props.getGroupListDetailFunctions.appendListDetailFromCompose(formdata);
+        this.props.getGroupListDetailFunctions.updateListDetailFromCompose(formdata);
         this.props.closeExtensionModal();
         // console.log('post updated', { updatedStatus });
       })
@@ -65,7 +69,7 @@ class EngineDetailCompose extends Component {
     return (
       <View style={{flex:1,alignSelf:'stretch'}}>
         <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={[ styles.scrollViewStandardContentContainer, {padding:10, paddingBottom:120}]} className="engineScrollView">
-          <H2>New Engine: {_engine.title}</H2>
+          <H2>{_engine.title}</H2>
           <HR style={{marginBottom:20}}/>
           <ResponsiveForm 
             ref="engineComposeForm"
@@ -80,4 +84,4 @@ class EngineDetailCompose extends Component {
   }
 }
 
-export default EngineDetailCompose;
+export default EngineDetailEdit;
