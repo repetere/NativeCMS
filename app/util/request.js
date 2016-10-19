@@ -20,6 +20,7 @@ let request = function (url, options, responseFormatter) {
       fetch(url, options)
         // .then(checkStatus)
         .then((response) => {
+          // console.log({ response, });
           fetchedRequest = response;
           if (responseFormatter) {
             let formatterPromise = responseFormatter(response);
@@ -28,11 +29,14 @@ let request = function (url, options, responseFormatter) {
             } else {
               throw new Error('responseFormatter must return a Promise');
             }
-          } else {
+          } else if  (fetchedRequest.status >= 200 && fetchedRequest.status < 300) {
             return response.json();
+          } else {
+            return {};
           }
         })
         .then((responseData) => {
+          // console.log({ responseData, });
           if (fetchedRequest.status >= 200 && fetchedRequest.status < 300) { 
             resolve(responseData);
           } else {
