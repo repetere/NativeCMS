@@ -9,6 +9,8 @@ import constants from '../../constants';
 import EngineDetail from './engineDetail';
 import EngineDetailCompose from './engineDetailCompose';
 import EngineDetailEdit from './engineDetailEdit';
+import ResourceDetail from './resourceDetail';
+import ResourceDetailEdit from './ResourceDetailEdit';
 import moment from 'moment';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
@@ -36,7 +38,6 @@ class Pipelines extends Component {
               detailComponent: EngineDetail,
               createModalComponent: EngineDetailCompose,
               editModalComponent: EngineDetailEdit,
-              deleteModalComponent: EngineDetailEdit,
               constants,
             }),
           },
@@ -44,10 +45,9 @@ class Pipelines extends Component {
             group: getGroupFromEntityName('resource', 'pipeline', { constants, }),
             list: getListFromEntityName('resource', 'pipeline', { constants, }),
             detail: getDetailFromEntityName('resource', 'pipeline', {
-              detailComponent: EngineDetail,
-              createModalComponent: LoadingView,
-              editModalComponent:LoadingView,
-              deleteModalComponent:LoadingView,
+              detailComponent: ResourceDetail,
+              createModalComponent: ResourceDetailEdit,
+              editModalComponent:ResourceDetailEdit,
               constants,
             }),
           },

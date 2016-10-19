@@ -91,14 +91,22 @@ function getDefaultRenderRowData(data) {
 
 function getRefreshData() {
   this.setState({ isRefreshing: true, });
-  setTimeout(() => {
-    console.log('now refreshing!');
-    this.setState({
-      // loaded: this.state.loaded + 10,
-      isRefreshing: false,
-      // rowData: rowData,
+  this.props.getGroupListDetailFunctions.getListData()
+    .then(() => { 
+      this.setState({ isRefreshing: false, });
+    })
+    .catch(() => { 
+      this.setState({ isRefreshing: false, });
     });
-  }, 1000);
+
+  // setTimeout(() => {
+  //   console.log('now refreshing!');
+  //   this.setState({
+  //     // loaded: this.state.loaded + 10,
+  //     isRefreshing: false,
+  //     // rowData: rowData,
+  //   });
+  // }, 1000);
 }
 
 function getDataForLists(config, options = {}) {
@@ -110,7 +118,9 @@ function getDataForLists(config, options = {}) {
     dataError: false,
     dataLoaded: false,
   };
-  let stateDataProp = {};
+  let stateDataProp = {
+    isRefreshing: false,
+  };
   let selectedGroupListProp = this.props[ config.componentPropsName ].entities[ this.state.GroupListDetailStateData.selectedGroup ];
   // request(this.props.GroupListDetail.list.fetchUrl, {
   return new Promise((resolve, reject) => {
@@ -124,7 +134,7 @@ function getDataForLists(config, options = {}) {
     })
     .then(responseData => {
       // console.log({responseData})
-
+      stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = false;
       stateData.pages = responseData[ selectedGroupListProp[config.componentDataName].listProps.pagesProp ];
@@ -141,6 +151,7 @@ function getDataForLists(config, options = {}) {
     })
     .catch(error => {
       // console.log({error})
+      stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = error;
       stateData.selectedGroup = this.state.GroupListDetailStateData.selectedGroup;
@@ -283,6 +294,7 @@ class GroupList extends Component{
     // }
   }
   render() {
+    // console.log('GroupList RENDER this.state', this.state);
     // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
@@ -391,13 +403,14 @@ class GroupDetail extends Component{
   }
   render() {
     // console.log('GroupDetail RENDER this.props',this.props)
+    // console.log('GroupDetail RENDER this.state',this.state)
     // let loadingView = (<LoadingView/>);
     let emptyMessage = (this.props.GroupListDetail.list) ? 'No '+capitalize(this.props.GroupListDetail.list.componentProps.title)+' selected' : ' ' ;
     let emptyView = (<EmptyDisplay message={emptyMessage}/>);
     // let errorView = (<LoadingView/>);
     // console.log({ CustomDetailComponent });
 
-    if (this.props.GroupListDetail.detail && this.props.GroupListDetail.detail.detailComponent && this.state.detailData){
+    if (this.props.GroupListDetail.detail && this.props.GroupListDetail.detail.detailComponent && this.state.detailData && this.props.GroupListDetailStateData.detailData!==false){
       let CustomDetailComponent = this.props.GroupListDetail.detail.detailComponent;
       return <CustomDetailComponent {...this.state} {...this.props}/>;     
     } else {
@@ -435,15 +448,15 @@ function generateModals(actions, props) {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
 
-    // console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
-    if (modalOptions.ref.search(new RegExp('create_', 'i'))!==-1) {
-      // modalOptions.passProps
-      modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = false;
-      // console.log('create modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData );
-    } else {
-      modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = true;
-      // console.log('edit or delete modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData);
-    }
+    // // console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
+    // if (modalOptions.ref.search(new RegExp('create_', 'i'))!==-1) {
+    //   // modalOptions.passProps
+    //   modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = false;
+    //   // console.log('create modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData );
+    // } else {
+    //   modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = true;
+    //   // console.log('edit or delete modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData);
+    // }
     modalOptions.style = Object.assign({
       justifyContent: 'center',
       alignItems: 'center',
@@ -620,8 +633,9 @@ class GroupListDetail extends Component{
     });
   }
   setSelectedGroup(groupName) {
+    // console.log('setSelectedGroup', { groupName, });
     this.setState({
-      GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, {
+      GroupListDetailStateData: Object.assign({},this.state.GroupListDetailStateData, {
         selectedGroup: groupName,
         listData: {
           dataLoaded: false,
@@ -644,7 +658,9 @@ class GroupListDetail extends Component{
     };
     if (selectedGroup) {
       newState.GroupListDetailStateData.selectedGroup = selectedGroup;
+      newState.GroupListDetailStateData.detailData = false;
     }
+    // console.log({ newState, });
     this.setState(newState);
   }
   updateListDetailFromCompose(data) {
@@ -724,6 +740,7 @@ class GroupListDetail extends Component{
     });
   }
   render() {
+    // console.log('this.state',this.state);
     // console.log('GroupDetail REDNER this.state', this.state,Dimensions.get('window'));
     let { width, /*height,*/ } = Dimensions.get('window');
     let getDataFunctions = { 

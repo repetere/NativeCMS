@@ -4,11 +4,12 @@
  * @flow
  */
 import React, { cloneElement, Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Switch, Picker, Platform, Dimensions, TouchableOpacity, ListView, } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, Switch, Picker, Platform, Dimensions, TouchableOpacity, ListView, } from 'react-native';
 import { Button, CheckBox } from 'react-native-elements';
 import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridMarginStyle, } from '../LayoutElements';
 // let NativeSelect = (Platform.OS === 'web') ? {} : require('react-native-dropdown') ;
 import Icons from '../Icons';
+import Table from '../Table';
 import debounce from 'debounce';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as Animatable from 'react-native-animatable';
@@ -58,7 +59,11 @@ function getPropertyAttribute(options) {
 
 function getFormTextInputArea(options) {
   let { formElement, i, formgroup, width, } = options;
- 
+  // console.log(this.state, { formElement })
+  let initialValue = formElement.value || this.state[ formElement.name ];
+  if (typeof initialValue !== 'string') {
+    initialValue = JSON.stringify(initialValue, null, 2);
+  }
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={getGridMarginStyle({
@@ -69,14 +74,14 @@ function getFormTextInputArea(options) {
     gridItemContentStyle={{ borderTopWidth:0, }}
     >
     <TextInput {...formElement.passProps}
-      style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
+      style={{ minHeight: (formElement.type==='textarea')?80:40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
       multiline={(formElement.type==='textarea')?true:false}
       onChangeText={(text) => {
         let updatedStateProp = {};
         updatedStateProp[ formElement.name ] = text;
         this.setState(updatedStateProp);
       } }
-      value={formElement.value || this.state[formElement.name]} />
+      value={initialValue} />
   </GRID_ITEM>);
 }
 
@@ -365,6 +370,73 @@ function getFormDatalist(options) {
   </GRID_ITEM>);
 }
 
+function getFormDataTable(options) {
+  let { formElement, i, formgroup, width, } = options;
+  // let formColumns = formElement.columns;
+  // let formColumnsLength = formElement.columns.length;
+  let dataTableData = getPropertyAttribute({
+    property: this.state, element: formElement, skipSelector: true,
+  }) || [];
+  // console.log({ dataTableData, });
+  return (<GRID_ITEM key={i}
+    description={formElement.label}
+    style={[ getGridMarginStyle({
+      formgroup,
+      i,
+      width,
+    }), ]}
+    gridItemContentStyle={{ borderTopWidth: 0, }}
+    >
+    {/*<Text>data table {formColumns.length}</Text> */}
+    <ScrollView style={[ styles.stretchBox, ]} contentContainerStyle={[
+      styles.scrollViewStandardContentContainer, {
+        flex: 1, alignSelf: 'stretch',
+      }, ]} horizontal={true} >
+      <Table
+        name="resource-variable-table"
+        pages={1}
+        rows={dataTableData}
+        totalcount={dataTableData.length}
+        getBlankHeader={formElement.dataTableHeader}
+        getRenderRowData={formElement.dataTableRow}
+        noImage={true}
+        rowActions={[ 
+          {
+            icon: {
+              name:'ios-arrow-dropup-outline',
+            },
+            onPress: function movedown(detailData, detailRowData, sectionId, rowId) {
+              console.log('up',{ detailData, detailRowData, sectionId, rowId }, this.props);
+            },
+          },
+          {
+            icon: {
+              name:'ios-arrow-dropdown-outline',
+            },
+            onPress: function movedown(detailData, detailRowData, sectionId, rowId) {
+              console.log('down',{ detailData, detailRowData, sectionId, rowId }, this.props);
+            },
+          },
+          {
+            icon: {
+              name: 'ios-close-circle-outline',
+              style: {
+                color: 'firebrick',
+              },
+            },
+            onPress: function movedown(detailData, detailRowData, sectionId, rowId) {
+              console.log('remove',{ detailData, detailRowData, sectionId, rowId }, this.props);
+            },
+          },
+        ]}
+        // noAction={true}
+        {...this.props}
+        >
+      </Table>
+    </ScrollView>  
+  </GRID_ITEM>);
+}
+
 // let formKeyCounter = 0;
 class ResponsiveForm extends Component {
   constructor(props) {
@@ -465,6 +537,8 @@ class ResponsiveForm extends Component {
             return getFormSubmit.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'datalist') {
             return getFormDatalist.call(this, { formElement,  i:j, formgroup, width, });
+          } else if (formElement.type === 'datatable') {
+            return getFormDataTable.call(this, { formElement,  i:j, formgroup, width, });
           } else if (formElement.type === 'divider') {
             return (<HR key={j}/>);
           } else if (formElement.type === 'textblock') {

@@ -12,12 +12,18 @@ export default {
     },
     resources: {
       GET_INDEX:'resources',
+      POST_NEW:'resources',
+      POST_UPDATE:'resources/',
     },
     parsers: {
       GET_INDEX:'parsers',
+      POST_NEW:'parsers',
+      POST_UPDATE:'parsers/',
     },
     segments: {
       GET_INDEX:'segments',
+      POST_NEW:'segments',
+      POST_UPDATE:'segments/',
     },
     customers: {
       GET_INDEX:'customers',

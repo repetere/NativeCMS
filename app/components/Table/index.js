@@ -125,6 +125,7 @@ class Table extends Component {
           style={[ styles.flexBox, { paddingLeft:6, paddingRight:6, } ]}
           contentContainerStyle={{ position:'relative', }}
           dataSource={this.state.rows}
+          enableEmptySections={true}
           renderRow={this.renderRow.bind(this, this.getRenderRowData) }
           renderHeader={this.renderHeader.bind(this) }
           initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
@@ -156,11 +157,38 @@ class Table extends Component {
       </View>
     );
   }
-  renderRow(tranformFunction, data) {
+  renderRow(tranformFunction, data, sectionId, rowId) {
     // console.log('TABLE renderRow',{tranformFunction}, {data})
     let renderData = tranformFunction(data);
     let { /*height,*/ width, } = Dimensions.get('window');
     // console.log('width-100', width-100 ,{width});
+    let actionsComponent = null;
+    if (this.props.noAction !== true) {
+      actionsComponent = (
+        <TouchableOpacity style={layoutStyles.listItemIconWrapper} onPress={this.loadDetail.bind(this, data, renderData, sectionId, rowId)}>
+          <Icons name={renderData.action.icon.name} size={22} style={layoutStyles.listItemIcon} />
+        </TouchableOpacity>);
+    }
+    if (this.props.rowActions && this.props.rowActions.length > 0) {
+      actionsComponent = (
+        <View  style={[layoutStyles.listItemIconWrapper,{marginRight:20,}]}>
+          {this.props.rowActions.map((action, i) => {
+            return (
+              <TouchableOpacity key={i} style={{
+                paddingLeft: 10,
+                paddingRight: 10, 
+                right:15,
+                // top: 10,
+                height:25
+              }} onPress={action.onPress.bind(this, data, renderData, sectionId, rowId)}>
+                <Icons name={action.icon.name} size={22} style={[layoutStyles.listItemIcon,action.icon.style]} />
+              </TouchableOpacity>
+            );
+          })
+          }
+        </View>);
+    }
+
     return (
       <View style={layoutStyles.listContainer} >
         {(this.props.noImage===true)?null:(<View style={layoutStyles.listImageWrapper}>
@@ -175,16 +203,12 @@ class Table extends Component {
               );
             }) }
           </View>
-          
-          {(this.props.noAction===true) ? null : (
-          <TouchableOpacity style={layoutStyles.listItemIconWrapper} onPress={this.loadDetail.bind(this, data, renderData)}>
-            <Icons name={renderData.action.icon.name} size={22} style={layoutStyles.listItemIcon} />
-          </TouchableOpacity>)}
+          {actionsComponent}
         </View>  
       </View>
     );
   }
-  loadDetail(detailData, detailRowData) {
+  loadDetail(detailData, detailRowData, sectionId, rowId) {
     console.log({ detailData }, { detailRowData }, this.props);
     this.props.onChangeExtension(this.props.detailPath.replace(':id', detailData._id), {
       config: this.props.loadExtensionRouteOptions,

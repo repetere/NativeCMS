@@ -7,7 +7,7 @@ import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '
 import ResponsiveForm from '../../../../app/components/ResponsiveForm';
 import { request, } from '../../../../app/util/request';
 import constants from '../../constants';
-import engineform from './engineform';
+import requestform from './requestform';
 
 class EngineDetailEdit extends Component {
   constructor(props){
@@ -24,11 +24,11 @@ class EngineDetailEdit extends Component {
     // }
   }
   getFormLayoutData() {
-    return engineform(this.props);
+    return requestform(this.props);
   }
   editEngine(formdata) {
     // console.log('editEngine formdata', { formdata });
-    request(constants.pipelines.all.BASE_URL + constants.pipelines.engines.POST_UPDATE+formdata._id,
+    request(constants.pipelines.all.BASE_URL + constants.pipelines.resources.POST_UPDATE+formdata._id,
       {
         method: 'PUT',
         headers: {
@@ -59,7 +59,7 @@ class EngineDetailEdit extends Component {
     return (
       <View style={{ flex:1, alignSelf:'stretch', }}>
         <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={[ styles.scrollViewStandardContentContainer, { padding:10, paddingBottom:120, }]} className="engineScrollView">
-          <H2>{_engine.title}</H2>
+          <H2>Resource: {_engine.title}</H2>
           <HR style={{ marginBottom:20, }}/>
           <ResponsiveForm 
             ref="engineComposeForm"
