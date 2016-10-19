@@ -451,7 +451,7 @@ class ResponsiveForm extends Component {
     let { width,  } = Dimensions.get('window');
 
     let formGroupData = this.props.formgroups.map((formgroup, i) => {
-      return (<RESPONSIVE_GRID key={i} columns={formgroup.layoutColumns || 2}>
+      return (<RESPONSIVE_GRID key={i} columns={formgroup.layoutColumns || 2} style={formgroup.layoutStyle}>
         {formgroup.formElements.map((formElement, j) => {
           if (formElement.type === 'text' || formElement.type === 'textarea') {
             return getFormTextInputArea.call(this, { formElement,  i:j, formgroup, width, });

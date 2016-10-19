@@ -50,7 +50,7 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log('MAIN componentWillReceiveProps',{nextProps,initialRouteChange,})
+    // console.log('MAIN componentWillReceiveProps',{nextProps,initialRouteChange,})
     if (nextProps.user.isLoggedIn !== true && (this.getCurrentScenePath() !== '/login' || this.state.location.pathname !== '/login')) {
       this.onChangeExtension.call(this, '/login', {
         initialLoad: 'recievedPropLogin',

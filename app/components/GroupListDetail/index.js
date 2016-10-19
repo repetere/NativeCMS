@@ -466,9 +466,9 @@ function generateModals(actions, props) {
           justifyContent: 'center',
           alignItems: 'center',
           alignSelf: 'stretch',
-          maxHeight: 200,
+          maxHeight: 270,
           maxWidth: 350,
-          marginTop: (height > 700) ? 50 : 20,
+          marginTop: (height > 700) ? 150 : 120,
           overflow: 'hidden',
           borderRadius:5,
         }} backdrop={modalOptions.backdrop} key={modalOptions.key} swipeToClose={false} position={modalOptions.position} ref={modalOptions.ref}>

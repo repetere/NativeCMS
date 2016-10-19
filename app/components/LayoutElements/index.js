@@ -139,7 +139,7 @@ exports.RESPONSIVE_GRID = class RESPONSIVE_GRID extends Component {
     // console.log('this.props.children',this.props.children)
     // console.log({gridItems})
     return (
-      <Grid style={{alignSelf:'stretch',alignItems:'stretch'}}>
+      <Grid style={[{ alignSelf:'stretch', alignItems:'stretch', }, this.props.style, ]}>
         {gridItems}
       </Grid>);
   }

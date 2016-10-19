@@ -40,6 +40,8 @@ class ConfirmModal extends Component {
       }, ],
     }, {
       layoutColumns: 2,
+      layoutStyle: { 
+      },  
       formElements: [{
         type:'submit',
         label:'Yes',
