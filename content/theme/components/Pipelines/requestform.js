@@ -56,6 +56,9 @@ export default function (formProps) {
         name:'resource_property_value',
         // value: 'ECS',
         options: [{
+          label: 'Please select',
+          value: '',
+        },{
           label: 'Schema',
           value: 'schema',
         }, {

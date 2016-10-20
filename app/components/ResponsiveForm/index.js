@@ -10,6 +10,7 @@ import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridM
 // let NativeSelect = (Platform.OS === 'web') ? {} : require('react-native-dropdown') ;
 import Icons from '../Icons';
 import Table from '../Table';
+import Accordian from '../Accordian';
 import debounce from 'debounce';
 import ModalDropdown from 'react-native-modal-dropdown';
 import * as Animatable from 'react-native-animatable';
@@ -58,11 +59,18 @@ function getPropertyAttribute(options) {
 }
 
 function getFormTextInputArea(options) {
-  let { formElement, i, formgroup, width, } = options;
+  let { formElement, i, formgroup, width, onChangeText, } = options;
   // console.log(this.state, { formElement })
   let initialValue = formElement.value || this.state[ formElement.name ];
   if (typeof initialValue !== 'string') {
     initialValue = JSON.stringify(initialValue, null, 2);
+  }
+  if (!onChangeText) {
+    onChangeText = (text) => {
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = text;
+      this.setState(updatedStateProp);
+    };
   }
   return (<GRID_ITEM key={i}
     description={formElement.label}
@@ -74,19 +82,22 @@ function getFormTextInputArea(options) {
     gridItemContentStyle={{ borderTopWidth:0, }}
     >
     <TextInput {...formElement.passProps}
-      style={{ minHeight: (formElement.type==='textarea')?80:40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
+      style={{ minHeight: (formElement.type==='textarea')?80:40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, backgroundColor:'white', }} 
       multiline={(formElement.type==='textarea')?true:false}
-      onChangeText={(text) => {
-        let updatedStateProp = {};
-        updatedStateProp[ formElement.name ] = text;
-        this.setState(updatedStateProp);
-      } }
+      onChangeText={onChangeText}
       value={initialValue} />
   </GRID_ITEM>);
 }
 
 function getFormCheckbox(options) {
-  let { formElement, i, formgroup, width, } = options;
+  let { formElement, i, formgroup, width, onValueChange, } = options;
+  if (!onValueChange) {
+    onValueChange = (value) => {
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = value;
+      this.setState(updatedStateProp);
+    };
+  }
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={getGridMarginStyle({
@@ -97,18 +108,28 @@ function getFormCheckbox(options) {
     gridItemContentStyle={{ borderTopWidth:0, }}
     >
     <Switch {...formElement.passProps}
-      onValueChange={(value) => {
-        let updatedStateProp = {};
-        updatedStateProp[ formElement.name ] = value;
-        this.setState(updatedStateProp);
-      } }
+      onValueChange={onValueChange}
       // style={{marginBottom: 10}}
       value={formElement.value || this.state[formElement.name]} />
   </GRID_ITEM>);
 }
 
 function getFormSelect(options) {
-  let { formElement, i, formgroup, width, } = options;
+  let { formElement, i, formgroup, width, onValueChange, onSelect, } = options;
+  if (!onValueChange) {
+    onValueChange = (value) => {
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = value;
+      this.setState(updatedStateProp);
+    };
+  }
+  if (!onSelect) {
+    onSelect = (value) => {
+      let updatedStateProp = {};
+      updatedStateProp[ formElement.name ] = formElement.options[ value ].value;
+      this.setState(updatedStateProp);
+    };
+  }
   return (<GRID_ITEM key={i}
     description={formElement.label}
     style={getGridMarginStyle({
@@ -120,31 +141,24 @@ function getFormSelect(options) {
     >
     {(Platform.OS === 'web') ? (
       <Picker 
+        style={{ backgroundColor:'white', }}
         selectedValue={formElement.value}
-        onValueChange={(value) => {
-          let updatedStateProp = {};
-          updatedStateProp[ formElement.name ] = value;
-          this.setState(updatedStateProp);
-        } }>
+        onValueChange={onValueChange}>
         {formElement.options.map(option => {
           return (<Picker.Item label={option.label} value={option.value} />);
         })}
       </Picker>
     ) : (
         <ModalDropdown 
-          onSelect={(value) => {
-            let updatedStateProp = {};
-            updatedStateProp[ formElement.name ] = formElement.options[value].value;
-            this.setState(updatedStateProp);
-          } }
+          onSelect={onSelect}
           defaultValue={this.state[formElement.name] || formElement.value}
           style={{
-            height: 40, borderColor: 'lightgrey', borderWidth: 1, justifyContent: 'center', borderRadius: 3,
+            height: 40, borderColor: 'lightgrey', borderWidth: 1, justifyContent: 'center', borderRadius: 3, backgroundColor:'white',
             padding:5,
           }}
           textStyle={{ justifyContent:'center', flex:1 }}
           dropdownStyle={{
-            borderColor: 'gray', borderWidth: 1, minWidth:300, alignItems:'stretch', alignSelf: 'stretch',
+            borderColor: 'gray', borderWidth: 1, minWidth:300, alignItems:'stretch', alignSelf: 'stretch',  backgroundColor:'white',
           }}
           options={formElement.options.map(option => option.label)} />
     )}
@@ -165,7 +179,7 @@ function getFormSubmit(options) {
   let { formElement, i, formgroup, width, } = options;
   return (<View key={i} style={{ padding:10, }} >
     <Button {...formElement.passProps}
-      buttonStyle={{borderRadius:5, }}
+      buttonStyle={{ borderRadius:5, }}
       title={formElement.value}
       onPress={this.submitForm.bind(this)} />
   </View>);
@@ -390,7 +404,7 @@ function getFormDataTable(options) {
     {/*<Text>data table {formColumns.length}</Text> */}
     <ScrollView style={[ styles.stretchBox, ]} contentContainerStyle={[
       styles.scrollViewStandardContentContainer, {
-        flex: 1, alignSelf: 'stretch',
+        flex: 1, alignSelf: 'stretch', marginBottom: 0, paddingBottom:0, paddingTop:0, borderTopWidth:1, borderTopColor:'lightgrey',
       }, ]} horizontal={true} >
       <Table
         name="resource-variable-table"
@@ -400,21 +414,44 @@ function getFormDataTable(options) {
         getBlankHeader={formElement.dataTableHeader}
         getRenderRowData={formElement.dataTableRow}
         noImage={true}
+        style={{}}
         rowActions={[ 
           {
             icon: {
               name:'ios-arrow-dropup-outline',
             },
-            onPress: function movedown(detailData, detailRowData, sectionId, rowId) {
-              console.log('up',{ detailData, detailRowData, sectionId, rowId }, this.props);
+            onPress: (detailData, detailRowData, sectionId, rowId)=> {
+              // console.log('up',{ detailData, detailRowData, sectionId, rowId }, this.props);
+              if (rowId > 0) {                
+                let newState = Object.assign({}, this.state);
+                let itemToMove = newState[ formElement.name ].splice(rowId, 1)[0];
+                // console.log({itemToMove})
+                newState[ formElement.name ].splice(rowId - 1, 0, itemToMove);
+                newState.formDataTables[ formElement.name ] = {};
+                this.setState(newState);
+              }
+              // else {
+              //   console.log('already at top of list')
+              // }
             },
           },
           {
             icon: {
               name:'ios-arrow-dropdown-outline',
             },
-            onPress: function movedown(detailData, detailRowData, sectionId, rowId) {
-              console.log('down',{ detailData, detailRowData, sectionId, rowId }, this.props);
+            onPress: (detailData, detailRowData, sectionId, rowId) => {
+              // console.log('down',this.state[ formElement.name ].length,{ detailData, detailRowData, sectionId, rowId }, this.props);
+              if (rowId < (this.state[ formElement.name ].length -1)) {                
+                let newState = Object.assign({}, this.state);
+                let itemToMove = newState[ formElement.name ].splice(rowId, 1)[0];
+                // console.log({itemToMove})
+                newState[ formElement.name ].splice(rowId + 1, 0, itemToMove);
+                newState.formDataTables[ formElement.name ] = {};
+                this.setState(newState);
+              }
+              // else {
+              //   console.log('already at end of list')
+              // }
             },
           },
           {
@@ -424,8 +461,12 @@ function getFormDataTable(options) {
                 color: 'firebrick',
               },
             },
-            onPress: function movedown(detailData, detailRowData, sectionId, rowId) {
-              console.log('remove',{ detailData, detailRowData, sectionId, rowId }, this.props);
+            onPress: (detailData, detailRowData, sectionId, rowId) => {
+              // console.log('remove',{ detailData, detailRowData, sectionId, rowId }, 'this.state', this.state);
+              let newState = Object.assign({}, this.state);
+              newState[ formElement.name ].splice(rowId, 1);
+              newState.formDataTables[ formElement.name ] = {};
+              this.setState(newState);
             },
           },
         ]}
@@ -433,8 +474,88 @@ function getFormDataTable(options) {
         {...this.props}
         >
       </Table>
-    </ScrollView>  
+    </ScrollView>
+    <View>
+      <Accordian
+        title={'Add '+formElement.label}
+        collapsible={true}
+        icontype="Octicons"
+        iconCollapsed="plus"
+        iconOpened="dash"
+        useLeftIcon={true}
+        iconSize={14}
+        containerStyle={[layoutStyles.gridItemContent, {
+          marginTop: 5, paddingTop: 0, paddingBottom: 0, backgroundColor: 'whitesmoke', marginLeft: 5, marginRight: 5,
+        }, ]}
+        >
+        {formElement.newItems.map((newItem, a) => { 
+          if (newItem.type === 'text' || newItem.type === 'textarea') {
+            // newItem.name = formElement.name+'.'+newItem.name;
+            return getFormTextInputArea.call(this, {
+              formElement:newItem,
+              i: a,
+              formgroup: {},
+              width,
+              onChangeText: (text) => {
+                let updatedStateProp = Object.assign({}, this.state.formDataTables);
+                updatedStateProp[ formElement.name ] = Object.assign({}, updatedStateProp[ formElement.name ], {
+                  [ newItem.name ]: text,
+                });
+                this.setState({ formDataTables: updatedStateProp, });
+              },
+            });
+          } else if (newItem.type === 'select') {
+            // newItem.name = formElement.name+'.'+newItem.name;
+            return getFormSelect.call(this, {
+              formElement:newItem,
+              i: a,
+              formgroup: {},
+              width,
+              onValueChange: (value) => {
+                let updatedStateProp = Object.assign({}, this.state.formDataTables);
+                updatedStateProp[ formElement.name ] = Object.assign({}, updatedStateProp[ formElement.name ], {
+                  [ newItem.name ]: value,
+                });
+                this.setState({ formDataTables: updatedStateProp, });
+              },
+              onSelect: (value) => {
+                let updatedStateProp = Object.assign({}, this.state.formDataTables);
+                updatedStateProp[ formElement.name ] = Object.assign({}, updatedStateProp[ formElement.name ], {
+                  [ newItem.name ]: newItem.options[ value ].value,
+                });
+                this.setState({ formDataTables: updatedStateProp, });
+              },
+            });
+          } else {
+            return <View key={a} />;
+          }
+        })}
+        <SimpleButton 
+          buttonStyle={{ borderRadius:5, width:200, height:20, }}
+          label="Add"
+          onPress={() => {
+            let newState = Object.assign({}, this.state);
+            if (!Array.isArray(newState[ formElement.name ])) {
+              newState[ formElement.name ] = [];
+            }
+            newState[ formElement.name ].push(this.state.formDataTables[ formElement.name ]);
+            newState.formDataTables[ formElement.name ] = {};
+            this.setState(newState);
+            // console.log('add row',this.state);
+          }} />
+      </Accordian>
+    </View>
   </GRID_ITEM>);
+}
+
+class SimpleButton extends Component{
+  render() {
+    return (<TouchableOpacity onPress={this.props.onPress}>
+      <View style={[ { borderRadius: 5, backgroundColor:'lightslategrey', padding:10, margin:10, justifyContent:'center', alignSelf:'stretch', alignItems:'center', flex:0 }, this.props.style, ]}>
+        <Text style={{ color:'white', }}>{this.props.label}</Text>  
+      </View>
+    </TouchableOpacity>);
+  }
 }
 
 // let formKeyCounter = 0;
@@ -445,6 +566,7 @@ class ResponsiveForm extends Component {
       formDataError: null,
       formDataStatusDate: new Date(),
       formDataLists:{},
+      formDataTables:{},
     }, props.formdata);
     this.datalists = {};
     props.formgroups.forEach((formgroup) => {
@@ -467,6 +589,7 @@ class ResponsiveForm extends Component {
     delete formdata.formDataError;
     delete formdata.formDataLists;
     delete formdata.formDataStatusDate;
+    delete formdata.formDataTables;
     this.props.onSubmit(formdata);
   }
   componentWillUpdate(prevProps, prevState) {

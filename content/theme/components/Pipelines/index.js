@@ -11,6 +11,7 @@ import EngineDetailCompose from './engineDetailCompose';
 import EngineDetailEdit from './engineDetailEdit';
 import ResourceDetail from './resourceDetail';
 import ResourceDetailEdit from './ResourceDetailEdit';
+import ResourceDetailCompose from './ResourceDetailCompose';
 import moment from 'moment';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
@@ -46,7 +47,7 @@ class Pipelines extends Component {
             list: getListFromEntityName('resource', 'pipeline', { constants, }),
             detail: getDetailFromEntityName('resource', 'pipeline', {
               detailComponent: ResourceDetail,
-              createModalComponent: ResourceDetailEdit,
+              createModalComponent: ResourceDetailCompose,
               editModalComponent:ResourceDetailEdit,
               constants,
             }),

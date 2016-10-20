@@ -7,25 +7,25 @@ import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '
 import ResponsiveForm from '../../../../app/components/ResponsiveForm';
 import { request, } from '../../../../app/util/request';
 import constants from '../../constants';
-import engineform from './engineform';
+import requestform from './requestform';
 
-class EngineDetailCompose extends Component {
+class ResourceDetailCompose extends Component {
   constructor(props){
     super(props);
-    let engineData = {};
-    this.state = engineData;
+    let resourceData = {};
+    this.state = resourceData;
   }
   // componentWillReceiveProps(nextProps) {
-  //   let engineData = {};
-  //   this.setState(engineData);
+  //   let resourceData = {};
+  //   this.setState(resourceData);
   // }
   getFormLayoutData() {
-    return engineform(this.props);
+    return requestform(this.props);
   }
-  editEngine(formdata) {
-    // console.log('editEngine formdata', { formdata });
+  editResource(formdata) {
+    // console.log('editResource formdata', { formdata });
     formdata.system_of_record_associated_data = Object.assign({}, formdata.system_of_record_associated_data);
-    request(constants.pipelines.all.BASE_URL + constants.pipelines.engines.POST_NEW,
+    request(constants.pipelines.all.BASE_URL + constants.pipelines.resources.POST_NEW,
       {
         method: 'POST',
         headers: {
@@ -44,28 +44,28 @@ class EngineDetailCompose extends Component {
         // console.log('post updated', { updatedStatus, });
       })
       .catch(e => {
-        this.props.handleErrorNotification({ message:'Could not create a new Engine. '+e, }, e);
+        this.props.handleErrorNotification({ message:'Could not create a new Resource. '+e, }, e);
       });
   }
-  changeEngine(formdata) {
-    // console.log('changeEngine formdata', { formdata });
+  changeResource(formdata) {
+    // console.log('changeResource formdata', { formdata });
     if (formdata.title !== this.state.title) {
       this.setState({ title: formdata.title, });
     }
   }
   render() {
-    let _engine = this.state;
-    // console.log('ENGINE DETAIL Compose this.props', this.props, { _engine, });
+    let _resource = this.state;
+    // console.log('ENGINE DETAIL Compose this.props', this.props, { _resource, });
     return (
       <View style={{ flex:1, alignSelf:'stretch', }}>
-        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={[ styles.scrollViewStandardContentContainer, { padding:10, paddingBottom:120, }]} className="engineScrollView">
-          <H2>New Engine: {_engine.title}</H2>
+        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={[ styles.scrollViewStandardContentContainer, { padding:10, paddingBottom:120, }]} className="resourceScrollView">
+          <H2>New Resource: {_resource.title}</H2>
           <HR style={{ marginBottom:20, }}/>
           <ResponsiveForm 
-            ref="engineComposeForm"
-            onSubmit={this.editEngine.bind(this)}
-            onChange={this.changeEngine.bind(this)}
-            formdata={_engine}
+            ref="resourceComposeForm"
+            onSubmit={this.editResource.bind(this)}
+            onChange={this.changeResource.bind(this)}
+            formdata={_resource}
             formgroups={this.getFormLayoutData.call(this)}
             />
         </ScrollView>
@@ -74,4 +74,4 @@ class EngineDetailCompose extends Component {
   }
 }
 
-export default EngineDetailCompose;
+export default ResourceDetailCompose;

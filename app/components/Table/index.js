@@ -102,7 +102,7 @@ class Table extends Component {
     this.state = {
       pages: this.props.pages || 1,
       rows: (this.props.rows)? ds.cloneWithRows(this.props.rows) : ds.cloneWithRows([ this.getBlankHeader() ]),
-      rowscount: (this.props.rows) ? this.props.rows.length : 20,
+      rowscount: (this.props.rows && this.props.rows.length>3) ? this.props.rows.length : 10,
       totalcount: this.props.totalcount || 1,
     };
   }
@@ -120,7 +120,7 @@ class Table extends Component {
   render() {
     // console.log('TABLE this',{this})
     return (
-      <View style={[styles.scrollViewStandardContainer,{flex:1}]}  >
+      <View style={[styles.scrollViewStandardContainer,{ flex:1, }, this.props.style]}  >
         <ListView
           style={[ styles.flexBox, { paddingLeft:6, paddingRight:6, } ]}
           contentContainerStyle={{ position:'relative', }}
