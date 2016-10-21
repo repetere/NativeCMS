@@ -7,7 +7,7 @@ import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '
 import ResponsiveForm from '../../../../app/components/ResponsiveForm';
 import { request, } from '../../../../app/util/request';
 import constants from '../../constants';
-import requestform from './requestform';
+import resourceform from './resourceform';
 
 class EngineDetailEdit extends Component {
   constructor(props){
@@ -24,7 +24,7 @@ class EngineDetailEdit extends Component {
     // }
   }
   getFormLayoutData() {
-    return requestform(this.props);
+    return resourceform(this.props);
   }
   editEngine(formdata) {
     // console.log('editEngine formdata', { formdata });

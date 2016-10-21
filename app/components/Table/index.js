@@ -102,7 +102,7 @@ class Table extends Component {
     this.state = {
       pages: this.props.pages || 1,
       rows: (this.props.rows)? ds.cloneWithRows(this.props.rows) : ds.cloneWithRows([ this.getBlankHeader() ]),
-      rowscount: (this.props.rows && this.props.rows.length>3) ? this.props.rows.length : 10,
+      rowscount: (this.props.rows && this.props.rows.length>0) ? this.props.rows.length : 10,
       totalcount: this.props.totalcount || 1,
     };
   }
@@ -128,7 +128,7 @@ class Table extends Component {
           enableEmptySections={true}
           renderRow={this.renderRow.bind(this, this.getRenderRowData) }
           renderHeader={this.renderHeader.bind(this) }
-          initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
+          initialListSize={(Platform.OS==='web')?this.state.rowscount||20:undefined}
           >
         </ListView>
       </View>
@@ -147,7 +147,7 @@ class Table extends Component {
           <View style={[layoutStyles.listTextContainer,{ maxWidth:(width-110), }]}>
             {renderData.columns.map((column, i) => {
               return (
-                <Text key={i} style={[ layoutStyles.listText, column.style, layoutStyles.tableHeaderText, ]} numberOfLines={1}>{column.heading.toUpperCase()} </Text>
+                <Text key={i} style={[ layoutStyles.listText, column.style, layoutStyles.tableHeaderText, ]} numberOfLines={this.props.numberOfLines || this.props.numberOfHeaderLines }>{column.heading.toUpperCase()} </Text>
               );
             }) }
           </View>  
@@ -171,7 +171,7 @@ class Table extends Component {
     }
     if (this.props.rowActions && this.props.rowActions.length > 0) {
       actionsComponent = (
-        <View  style={[layoutStyles.listItemIconWrapper,{marginRight:20,}]}>
+        <View  style={[layoutStyles.listItemIconWrapper, { marginRight:20, }]}>
           {this.props.rowActions.map((action, i) => {
             return (
               <TouchableOpacity key={i} style={{
@@ -190,16 +190,21 @@ class Table extends Component {
     }
 
     return (
-      <View style={layoutStyles.listContainer} >
+      <View style={[layoutStyles.listContainer, { backgroundColor:(parseInt(rowId)%2!==0)?'ghostwhite':undefined, }]} >
         {(this.props.noImage===true)?null:(<View style={layoutStyles.listImageWrapper}>
           <Image source={{ uri: renderData.image.uri, }} style={layoutStyles.listImage} resizeMode="cover" />
         </View>)}
         
         <View style={layoutStyles.listTextWrapper}>
           <View style={[layoutStyles.listTextContainer, { maxWidth:(width-110), }]}>
-            {renderData.columns.map(( column, i) => {
+            {renderData.columns.map((column, i) => {
+              if (Platform.OS === 'web' && column.usePRE) {
+                return (<View key={i} style={[ layoutStyles.listText, column.style, ]}><pre style={{ overflow:'auto', }}>{(column.useJSON)?JSON.stringify(column.label, null, 2):column.label}</pre></View>);
+                // return (<View key={i} style={[ layoutStyles.listText, column.style, ]}><pre style={{ overflow:'auto', }}>{column.label}</pre></View>);
+              }
               return (
-                <Text key={i} style={[layoutStyles.listText, column.style, ]} numberOfLines={1}>{column.label} </Text>
+                <Text key={i} style={[layoutStyles.listText, column.style, ]} numberOfLines={this.props.numberOfLines}>{(column.useJSON)?JSON.stringify(column.label, null, 2):column.label}</Text>
+                // <Text key={i} style={[layoutStyles.listText, column.style, ]} numberOfLines={this.props.numberOfLines}>{column.label}</Text>
               );
             }) }
           </View>
@@ -209,7 +214,7 @@ class Table extends Component {
     );
   }
   loadDetail(detailData, detailRowData, sectionId, rowId) {
-    console.log({ detailData }, { detailRowData }, this.props);
+    // console.log({ detailData }, { detailRowData }, this.props);
     this.props.onChangeExtension(this.props.detailPath.replace(':id', detailData._id), {
       config: this.props.loadExtensionRouteOptions,
       passProps: {
