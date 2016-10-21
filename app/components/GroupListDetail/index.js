@@ -111,9 +111,6 @@ function getRefreshData() {
 
 function getDataForLists(config, options = {}) {
   // console.log('getDataForLists CALLDED this.props',this.props,'this.state',this.state,{config})
-  let queryString = '?'+querystring.stringify(Object.assign({}, options.query, {
-    format: 'json',
-  }));
   let stateData = {
     dataError: false,
     dataLoaded: false,
@@ -122,7 +119,12 @@ function getDataForLists(config, options = {}) {
     isRefreshing: false,
   };
   let selectedGroupListProp = this.props[ config.componentPropsName ].entities[ this.state.GroupListDetailStateData.selectedGroup ];
+  let querystringPrefix = (selectedGroupListProp.list.fetchUrl.indexOf('?')!==-1) ? '&' : '?';
+  let queryString = querystringPrefix+querystring.stringify(Object.assign({}, options.query, {
+    format: 'json',
+  }));
   // request(this.props.GroupListDetail.list.fetchUrl, {
+  console.log('selectedGroupListProp.list.fetchUrl+queryString',selectedGroupListProp.list.fetchUrl+queryString)
   return new Promise((resolve, reject) => {
     request(selectedGroupListProp.list.fetchUrl+queryString, {
       method: 'GET',
@@ -133,7 +135,7 @@ function getDataForLists(config, options = {}) {
       },
     })
     .then(responseData => {
-      // console.log({responseData})
+      console.log({responseData},'config.componentDataName',config.componentDataName,'selectedGroupListProp[config.componentDataName]',selectedGroupListProp[config.componentDataName])
       stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = false;
@@ -150,7 +152,7 @@ function getDataForLists(config, options = {}) {
       resolve(responseData);
     })
     .catch(error => {
-      // console.log({error})
+      console.log({error})
       stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = error;
@@ -229,8 +231,10 @@ class Group extends Component{
         backgroundColor:'whitesmoke',
       },
         ]}  >
-        <MenuBar {...groupMenuBarProps}/>
-        {this.getGroups()}
+        <MenuBar {...groupMenuBarProps} />
+        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer} >
+          {this.getGroups()}
+        </ScrollView>
       </Animatable.View>
     );  
     return loadedDataView;     
@@ -791,9 +795,9 @@ export function getListFromEntityName(entityName, groupName, options) {
   return {
     fetchUrl: constants[pluralize(groupName)].all.BASE_URL + constants[pluralize(groupName)][pluralize(entityName)].GET_INDEX,
     listProps: {
-      pagesProp:`${entityName}pages`, //enginepages,
-      dataProp: pluralize(entityName), //'engines',
-      countProp: `${pluralize(entityName)}count`,//'enginescount',
+      pagesProp:`${options.listPropsEntityName || entityName}pages`, //enginepages,
+      dataProp: pluralize(options.listPropsEntityName || entityName), //'engines',
+      countProp: `${pluralize(options.listPropsEntityName || entityName)}count`,//'enginescount',
     },
     componentProps: {
       title: capitalize(entityName), //'Engine',
@@ -802,7 +806,7 @@ export function getListFromEntityName(entityName, groupName, options) {
       method: 'passProps',
     },
     menuBar: {
-      title: capitalize(entityName), //'Engine',
+      title: capitalize(options.display_title || entityName), //'Engine',
       // rightItem: {
       //   icon: {
       //     icontype: 'Ionicons',

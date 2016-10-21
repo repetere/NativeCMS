@@ -17,6 +17,7 @@ import ParserDetailEdit from './ParserDetailEdit';
 import ParserDetailCompose from './ParserDetailCompose';
 import SegmentDetail from './SegmentDetail';
 import SegmentDetailEdit from './SegmentDetailEdit';
+import SegmentDetailCompose from './SegmentDetailCompose';
 import moment from 'moment';
 import numeral from 'numeral';
 import capitalize from 'capitalize';
@@ -72,7 +73,7 @@ class Pipelines extends Component {
             list: getListFromEntityName('segment', 'pipeline', { constants, }),
             detail: getDetailFromEntityName('segment', 'pipeline', {
               detailComponent: SegmentDetail,
-              createModalComponent: LoadingView,
+              createModalComponent: SegmentDetailCompose,
               editModalComponent: SegmentDetailEdit,
               constants,
             }),

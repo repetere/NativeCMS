@@ -232,8 +232,8 @@ export function getResourceVariableTable(variables) {
 
 export function getSegmentRulesetRulesHeader() {
   return {
-    function: 'n/a',
-    state: 'n/a',
+    function_name: 'n/a',
+    default_state: 'n/a',
   };
 }
 export function getSegmentRulesetRulesRenderRowData(data) {

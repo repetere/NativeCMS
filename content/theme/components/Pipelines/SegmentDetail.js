@@ -33,11 +33,16 @@ class SegmentDetail extends Component {
               description="Name"
               />
           </RESPONSIVE_GRID>
-          <RESPONSIVE_GRID columns={1}>
+          <RESPONSIVE_GRID columns={2}>
             <GRID_ITEM 
               useLabel={true}
               title={this.props.detailData.description}
               description="Description"
+              />
+            <GRID_ITEM 
+              useLabel={true}
+              title={this.props.detailData.category}
+              description="category"
               />
           </RESPONSIVE_GRID>
           <H2 style={{ marginTop:20, }}>Conditions</H2>
@@ -45,20 +50,23 @@ class SegmentDetail extends Component {
             {getSegmentConditionsTable.call(this, this.props.detailData.conditions||[])}
           </RESPONSIVE_GRID>
           <H2 style={{ marginTop: 20, }}>Ruleset</H2>
-          <RESPONSIVE_GRID columns={2}>
-            <GRID_ITEM 
-              useLabel={true}
-              title={this.props.detailData.ruleset.title}
-              description="Title"
-              />
-            <GRID_ITEM 
-              useLabel={true}
-              title={this.props.detailData.ruleset.name}
-              description="Name"
-              />
-          </RESPONSIVE_GRID>
+          {(this.props.detailData.ruleset) ? (
+            <RESPONSIVE_GRID columns={2}>
+              <GRID_ITEM 
+                useLabel={true}
+                title={this.props.detailData.ruleset.title || 'n/a'}
+                description="Title"
+                />
+              <GRID_ITEM 
+                useLabel={true}
+                title={this.props.detailData.ruleset.name || 'n/a'}
+                description="Name"
+                />
+            </RESPONSIVE_GRID>
+          ):null}
           <RESPONSIVE_GRID columns={1}>
-            {getSegmentRulesetRulesTable.call(this, this.props.detailData.ruleset.rules||[])}
+            {(this.props.detailData.ruleset && this.props.detailData.ruleset.rules && this.props.detailData.ruleset.rules.length>0)?(getSegmentRulesetRulesTable.call(this, this.props.detailData.ruleset.rules||[])):(<GRID_ITEM gridItemContentStyle={{borderTopWidth:0}}><Text>No Segment Ruleset</Text></GRID_ITEM>)}
+            {}
           </RESPONSIVE_GRID>
         </View>
       </DetailView>

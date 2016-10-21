@@ -26,6 +26,11 @@ export default function (formProps) {
       name:'description',
       // value:'text',
     }, {
+      type:'text',
+      label:'Category',
+      name:'category',
+      // value:'text',
+    }, {
       type: 'datatable',
       label: 'Conditions',
       name: 'conditions',
@@ -97,6 +102,16 @@ export default function (formProps) {
         label: 'Condition Group',
         name:'condition_group_id',
       }, ],
+    }, {
+      type:'text',
+      label:'Ruleset Title',
+      name:'ruleset.title',
+      // value:'text',
+    }, {
+      type:'text',
+      label:'Ruleset Name',
+      name:'ruleset.name',
+      // value:'text',
     }, {
       type: 'datatable',
       label: 'Ruleset Rules',
