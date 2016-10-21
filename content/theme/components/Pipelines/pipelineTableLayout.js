@@ -147,6 +147,7 @@ export function getParserVariablesRenderRowData(data) {
       style: {
         width: 300,
       },
+      // usePRE:true,  
       heading: 'Operation',
       label: data.calculation_operation,
     }],

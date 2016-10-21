@@ -7,7 +7,7 @@ import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, } from '
 import ResponsiveForm from '../../../../app/components/ResponsiveForm';
 import { request, } from '../../../../app/util/request';
 import constants from '../../constants';
-import requestform from './requestform';
+import resourceform from './resourceform';
 
 class ResourceDetailCompose extends Component {
   constructor(props){
@@ -20,7 +20,7 @@ class ResourceDetailCompose extends Component {
   //   this.setState(resourceData);
   // }
   getFormLayoutData() {
-    return requestform(this.props);
+    return resourceform(this.props);
   }
   editResource(formdata) {
     // console.log('editResource formdata', { formdata });
