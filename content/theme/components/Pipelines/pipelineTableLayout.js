@@ -52,6 +52,7 @@ export function getSegmentConditionsHeader() {
     value: 'n/a',
     minimum: 'n/a',
     maximum: 'n/a',
+    condition_group_id: 'n/a',
   };
 }
 export function getSegmentConditionsRenderRowData(data) {
@@ -92,6 +93,12 @@ export function getSegmentConditionsRenderRowData(data) {
       },
       heading: 'Maximum',
       label: data.state_property_attribute_value_maximum,
+    }, {
+      style: {
+        width: 100,
+      },
+      heading: 'Condition Group',
+      label: data.condition_group_id,
     }],
     action: {
       icon: {
@@ -216,6 +223,51 @@ export function getResourceVariableTable(variables) {
         totalcount={variables.length}
         getBlankHeader={getResourceVariablesHeader}
         getRenderRowData={getResourceVariablesRenderRowData}
+        noImage={true}
+        noAction={true}
+        {...this.props}
+        >
+      </Table>);
+}
+
+export function getSegmentRulesetRulesHeader() {
+  return {
+    function: 'n/a',
+    state: 'n/a',
+  };
+}
+export function getSegmentRulesetRulesRenderRowData(data) {
+  return {
+    columns: [{
+      style: {
+        width:200,
+      },
+      heading: 'Function',
+      label: data.function_name,
+    }, {
+      style: {
+        width: 400,
+      },
+      usePRE: true,
+      useJSON:true,
+      heading: 'Default State',
+      label: data.default_state,
+    }],
+    action: {
+      icon: {
+        name:'ios-arrow-forward',
+      },
+    },
+  };
+}
+export function getSegmentRulesetRulesTable(rules) {
+  return (<Table
+        name="segment-rules-table"
+        pages={1}
+        rows={rules}
+        totalcount={rules.length}
+        getBlankHeader={getSegmentRulesetRulesHeader}
+        getRenderRowData={getSegmentRulesetRulesRenderRowData}
         noImage={true}
         noAction={true}
         {...this.props}

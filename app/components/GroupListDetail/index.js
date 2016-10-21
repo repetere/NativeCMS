@@ -161,6 +161,8 @@ function getDataForLists(config, options = {}) {
         GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
       });
       reject(error);
+      this.props.handleErrorNotification({ message:'Could not update '+pluralize(stateData.selectedGroup)+'. '+error, }, error);
+
     });
   });
 }

@@ -85,7 +85,7 @@ const styles = StyleSheet.create(Object.assign({
     minHeight:30,
     borderBottomColor: 'lightgrey',
     borderBottomWidth: StyleSheet.hairlineWidth || 1,
-    alignSelf: 'center',
+    alignSelf: 'stretch',
   },
   listText: {
     fontSize: 14,

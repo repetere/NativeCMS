@@ -27,7 +27,7 @@ import { getComponentFromRouterLocation, getTabFromLocation, getRouteExtensionFr
 import pathToRegexp from 'path-to-regexp';
 import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 import { MessageBarManager, MessageBar, } from '../MessageBar';
-
+import moment from 'moment';
 const history = getHistory(historySettings, AppConfigSettings, store);
 // const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
 const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || '/';
@@ -133,7 +133,17 @@ class MainApp extends Component{
             timeout: jwt_token_data.timeout,
             user: jwt_user_profile,
           };
-          this.props.saveUserProfile(url, response, json);
+          let currentTime = new Date();
+          
+          if (moment(jwt_token_data.expires).isBefore(currentTime)) {
+            let expiredTokenError = new Error(`Access Token Expired ${moment(jwt_token_data.expires).format('LLLL')}`);
+            setTimeout(() => {
+              this.handleErrorNotification({ message: 'Access Token Expired' + expiredTokenError, }, expiredTokenError);
+            }, 1000);
+            throw expiredTokenError;
+          } else {
+            this.props.saveUserProfile(url, response, json);
+          }
         } else if(jwt_token) {
           this.props.getUserProfile(jwt_token);
         }
@@ -150,9 +160,9 @@ class MainApp extends Component{
         this.props.logoutUser();
       });
     setImmediate(() => {
-      MessageBarManager.hideAlert();
+      // MessageBarManager.hideAlert();
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
-      MessageBarManager.hideAlert();
+      // MessageBarManager.hideAlert();
     });
       
   }
@@ -167,7 +177,7 @@ class MainApp extends Component{
     this.onChangeExtension(el.props.path, options);
   }
   onChangeExtension(path, options = {}) {
-    console.log('onChangeExtension',{path},{options})
+    // console.log('onChangeExtension',{path},{options})
     let pageLocation = this.props.location.pathname;
     if (pageLocation !== defaultExtensionRoute) {
       this.previousRoute = { path:pageLocation, };
@@ -210,7 +220,7 @@ class MainApp extends Component{
     // window.appnav = this.refs.AppNavigator;
     if (!MessageBarManager.getRegisteredMessageBar()) {
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
-      MessageBarManager.hideAlert();
+      // MessageBarManager.hideAlert();
       window.MessageBarManager = MessageBarManager;
     }
     /*
