@@ -31,6 +31,7 @@ export function getMCRSegmentRulesetRulesRenderRowData(data) {
       style: {
         width:150,
       },
+      // usePRE:true,  
       heading: 'Field',
       label: data.field || ' ',
     }, {
@@ -55,6 +56,7 @@ export function getMCRSegmentRulesetRulesRenderRowData(data) {
       style: {
         width: 200,
       },
+      // usePRE:true,  
       heading: 'Output',
       label: data.output,
     }],

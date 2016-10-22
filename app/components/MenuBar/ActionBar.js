@@ -8,6 +8,7 @@ import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 
 function getMenuItem(props, index, menuBarContentItemStyle = {}, modalExtensionRefs = {}) {
+  console.log({ modalExtensionRefs });
   let onPressProp = {};
   if (props) {
     if (props.type === 'modal') {
@@ -35,8 +36,10 @@ function getMenuItem(props, index, menuBarContentItemStyle = {}, modalExtensionR
 class ActionBar extends Component{
   constructor(props) {
     super(props);
+    console.log('constructor ActionBar this.props',this.props)
   }
   render() {
+    console.log('ActionBar this.props',this.props)
     let menuItems = this.props.actions.map((action, i) => getMenuItem(action, i, this.props.menuBarContentItemStyle,this.props.modalExtensionRefs));
 
     return (<View style={[layoutStyles.menuBarContentWrapper, this.props.menuBarContentWrapperStyle, ]}>

@@ -59,8 +59,12 @@ function getMenuItemList(props, index, menuBarContentItemStyle = {}, modalExtens
         // onPress={() => { console.log('icon pressed', { modalExtensionRefs, props }) } }
         size={24}
         key={index}/>;
-    } else if (props.itemType === 'text'){
-      return <Text key={index} style={[layoutStyles.menuBarItemIcon, layoutStyles.menuBarItemText, menuBarContentItemStyle, ]}>{props.label}</Text>;  
+    } else if (props.itemType === 'text') {
+      if (props.onPress) {
+        return <TouchableOpacity key={index} onPress={props.onPress} style={{justifyContent:'center', flex:1,}}><Text style={[layoutStyles.menuBarItemIcon, layoutStyles.menuBarItemText, menuBarContentItemStyle, ]}>{props.label}</Text></TouchableOpacity>; 
+      } else {
+        return <Text key={index} style={[layoutStyles.menuBarItemIcon, layoutStyles.menuBarItemText, menuBarContentItemStyle, ]}>{props.label}</Text>;  
+      }
     }
   }
   else {

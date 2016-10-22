@@ -114,6 +114,7 @@ function getDataForLists(config, options = {}) {
   let stateData = {
     dataError: false,
     dataLoaded: false,
+    dataTimestamp: new Date(),
   };
   let stateDataProp = {
     isRefreshing: false,
@@ -124,7 +125,7 @@ function getDataForLists(config, options = {}) {
     format: 'json',
   }));
   // request(this.props.GroupListDetail.list.fetchUrl, {
-  console.log('selectedGroupListProp.list.fetchUrl+queryString',selectedGroupListProp.list.fetchUrl+queryString)
+  // console.log('selectedGroupListProp.list.fetchUrl+queryString',selectedGroupListProp.list.fetchUrl+queryString)
   return new Promise((resolve, reject) => {
     request(selectedGroupListProp.list.fetchUrl+queryString, {
       method: 'GET',
@@ -135,7 +136,7 @@ function getDataForLists(config, options = {}) {
       },
     })
     .then(responseData => {
-      console.log({responseData},'config.componentDataName',config.componentDataName,'selectedGroupListProp[config.componentDataName]',selectedGroupListProp[config.componentDataName])
+      // console.log({responseData},'config.componentDataName',config.componentDataName,'selectedGroupListProp[config.componentDataName]',selectedGroupListProp[config.componentDataName])
       stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = false;
@@ -152,7 +153,7 @@ function getDataForLists(config, options = {}) {
       resolve(responseData);
     })
     .catch(error => {
-      console.log({error})
+      // console.log({error})
       stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = error;
@@ -304,7 +305,7 @@ class GroupList extends Component{
     // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
-
+    // console.log('this.props.GroupListDetail.list.componentProps', this.props.GroupListDetail.list);
     if (this.props.GroupListDetail.list) {
       let groupListMenuBar = this.props.GroupListDetail.list.menuBar;
       groupListMenuBar.leftItem = {
@@ -319,6 +320,37 @@ class GroupList extends Component{
           console.log('show sidebar');
         },
         label: capitalize(pluralize(this.props.GroupListDetail.groupTitle)),
+      };
+      let actionBarProps = {
+        menuBarContentWrapperStyle: {
+          height: 40,
+          paddingTop: 0,
+          borderBottomWidth:0,
+          borderTopWidth:1,
+          borderTopColor: 'darkgray',
+        },
+        actions: [ {
+          itemType: 'text',
+          label:'filter',
+        }, {
+          itemType: 'text',
+          label: 'last updated',
+          onPress: getRefreshData.bind(this),
+        }, {
+          icon: {
+            icontype: 'Ionicons',
+            name: 'ios-add-circle-outline',
+          },
+          itemType: 'icon',
+          title: `Create ${capitalize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          description: `create new ${pluralize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          type: 'modal',
+          modalOptions: {
+            component: this.props.GroupListDetail.list.componentProps.createModalComponent,
+            ref:`create_${this.props.GroupListDetail.list.componentProps.entityName}_modal`,
+            style: { /* margin: 30, width:500, */ },
+          },
+        }],
       };
       let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
 
@@ -365,6 +397,7 @@ class GroupList extends Component{
                 >
               </ListView>
             ) : null}
+          <ActionBar {...actionBarProps} {...this.props} />
           </View>
         </View>
         );
@@ -430,7 +463,7 @@ function closeModal(name) {
 }
 
 function generateModals(actions, props) {
-  // console.log('generateModals', { actions });
+  // console.log('generateModals', { actions, props });
   let { width, height, } = Dimensions.get('window');
   // console.log('Dimensions',{ width, height, })
   let modals = actions.map((action, i) => {
@@ -801,6 +834,10 @@ export function getListFromEntityName(entityName, groupName, options) {
     },
     componentProps: {
       title: capitalize(entityName), //'Engine',
+      create_modal_ref: `create_${entityName}_modal`,
+      createModalComponent: options.createModalComponent,
+      entityName,
+      groupName,
     },
     detailLoad: {
       method: 'passProps',
