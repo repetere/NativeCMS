@@ -16,6 +16,7 @@ import ParserDetail from '../Pipelines/ParserDetail';
 import ParserDetailEdit from '../Pipelines/ParserDetailEdit';
 import ParserDetailCompose from '../Pipelines/ParserDetailCompose';
 import SegmentDetail from '../Pipelines/SegmentDetail';
+import MCRSegmentDetail from './MCRSegmentDetail';
 import SegmentDetailEdit from '../Pipelines/SegmentDetailEdit';
 import SegmentDetailCompose from '../Pipelines/SegmentDetailCompose';
 import moment from 'moment';
@@ -82,7 +83,7 @@ class Models extends Component {
             group: getGroupFromEntityName('mcr_segment', 'model', { constants, }),
             list: getListFromEntityName('mcr_segment', 'model', { constants,  listPropsEntityName:'segment', display_title:'MCR Segments', }),
             detail: getDetailFromEntityName('mcr_segment', 'model', {
-              detailComponent: SegmentDetail,
+              detailComponent: MCRSegmentDetail,
               createModalComponent: SegmentDetailCompose,
               editModalComponent: SegmentDetailEdit,
               constants,
