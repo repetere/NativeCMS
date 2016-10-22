@@ -55,6 +55,7 @@ function getListStateFromProps(props) {
   if (typeof props.dataError !== 'undefined') {
     returnProps.dataError = props.dataError;
     returnProps.dataLoaded = props.dataLoaded;
+    returnProps.dataTimestamp = props.dataTimestamp;
 
   }
   return returnProps;
@@ -301,7 +302,7 @@ class GroupList extends Component{
     // }
   }
   render() {
-    // console.log('GroupList RENDER this.state', this.state);
+    console.log('GroupList RENDER this.state', this.state);
     // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
@@ -334,7 +335,7 @@ class GroupList extends Component{
           label:'filter',
         }, {
           itemType: 'text',
-          label: 'last updated',
+          label: (this.state.dataTimestamp)? 'Updated '+moment(this.state.dataTimestamp).calendar():'Refresh data',
           onPress: getRefreshData.bind(this),
         }, {
           icon: {
