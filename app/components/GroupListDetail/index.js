@@ -306,8 +306,8 @@ class GroupList extends Component{
     // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
     let errorView = (<LoadingView/>);
-    // console.log('this.props.GroupListDetail.list.componentProps', this.props.GroupListDetail.list);
     if (this.props.GroupListDetail.list) {
+      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
       let groupListMenuBar = this.props.GroupListDetail.list.menuBar;
       groupListMenuBar.leftItem = {
         textIcon: {
@@ -331,8 +331,21 @@ class GroupList extends Component{
           borderTopColor: 'darkgray',
         },
         actions: [ {
-          itemType: 'text',
-          label:'filter',
+          // itemType: 'text',
+          // label:'filter',
+          icon: {
+            icontype: 'Ionicons',
+            name: 'md-funnel', //ios-settings-outline
+          },
+          itemType: 'icon',
+          title: `Filter ${capitalize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          description: `filter new ${pluralize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          type: 'modal',
+          modalOptions: {
+            component: emptyView,
+            ref: `filter_${this.props.GroupListDetail.list.componentProps.entityName}_modal`,
+            style: { /* margin: 30, width:500, */ },
+          },
         }, {
           itemType: 'text',
           label: (this.state.dataTimestamp)? 'Updated '+moment(this.state.dataTimestamp).calendar():'Refresh data',
@@ -340,7 +353,7 @@ class GroupList extends Component{
         }, {
           icon: {
             icontype: 'Ionicons',
-            name: 'ios-add-circle-outline',
+            name: 'ios-create-outline', //ios-settings-outline
           },
           itemType: 'icon',
           title: `Create ${capitalize(this.props.GroupListDetail.list.componentProps.entityName)}`,
@@ -353,7 +366,6 @@ class GroupList extends Component{
           },
         }],
       };
-      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
 
       let useLoadingView = ((typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false) || (this.state.dataLoaded === false && this.state.dataError === false));
       // console.log({ useLoadingView });
@@ -398,7 +410,7 @@ class GroupList extends Component{
                 >
               </ListView>
             ) : null}
-          <ActionBar {...actionBarProps} {...this.props} />
+            <ActionBar {...actionBarProps} {...this.props} />
           </View>
         </View>
         );
@@ -488,15 +500,6 @@ function generateModals(actions, props) {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
 
-    // // console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
-    // if (modalOptions.ref.search(new RegExp('create_', 'i'))!==-1) {
-    //   // modalOptions.passProps
-    //   modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = false;
-    //   // console.log('create modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData );
-    // } else {
-    //   modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = true;
-    //   // console.log('edit or delete modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData);
-    // }
     modalOptions.style = Object.assign({
       justifyContent: 'center',
       alignItems: 'center',
@@ -507,7 +510,6 @@ function generateModals(actions, props) {
     
     let ModalOptionComponent = modalOptions.component;
     let ModelContent = (modalOptions.component) ? (<ModalOptionComponent {...modalOptions.passProps}/>):null;
-
 
     // modalOptions.deleteConfirm
     if (modalOptions.component===false){
@@ -911,7 +913,7 @@ export function getDetailFromEntityName(entityName, groupName, options) {
     }, {
       icon: {
         icontype: 'Ionicons',
-        name: 'ios-add-circle-outline',
+        name: 'ios-settings-outline',
       },
       itemType: 'icon',
       title: `Create ${capitalize(entityName)}`,
@@ -922,7 +924,21 @@ export function getDetailFromEntityName(entityName, groupName, options) {
         ref:`create_${entityName}_modal`,
         style: { /* margin: 30, width:500, */ },
       },
-    }, ],
+    }, {
+      icon: {
+        icontype: 'Ionicons',
+        name: 'md-funnel', //ios-settings-outline
+      },
+      itemType: 'icon',
+      title: `Filter ${capitalize(entityName)}`,
+      description: `filter new ${pluralize(entityName)}`,
+      type: 'modal',
+      modalOptions: {
+        component: options.createModalComponent,
+        ref: `filter_${entityName}_modal`,
+        style: { /* margin: 30, width:500, */ },
+      },
+    }],
   };
 }
 
