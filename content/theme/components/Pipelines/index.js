@@ -15,13 +15,11 @@ import ResourceDetailCompose from './ResourceDetailCompose';
 import ParserDetail from './ParserDetail';
 import ParserDetailEdit from './ParserDetailEdit';
 import ParserDetailCompose from './ParserDetailCompose';
-import SegmentDetail from './SegmentDetail';
-import SegmentDetailEdit from './SegmentDetailEdit';
-import SegmentDetailCompose from './SegmentDetailCompose';
-import moment from 'moment';
-import numeral from 'numeral';
-import capitalize from 'capitalize';
-import pluralize from 'pluralize';
+import SegmentDetailGenerator from './SegmentDetailGenerator';
+import SegmentDetailEditGenerator from './SegmentDetailEditGenerator';
+import SegmentDetailComposeGenerator from './SegmentDetailComposeGenerator';
+import segmentform from './segmentform';
+import { getSegmentRulesetRulesTable, } from './pipelineTableLayout';
 
 class Pipelines extends Component {
   constructor(props) {
@@ -72,9 +70,19 @@ class Pipelines extends Component {
             group: getGroupFromEntityName('segment', 'pipeline', { constants, }),
             list: getListFromEntityName('segment', 'pipeline', { constants, }),
             detail: getDetailFromEntityName('segment', 'pipeline', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable,
+              }),
+              createModalComponent: SegmentDetailComposeGenerator({
+                baseComposeURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_NEW,
+                segmentform: segmentform,
+                titlePrefix: 'Segment',
+              }),
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: segmentform,
+                titlePrefix: 'Segment',
+              }),
               constants,
             }),
           },

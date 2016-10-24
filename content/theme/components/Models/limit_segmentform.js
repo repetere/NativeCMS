@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, View, Platform, Text, Image, Dimensions, TextIn
 import layoutStyles from '../../../../app/components/Styles/layout';
 import constants from '../../constants';
 import { getSegmentConditionsHeader, getSegmentConditionsRenderRowData, newSegmentConditionItems, } from '../Pipelines/pipelineTableLayout';
-import { getMCRSegmentRulesetRulesHeader, getMCRSegmentRulesetRulesRenderRowData, } from './modelTableLayout';
+import { getLimitSegmentRulesetRulesHeader, getLimitSegmentRulesetRulesRenderRowData, } from './modelTableLayout';
 
 export default function (formProps) {
   return [ {
@@ -52,8 +52,8 @@ export default function (formProps) {
       type: 'datatable',
       label: 'Ruleset Rules',
       name: 'ruleset.rules',
-      dataTableHeader: getMCRSegmentRulesetRulesHeader,
-      dataTableRow: getMCRSegmentRulesetRulesRenderRowData,
+      dataTableHeader: getLimitSegmentRulesetRulesHeader,
+      dataTableRow: getLimitSegmentRulesetRulesRenderRowData,
       newItems: [ {
         type: 'text',
         label: 'Object',
@@ -72,12 +72,47 @@ export default function (formProps) {
         name:'minimum',
       }, {
         type: 'text',
-        label: 'Condition Group',
-        name:'or_group',
+        label: 'Product',
+        name:'product',
+      }, {
+        type: 'text',
+        label: 'Attribute',
+        name:'attribute',
+      }, {
+        type: 'text',
+        label: 'Limit',
+        name:'limit',
+      }, {
+        type: 'text',
+        label: 'Apply To',
+        name:'apply_to',
+      }, {
+        type: 'text',
+        label: 'Limit type',
+        name: 'limit_type',
+        options: [
+          {
+            label: 'Please select',
+            value: '',
+          }, {
+            label: 'CAP',
+            value: 'CAP',
+          }, {
+            label: 'FLOOR',
+            value: 'FLOOR',
+          }, {
+            label: 'EQUAL',
+            value: 'EQUAL',
+          }, 
+        ],
       }, {
         type: 'text',
         label: 'Output',
         name:'output',
+      }, {
+        type: 'text',
+        label: 'Comment',
+        name:'comment',
       }, ],
     }, {
       type: 'divider',    

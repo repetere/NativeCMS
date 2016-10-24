@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, View, Platform, Text, Image, Dimensions, TextIn
 import layoutStyles from '../../../../app/components/Styles/layout';
 import constants from '../../constants';
 import { getSegmentConditionsHeader, getSegmentConditionsRenderRowData, newSegmentConditionItems, } from '../Pipelines/pipelineTableLayout';
-import { getMCRSegmentRulesetRulesHeader, getMCRSegmentRulesetRulesRenderRowData, } from './modelTableLayout';
+import { getAdverseSegmentRulesetRulesHeader, getAdverseSegmentRulesetRulesRenderRowData, } from './modelTableLayout';
 
 export default function (formProps) {
   return [ {
@@ -52,32 +52,40 @@ export default function (formProps) {
       type: 'datatable',
       label: 'Ruleset Rules',
       name: 'ruleset.rules',
-      dataTableHeader: getMCRSegmentRulesetRulesHeader,
-      dataTableRow: getMCRSegmentRulesetRulesRenderRowData,
+      dataTableHeader: getAdverseSegmentRulesetRulesHeader,
+      dataTableRow: getAdverseSegmentRulesetRulesRenderRowData,
       newItems: [ {
         type: 'text',
-        label: 'Object',
-        name:'object',
+        label: 'Product',
+        name:'product',
       }, {
         type: 'text',
-        label: 'Field',
-        name:'field',
+        label: 'Step',
+        name:'step',
       }, {
         type: 'text',
-        label: 'Maximum',
-        name:'maximum',
+        label: 'Fail Reason',
+        name:'fail_reason_label',
       }, {
         type: 'text',
-        label: 'Minimum',
-        name:'minimum',
+        label: 'Source',
+        name:'source',
       }, {
         type: 'text',
-        label: 'Condition Group',
-        name:'or_group',
+        label: 'Variable',
+        name:'variable',
       }, {
         type: 'text',
-        label: 'Output',
-        name:'output',
+        label: 'Value',
+        name:'value',
+      }, {
+        type: 'text',
+        label: 'Reason Code',
+        name:'reason_code',
+      }, {
+        type: 'text',
+        label: 'Reason Text',
+        name:'reason_code_text',
       }, ],
     }, {
       type: 'divider',    

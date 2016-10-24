@@ -96,7 +96,7 @@ class Table extends Component {
   constructor(props){
     super(props);
     let ds = getDataSource();
-    console.log('Table', { props });
+    // console.log('Table', { props });
     this.getBlankHeader = props.getBlankHeader || getBlankDefaultHeader;
     this.getRenderRowData = props.getRenderRowData || getDefaultRenderRowData;
     this.state = {

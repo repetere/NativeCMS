@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, ScrollView, View, Platform, Text, Image, Dimensions, TextInput, } from 'react-native';
 import layoutStyles from '../../../../app/components/Styles/layout';
 import constants from '../../constants';
-import { getSegmentConditionsHeader, getSegmentConditionsRenderRowData, getSegmentRulesetRulesHeader, getSegmentRulesetRulesRenderRowData, } from './pipelineTableLayout';
+import { getSegmentConditionsHeader, getSegmentConditionsRenderRowData, getSegmentRulesetRulesHeader, getSegmentRulesetRulesRenderRowData, newSegmentConditionItems, } from './pipelineTableLayout';
 
 export default function (formProps) {
   return [ {
@@ -36,72 +36,7 @@ export default function (formProps) {
       name: 'conditions',
       dataTableHeader: getSegmentConditionsHeader,
       dataTableRow: getSegmentConditionsRenderRowData,
-      newItems: [ {
-        type: 'select',
-        label: 'Operation',
-        name:'condition_operation',
-        // value: 'ECS',
-        options: [{
-          label: 'Please select',
-          value: '',
-        }, {
-          label: 'AND',
-          value: 'AND',
-        }, {
-          label: 'OR',
-          value:'OR',  
-        }, ],
-      }, {
-        type: 'text',
-        label: 'State',
-        name:'state_property_attribute',
-      }, {
-        type: 'select',
-        label: 'Test',
-        name:'condition_test',
-        // value: 'ECS',
-        options: [{
-          label: 'Please select',
-          value: '',
-        }, {
-          label: 'CAP',
-          value: 'CAP',
-        }, {
-          label: 'FLOOR',
-          value:'FLOOR',  
-        }, {
-          label: 'RANGE',
-          value:'RANGE',  
-        }, {
-          label: 'EQUAL',
-          value:'EQUAL',  
-        }, {
-          label: 'NOT EQUAL',
-          value:'NOT EQUAL',  
-        }, {
-          label: 'IN',
-          value:'IN',  
-        }, {
-          label: 'NOT IN',
-          value:'NOT IN',  
-        }, ],
-      }, {
-        type: 'text',
-        label: 'Value',
-        name:'state_property_attribute_value_comparison',
-      }, {
-        type: 'text',
-        label: 'Minimum',
-        name:'state_property_attribute_value_minimum',
-      }, {
-        type: 'text',
-        label: 'Maximum',
-        name:'state_property_attribute_value_maximum',
-      }, {
-        type: 'text',
-        label: 'Condition Group',
-        name:'condition_group_id',
-      }, ],
+      newItems: newSegmentConditionItems,
     }, {
       type:'text',
       label:'Ruleset Title',

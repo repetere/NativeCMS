@@ -898,7 +898,7 @@ export function getDetailFromEntityName(entityName, groupName, options) {
     }, {
       icon: {
         icontype: 'Ionicons',
-        name: 'ios-create-outline',
+        name: 'ios-settings-outline',
       },
       itemType: 'icon',
       title: `Edit ${capitalize(entityName)}`, //'Edit Engine',
@@ -913,7 +913,7 @@ export function getDetailFromEntityName(entityName, groupName, options) {
     }, {
       icon: {
         icontype: 'Ionicons',
-        name: 'ios-settings-outline',
+        name: 'ios-create-outline',
       },
       itemType: 'icon',
       title: `Create ${capitalize(entityName)}`,

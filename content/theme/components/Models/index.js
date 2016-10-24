@@ -15,19 +15,40 @@ import ResourceDetailCompose from '../Pipelines/ResourceDetailCompose';
 import ParserDetail from '../Pipelines/ParserDetail';
 import ParserDetailEdit from '../Pipelines/ParserDetailEdit';
 import ParserDetailCompose from '../Pipelines/ParserDetailCompose';
-import SegmentDetail from '../Pipelines/SegmentDetail';
 import SegmentDetailGenerator from '../Pipelines/SegmentDetailGenerator';
-import MCRSegmentDetail from './MCRSegmentDetail';
-import SegmentDetailEdit from '../Pipelines/SegmentDetailEdit';
-import MCRSegmentDetailEdit from './MCRSegmentDetailEdit';
-import SegmentDetailCompose from '../Pipelines/SegmentDetailCompose';
-import MCRSegmentDetailCompose from './MCRSegmentDetailCompose';
-import moment from 'moment';
-import numeral from 'numeral';
-import capitalize from 'capitalize';
-import pluralize from 'pluralize';
-
-import { getMCRSegmentRulesetRulesTable, } from './modelTableLayout';
+import SegmentDetailEditGenerator from '../Pipelines/SegmentDetailEditGenerator';
+import SegmentDetailComposeGenerator from '../Pipelines/SegmentDetailComposeGenerator';
+import mcr_segmentform from './mcr_segmentform';
+import pricing_segmentform from './pricing_segmentform';
+import scoring_segmentform from './scoring_segmentform';
+import limit_segmentform from './limit_segmentform';
+import adverse_segmentform from './adverse_segmentform';
+import { getMCRSegmentRulesetRulesTable, getPricingSegmentRulesetRulesTable, getScoringSegmentRulesetRulesTable, getLimitSegmentRulesetRulesTable, getAdverseSegmentRulesetRulesTable, } from './modelTableLayout';
+let MCRSegmentDetailCompose = SegmentDetailComposeGenerator({
+  baseComposeURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_NEW,
+  segmentform: mcr_segmentform,
+  titlePrefix: 'MCR Segment',
+});
+let PricingSegmentDetailCompose = SegmentDetailComposeGenerator({
+  baseComposeURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_NEW,
+  segmentform: pricing_segmentform,
+  titlePrefix: 'Pricing Segment',
+});
+let ScoringSegmentDetailCompose = SegmentDetailComposeGenerator({
+  baseComposeURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_NEW,
+  segmentform: scoring_segmentform,
+  titlePrefix: 'Scoring Segment',
+});
+let LimitSegmentDetailCompose = SegmentDetailComposeGenerator({
+  baseComposeURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_NEW,
+  segmentform: limit_segmentform,
+  titlePrefix: 'Limit Segment',
+});
+let AdverseSegmentDetailCompose = SegmentDetailComposeGenerator({
+  baseComposeURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_NEW,
+  segmentform: adverse_segmentform,
+  titlePrefix: 'Adverse Segment',
+});
 
 class Models extends Component {
   constructor(props) {
@@ -78,19 +99,36 @@ class Models extends Component {
             group: getGroupFromEntityName('mcr_calculation', 'model', { constants, }),
             list: getListFromEntityName('mcr_calculation', 'model', { constants,  listPropsEntityName:'calculation', display_title:'MCR Calculations', }),
             detail: getDetailFromEntityName('mcr_calculation', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getMCRSegmentRulesetRulesTable,
+              }),
+              createModalComponent: MCRSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: mcr_segmentform,
+                titlePrefix: 'MCR Segment',
+              }),
               constants,
             }),
           },
           'MCR Segments': {
             group: getGroupFromEntityName('mcr_segment', 'model', { constants, }),
-            list: getListFromEntityName('mcr_segment', 'model', { constants,  listPropsEntityName:'segment', display_title:'MCR Segments',               createModalComponent: SegmentDetailCompose, }),
+            list: getListFromEntityName('mcr_segment', 'model', {
+              constants,
+              listPropsEntityName: 'segment',
+              display_title: 'MCR Segments',
+              createModalComponent: MCRSegmentDetailCompose,
+            }),
             detail: getDetailFromEntityName('mcr_segment', 'model', {
-              detailComponent: SegmentDetailGenerator({ getSegmentRulesetRulesTable:getMCRSegmentRulesetRulesTable, }), //MCRSegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: MCRSegmentDetailCompose,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getMCRSegmentRulesetRulesTable,
+              }),
+              createModalComponent: MCRSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: mcr_segmentform,
+                titlePrefix: 'MCR Segment',
+              }),
               constants,
             }),
           },
@@ -98,9 +136,15 @@ class Models extends Component {
             group: getGroupFromEntityName('score_calculation', 'model', { constants, }),
             list: getListFromEntityName('score_calculation', 'model', { constants,  listPropsEntityName:'calculation', display_title:'Scoring Calculations', }),
             detail: getDetailFromEntityName('score_calculation', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getScoringSegmentRulesetRulesTable,
+              }),
+              createModalComponent: ScoringSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: scoring_segmentform,
+                titlePrefix: 'Scoring Segment',
+              }),
               constants,
             }),
           },
@@ -108,9 +152,15 @@ class Models extends Component {
             group: getGroupFromEntityName('score_segment', 'model', { constants, }),
             list: getListFromEntityName('score_segment', 'model', { constants,  listPropsEntityName:'segment', display_title:'Scoring Segments', }),
             detail: getDetailFromEntityName('score_segment', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getScoringSegmentRulesetRulesTable,
+              }),
+              createModalComponent: ScoringSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: scoring_segmentform,
+                titlePrefix: 'Scoring Segment',
+              }),
               constants,
             }),
           },
@@ -118,9 +168,15 @@ class Models extends Component {
             group: getGroupFromEntityName('pricing_calculation', 'model', { constants, }),
             list: getListFromEntityName('pricing_calculation', 'model', { constants,  listPropsEntityName:'calculation', display_title:'Pricing Calculations', }),
             detail: getDetailFromEntityName('pricing_calculation', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getPricingSegmentRulesetRulesTable,
+              }),
+              createModalComponent: PricingSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: pricing_segmentform,
+                titlePrefix: 'Pricing Segment',
+              }),
               constants,
             }),
           },
@@ -128,9 +184,15 @@ class Models extends Component {
             group: getGroupFromEntityName('pricing_segment', 'model', { constants, }),
             list: getListFromEntityName('pricing_segment', 'model', { constants,  listPropsEntityName:'segment', display_title:'Pricing Segments', }),
             detail: getDetailFromEntityName('pricing_segment', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getPricingSegmentRulesetRulesTable,
+              }),
+              createModalComponent: PricingSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: pricing_segmentform,
+                titlePrefix: 'Pricing Segment',
+              }),
               constants,
             }),
           },
@@ -138,9 +200,15 @@ class Models extends Component {
             group: getGroupFromEntityName('limit_calculation', 'model', { constants, }),
             list: getListFromEntityName('limit_calculation', 'model', { constants,  listPropsEntityName:'calculation', display_title:'Limits Calculations', }),
             detail: getDetailFromEntityName('limit_calculation', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getLimitSegmentRulesetRulesTable,
+              }),
+              createModalComponent: LimitSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: limit_segmentform,
+                titlePrefix: 'Limit Segment',
+              }),
               constants,
             }),
           },
@@ -148,9 +216,15 @@ class Models extends Component {
             group: getGroupFromEntityName('limit_segment', 'model', { constants, }),
             list: getListFromEntityName('limit_segment', 'model', { constants,  listPropsEntityName:'segment', display_title:'Limits Segments', }),
             detail: getDetailFromEntityName('limit_segment', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getLimitSegmentRulesetRulesTable,
+              }),
+              createModalComponent: LimitSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: limit_segmentform,
+                titlePrefix: 'Limit Segment',
+              }),
               constants,
             }),
           },
@@ -158,9 +232,15 @@ class Models extends Component {
             group: getGroupFromEntityName('adverse_calculation', 'model', { constants, }),
             list: getListFromEntityName('adverse_calculation', 'model', { constants,  listPropsEntityName:'calculation', display_title:'Adverse Calculations', }),
             detail: getDetailFromEntityName('adverse_calculation', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getAdverseSegmentRulesetRulesTable,
+              }),
+              createModalComponent: AdverseSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: adverse_segmentform,
+                titlePrefix: 'Adverse Segment',
+              }),
               constants,
             }),
           },
@@ -168,9 +248,15 @@ class Models extends Component {
             group: getGroupFromEntityName('adverse_segment', 'model', { constants, }),
             list: getListFromEntityName('adverse_segment', 'model', { constants,  listPropsEntityName:'segment', display_title:'Adverse Segments', }),
             detail: getDetailFromEntityName('adverse_segment', 'model', {
-              detailComponent: SegmentDetail,
-              createModalComponent: SegmentDetailCompose,
-              editModalComponent: SegmentDetailEdit,
+              detailComponent: SegmentDetailGenerator({
+                getSegmentRulesetRulesTable: getAdverseSegmentRulesetRulesTable,
+              }),
+              createModalComponent: AdverseSegmentDetailCompose,
+              editModalComponent: SegmentDetailEditGenerator({
+                baseUpdateURL: constants.pipelines.all.BASE_URL + constants.pipelines.segments.POST_UPDATE,
+                segmentform: adverse_segmentform,
+                titlePrefix: 'Adverse Segment',
+              }),
               constants,
             }),
           },

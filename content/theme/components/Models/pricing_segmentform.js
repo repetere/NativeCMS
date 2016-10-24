@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, View, Platform, Text, Image, Dimensions, TextIn
 import layoutStyles from '../../../../app/components/Styles/layout';
 import constants from '../../constants';
 import { getSegmentConditionsHeader, getSegmentConditionsRenderRowData, newSegmentConditionItems, } from '../Pipelines/pipelineTableLayout';
-import { getMCRSegmentRulesetRulesHeader, getMCRSegmentRulesetRulesRenderRowData, } from './modelTableLayout';
+import { getMCRSegmentRulesetRulesHeader, getMCRSegmentRulesetRulesRenderRowData, getPricingSegmentRulesetRulesHeader, getPricingSegmentRulesetRulesRenderRowData, } from './modelTableLayout';
 
 export default function (formProps) {
   return [ {
@@ -52,33 +52,60 @@ export default function (formProps) {
       type: 'datatable',
       label: 'Ruleset Rules',
       name: 'ruleset.rules',
-      dataTableHeader: getMCRSegmentRulesetRulesHeader,
-      dataTableRow: getMCRSegmentRulesetRulesRenderRowData,
-      newItems: [ {
-        type: 'text',
-        label: 'Object',
-        name:'object',
-      }, {
-        type: 'text',
-        label: 'Field',
-        name:'field',
-      }, {
-        type: 'text',
-        label: 'Maximum',
-        name:'maximum',
-      }, {
-        type: 'text',
-        label: 'Minimum',
-        name:'minimum',
-      }, {
-        type: 'text',
-        label: 'Condition Group',
-        name:'or_group',
-      }, {
-        type: 'text',
-        label: 'Output',
-        name:'output',
-      }, ],
+      dataTableHeader: getPricingSegmentRulesetRulesHeader,
+      dataTableRow: getPricingSegmentRulesetRulesRenderRowData,
+      newItems: [
+        {
+          type: 'text',
+          label: 'Minimum',
+          name:'minimum_full_score',
+        }, {
+          type: 'text',
+          label: 'Maximum',
+          name:'maximum_full_score',
+        }, {
+          type: 'text',
+          label: 'Rating',
+          name:'rating',
+        }, {
+          type: 'text',
+          label: 'Annual Interest Rate',
+          name:'annual_interest_rate',
+        }, {
+          type: 'text',
+          label: 'Origination Fee Rate',
+          name:'origination_fee_rate',
+        }, {
+          type: 'text',
+          label: 'APR',
+          name:'apr',
+        }, {
+          type: 'text',
+          label: 'Expected Annual Default Rate',
+          name:'expected_annual_default_rate',
+        }, {
+          type: 'text',
+          label: 'Term',
+          name:'term',
+        }, {
+          type: 'select',
+          label: 'Guarantor',
+          name:'guarantor_required',
+          // value: 'ECS',
+          options: [
+            {
+              label: 'Please select',
+              value: '',
+            }, {
+              label: 'YES',
+              value: 'YES',
+            }, {
+              label: 'NO',
+              value:'NO',  
+            }, 
+          ],
+        }, 
+      ],
     }, {
       type: 'divider',    
     }, ],
