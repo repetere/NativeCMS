@@ -6,6 +6,7 @@ export default {
     INITIAL_APP_LOADED: 'loaded initial app state',
     RESET_APP_LOADED: 'resetting initial app state',
     ASYNCSTORAGE_KEY: 'current_view',
+    UPDATE_APP_DIMENSIONS: 'update dimensions state',
   },
   tabBarExtensions:{
     SET_EXTENSIONS_ACTION:'set tabBarExtensions',

@@ -24,10 +24,12 @@ import actions from '../../actions';
 import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
 import { getComponentFromRouterLocation, getTabFromLocation, getRouteExtensionFromLocation, } from '../../util/location';
+// import { onLayoutUpdate, setLayoutHandler } from '../../util/dimension';
 import pathToRegexp from 'path-to-regexp';
 import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 import { MessageBarManager, MessageBar, } from '../MessageBar';
 import moment from 'moment';
+import debounce from 'debounce';
 const history = getHistory(historySettings, AppConfigSettings, store);
 // const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
 const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || '/';
@@ -50,7 +52,7 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('MAIN componentWillReceiveProps',{nextProps,initialRouteChange,})
+    // console.log('MAIN componentWillReceiveProps', { nextProps, });
     if (nextProps.user.isLoggedIn !== true && (this.getCurrentScenePath() !== '/login' || this.state.location.pathname !== '/login')) {
       this.onChangeExtension.call(this, '/login', {
         initialLoad: 'recievedPropLogin',
@@ -69,7 +71,7 @@ class MainApp extends Component{
       });
     }
     else if (initialRouteChange===false && Platform.OS ==='web' && nextProps.user.isLoggedIn === true && this.getCurrentScenePath() !== nextProps.location.pathname) {
-      console.log('HANDLE BROWSER NAV')
+      // console.log('HANDLE BROWSER NAV')
       initialRouteChange = true;
       this.onChangeExtension(nextProps.location.pathname, {
         initialLoad: 'recievedPropLogin',
@@ -114,6 +116,7 @@ class MainApp extends Component{
     // }   
   }
   componentDidMount() {
+    // setLayoutHandler.call(this);
     // console.log('componentDidMount this.props', this.props);
     Promise.all([
       AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME),
@@ -164,10 +167,9 @@ class MainApp extends Component{
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
       // MessageBarManager.hideAlert();
     });
-      
   }
   componentWillUnmount() {
-  // Remove the alert located on this master page from the manager
+    // Remove the alert located on this master page from the manager
     setImmediate(() => {
       MessageBarManager.hideAlert();
       MessageBarManager.unregisterMessageBar();
@@ -341,7 +343,10 @@ class MainApp extends Component{
     // console.log('this.state.user.isLoggedIn', this.state.user.isLoggedIn);
     let initialPath = (this.state.location) ? this.state.location.pathname : '/';
 
-    return (<View style={[ styles.container, { backgroundColor: 'white' }]}>
+    return (<View
+      // onLayout={onLayoutUpdate.bind(this)}
+      style={[ styles.container, { backgroundColor: 'white' }]}
+      >
       {/*<CurrentApp {...this.state}  />*/}
       <View style={styles.stretchContainer}>
         <Area
@@ -389,6 +394,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initialAppLoaded:()=>store.dispatch(actions.pages.initialAppLoaded()),
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
+    setAppDimensions:(layout) => store.dispatch(actions.pages.setAppDimensions(layout)),
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
     showError: (notification) => store.dispatch(actions.messageBar.showError(notification)),
     showInfo: (notification) => store.dispatch(actions.messageBar.showInfo(notification)),

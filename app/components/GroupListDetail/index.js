@@ -6,6 +6,7 @@ import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 import LoadingView from '../LoadingIndicator/LoadingView';
+import { onLayoutUpdate, setLayoutHandler } from '../../util/dimension';
 import EmptyDisplay from '../EmptyDisplay';
 import ConfirmModal from './ConfirmModal';
 import MenuBar, { ActionBar, } from '../MenuBar';
@@ -302,10 +303,10 @@ class GroupList extends Component{
     // }
   }
   render() {
-    console.log('GroupList RENDER this.state', this.state);
+    // console.log('GroupList RENDER this.state', this.state);
     // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
-    let errorView = (<LoadingView/>);
+    // let errorView = (<LoadingView/>);
     if (this.props.GroupListDetail.list) {
       let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
       let groupListMenuBar = this.props.GroupListDetail.list.menuBar;
@@ -368,12 +369,12 @@ class GroupList extends Component{
       };
 
       let useLoadingView = ((typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false) || (this.state.dataLoaded === false && this.state.dataError === false));
-      // console.log({ useLoadingView });
+      let webListFix = (Platform.OS === 'web') ? { display:'flex', paddingBottom:60, } : {};
       let loadedDataView = (
-        <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
+        <View class="scrollContainerViewFix" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder, webListFix
         ]}  >
           <MenuBar {...groupListMenuBar} />
-          <View style={styles.stretchBox}>
+          <View class="scrollContainerViewFix" style={[ styles.stretchBox, (Platform.OS === 'web') ? [ styles.scrollViewStandardContainer, { paddingBottom: 60, flex: 1, }]:{}]}>
             <SearchBar
               lightTheme
               onChangeText={(data) => {
@@ -391,7 +392,7 @@ class GroupList extends Component{
             {(!useLoadingView && this.state.rowscount > 0) ? (
               <ListView
                 style={[ styles.flexBox, ]}
-                contentContainerStyle={layoutStyles.positionRelative}
+                contentContainerStyle={[layoutStyles.positionRelative,  ]}
                 enableEmptySections={true}
                 dataSource={this.state.rows}
                 renderRow={this.renderRow.bind(this, this.getRenderRowData) }
@@ -410,15 +411,15 @@ class GroupList extends Component{
                 >
               </ListView>
             ) : null}
-            <ActionBar {...actionBarProps} {...this.props} />
           </View>
+            <ActionBar {...actionBarProps} {...this.props} />
         </View>
         );
    
       return loadedDataView;     
     } else {
       let emptyView = (
-        <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,
+        <View class="scrollContainerViewFix" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,
         ]}  >
           <MenuBar />
           <EmptyDisplay message=" " />
@@ -626,7 +627,7 @@ class MultiColumn extends Component{
     let loadedDataView = (
       <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} alwaysBounceHorizontal={false} horizontal={true}>
         {(this.props.GroupListDetail.options.useGroups) ? <Group style={layoutStyles.multiColumnWidthContainer} {...this.props} /> : null}
-        <View style={layoutStyles.multiColumnWidthContainer}>
+        <View style={layoutStyles.multiColumnWidthContainer} onLayout={this.props.onLayout}>
           <GroupList  {...this.props} {...this.state.modals}/>
         </View>  
         <GroupDetail {...this.props} {...this.state.modals}/>
@@ -637,17 +638,17 @@ class MultiColumn extends Component{
   }
 }
 
-class GroupListDetail extends Component{
+class GroupListDetail extends Component {
   constructor(props) {
     super(props);
     // console.log('GroupListDetail props', props);
     this.state = {
       GroupListDetailStateData: {
-        groupData:(props.GroupListDetailStateData && props.GroupListDetailStateData.groupData)?props.GroupListDetailStateData.groupData:{},
-        listData:(props.GroupListDetailStateData && props.GroupListDetailStateData.listData)?props.GroupListDetailStateData.listData:{},
+        groupData: (props.GroupListDetailStateData && props.GroupListDetailStateData.groupData) ? props.GroupListDetailStateData.groupData : {},
+        listData: (props.GroupListDetailStateData && props.GroupListDetailStateData.listData) ? props.GroupListDetailStateData.listData : {},
         detailData: (props.GroupListDetailStateData && props.GroupListDetailStateData.detailData) ? props.GroupListDetailStateData.detailData : {},
-        selectedGroup: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.selectedGroup!=='undefined') ?props.GroupListDetailStateData.selectedGroup : {},
-        showGroupSidebar: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.showGroupSidebar!=='undefined') ?props.GroupListDetailStateData.showGroupSidebar : true,
+        selectedGroup: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.selectedGroup !== 'undefined') ? props.GroupListDetailStateData.selectedGroup : {},
+        showGroupSidebar: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.showGroupSidebar !== 'undefined') ? props.GroupListDetailStateData.showGroupSidebar : true,
       },
     };
   }
@@ -667,7 +668,7 @@ class GroupListDetail extends Component{
   }
   setDetailData(data) {
     // console.log('SET DETAIL DATA', { data });
-    let mergedDetailData = Object.assign({}, this.state.GroupListDetailStateData.detailData, this.props.GroupListDetail.entities[this.state.GroupListDetailStateData.selectedGroup].detail, data);
+    let mergedDetailData = Object.assign({}, this.state.GroupListDetailStateData.detailData, this.props.GroupListDetail.entities[ this.state.GroupListDetailStateData.selectedGroup ].detail, data);
     let GroupListDetailStateData = Object.assign(this.state.GroupListDetailStateData, { detailData: mergedDetailData, });
     // console.log('SET DETAIL ',{GroupListDetailStateData})
     this.setState({
@@ -677,7 +678,7 @@ class GroupListDetail extends Component{
   setSelectedGroup(groupName) {
     // console.log('setSelectedGroup', { groupName, });
     this.setState({
-      GroupListDetailStateData: Object.assign({},this.state.GroupListDetailStateData, {
+      GroupListDetailStateData: Object.assign({}, this.state.GroupListDetailStateData, {
         selectedGroup: groupName,
         listData: {
           dataLoaded: false,
@@ -706,7 +707,7 @@ class GroupListDetail extends Component{
     this.setState(newState);
   }
   updateListDetailFromCompose(data) {
-    console.log('new detail data', { data },this.state.GroupListDetailStateData);
+    // console.log('new detail data', { data },this.state.GroupListDetailStateData);
     let stateData = {
       dataLoaded: true,
       dataError: false,
@@ -732,7 +733,7 @@ class GroupListDetail extends Component{
     });
   }
   removeListDetailFromCompose(data) {
-    console.log('new detail data', { data, }, this.state.GroupListDetailStateData);
+    // console.log('new detail data', { data, }, this.state.GroupListDetailStateData);
     let stateData = {
       dataLoaded: true,
       dataError: false,
@@ -781,6 +782,9 @@ class GroupListDetail extends Component{
       ),
     });
   }
+  componentDidMount() {
+    setLayoutHandler.bind(this);
+  }
   render() {
     // console.log('this.state',this.state);
     // console.log('GroupDetail REDNER this.state', this.state,Dimensions.get('window'));
@@ -807,8 +811,8 @@ class GroupListDetail extends Component{
     let passProps = Object.assign({}, this.props, GLDpassProps, this.state);
     // console.log('GROUPLISTDETAILLLLLLLLLL ',{passProps})
     let dataView = (width > 600) ?
-      (<MultiColumn  {...passProps} {...getDataFunctions}/>)
-      : (<SingleColumn {...passProps}  {...getDataFunctions}/>);
+      (<MultiColumn  onLayout={onLayoutUpdate.bind(this)}  {...passProps} {...getDataFunctions}/>)
+      : (<SingleColumn  onLayout={onLayoutUpdate.bind(this)} {...passProps}  {...getDataFunctions}/>);
     return dataView;     
   }
 }
