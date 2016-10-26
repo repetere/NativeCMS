@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, AsyncStorage, Navigator, } from 'react-native';
+import { View, Platform, AsyncStorage, Navigator, Text, } from 'react-native';
 import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } from 'react-router';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Tabs from 'react-native-tabs';
@@ -24,7 +24,7 @@ import actions from '../../actions';
 import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
 import { getComponentFromRouterLocation, getTabFromLocation, getRouteExtensionFromLocation, } from '../../util/location';
-// import { onLayoutUpdate, setLayoutHandler } from '../../util/dimension';
+import { onLayoutUpdate, setLayoutHandler } from '../../util/dimension';
 import pathToRegexp from 'path-to-regexp';
 import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 import { MessageBarManager, MessageBar, } from '../MessageBar';
@@ -116,7 +116,7 @@ class MainApp extends Component{
     // }   
   }
   componentDidMount() {
-    // setLayoutHandler.call(this);
+    setLayoutHandler.call(this);
     // console.log('componentDidMount this.props', this.props);
     Promise.all([
       AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME),
@@ -332,11 +332,12 @@ class MainApp extends Component{
   }
   render() {
     // console.log(
-    //   'RENDER getRouteExtensionFromLocation(this.props.location.pathname)',
-    //   getRouteExtensionFromLocation(this.props.location.pathname),
-    //   'this.props.location.pathname',
-    //   this.props.location.pathname,
-    //   // 'this.props', this.props //,
+    //   'MAIN RENDER',
+    // //   'RENDER getRouteExtensionFromLocation(this.props.location.pathname)',
+    // //   getRouteExtensionFromLocation(this.props.location.pathname),
+    // //   'this.props.location.pathname',
+    // //   this.props.location.pathname,
+    // //   // 'this.props', this.props //,
     //   'this.state', this.state//,
     // );
 
@@ -344,10 +345,11 @@ class MainApp extends Component{
     let initialPath = (this.state.location) ? this.state.location.pathname : '/';
 
     return (<View
-      // onLayout={onLayoutUpdate.bind(this)}
+      onLayout={onLayoutUpdate.bind(this)}
       style={[ styles.container, { backgroundColor: 'white' }]}
       >
-      {/*<CurrentApp {...this.state}  />*/}
+      {/*<CurrentApp {...this.state}  />
+      <Text style={{ backgroundColor:'darkgray', color:'white', padding:20, position:'absolute', top:20, left:20, zIndex:1000}}>{JSON.stringify(this.state.page.layout,null,2)}</Text>*/}
       <View style={styles.stretchContainer}>
         <Area
           ref="AppNavigator"
