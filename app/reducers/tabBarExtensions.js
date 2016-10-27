@@ -14,16 +14,16 @@ const getIntialTabs = () =>{
 };
 
 const initialState = getIntialTabs();
-console.log('tabExtensions initialState',initialState)
+// console.log('tabExtensions initialState',initialState)
 
 const tabBarExtensionsReducer = (state = initialState, action) => {
   switch (action.type) {
   case constants.tabBarExtensions.SET_EXTENSIONS_ACTION:
-    let arrayOfTabExtensions = action.payload.arrayOfTabExtensions;
+    let arrayOfTabExtensions = action.payload.arrayOfTabExtensions.concat();
     arrayOfTabExtensions.splice(4, 0, EXTENSIONS.more);
     console.log('updated ', { arrayOfTabExtensions });  
     return {
-      all: EXTENSIONS.standard.concat(),
+      all: action.payload.arrayOfTabExtensions,
       current: arrayOfTabExtensions.splice(0,5),
     };
   default:

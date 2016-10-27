@@ -122,11 +122,14 @@ class MainApp extends Component{
       AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME),
       AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA),
       AsyncStorage.getItem(constants.jwt_token.PROFILE_JSON),
+      AsyncStorage.getItem(constants.async_token.TABBAR_TOKEN),
     ])
       .then((results) => {
         let jwt_token = results[ 0 ];
         let jwt_token_data = JSON.parse(results[ 1 ]);
         let jwt_user_profile = JSON.parse(results[ 2 ]);
+        let appTabs = (results[ 3 ]) ? JSON.parse(results[ 3 ]) : false;
+        console.log('main apptabs',{ appTabs });
         if (jwt_token_data && jwt_user_profile) {
           let url = AppLoginSettings.login.url;
           let response = {};
@@ -146,6 +149,9 @@ class MainApp extends Component{
             throw expiredTokenError;
           } else {
             this.props.saveUserProfile(url, response, json);
+            if (appTabs) {
+              this.props.setTabExtensions(appTabs);
+            }
           }
         } else if(jwt_token) {
           this.props.getUserProfile(jwt_token);

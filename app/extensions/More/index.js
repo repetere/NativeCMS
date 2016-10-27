@@ -5,13 +5,14 @@
  */
 //TO DO: https://github.com/clh161/react-native-easy-grid-view
 import React, { Component, } from 'react';
-import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, TouchableHighlight, TouchableOpacity, } from 'react-native';
+import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, TouchableHighlight, TouchableOpacity, AsyncStorage, } from 'react-native';
 import { Button, PricingCard, } from 'react-native-elements';
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import SortableListView from 'react-native-sortable-listview';
 import styles from '../../components/Styles/shared';
 import layoutStyles from '../../components/Styles/layout';
 import Icons from '../../components/Icons';
+import constants from '../../constants';
 import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridMarginStyle, } from '../../components/LayoutElements';
 import capitalize from 'capitalize';
 
@@ -118,7 +119,7 @@ class More extends Component {
     }
   }
   render() {
-    // console.log('this.props.tabBarExtensions', this.props.tabBarExtensions);
+    // console.log('MORE RENDER this.state', this.state);
     return (
       <View style={[ styles.stretchBox, styles.statusBarPadding, styles.tabBarPadding, ]}>
         <H1 style={{

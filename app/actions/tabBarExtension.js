@@ -18,15 +18,16 @@ const pages = {
    */
   setTabExtensions(arrayOfTabExtensions) {
     // let initialLocation = (customSettings.defaultExtensionRoute) ? customSettings.defaultExtensionRoute : location;
+    console.log('setTabExtensions',{arrayOfTabExtensions})
     return (dispatch) => {
-      // AsyncStorage.getItem(constants.pages.ASYNCSTORAGE_KEY)
-      //   .then((page_location) => {
-      //     dispatch(this.initialAppLoad(page_location));
-      //   })
-      //   .catch((error) => {
-      //     dispatch(this.initialAppLoad(initialLocation));
-      //   });
-      dispatch(this.updateTabExtensions(arrayOfTabExtensions));
+      AsyncStorage.setItem(constants.async_token.TABBAR_TOKEN,JSON.stringify(arrayOfTabExtensions))
+        .then(() => {
+          dispatch(this.updateTabExtensions(arrayOfTabExtensions));
+        })
+        .catch((error) => {
+          console.log({ error, });
+          dispatch(this.updateTabExtensions(arrayOfTabExtensions));
+        });
     };
   },
 };

@@ -39,4 +39,7 @@ export default {
     TOKEN_DATA: `${AppConfigSettings.name}_jwt_token_data`,
     PROFILE_JSON: `${AppConfigSettings.name}_jwt_profile`,
   },
+  async_token: {
+    TABBAR_TOKEN: 'AppTabs',
+  },
 };
