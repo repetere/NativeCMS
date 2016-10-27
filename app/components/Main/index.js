@@ -398,6 +398,7 @@ const mapDispatchToProps = (dispatch) => {
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
     setAppDimensions:(layout) => store.dispatch(actions.pages.setAppDimensions(layout)),
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
+    setTabExtensions: (arrayOfTabExtensions)=>store.dispatch(actions.tabBarExtension.setTabExtensions(arrayOfTabExtensions)),
     showError: (notification) => store.dispatch(actions.messageBar.showError(notification)),
     showInfo: (notification) => store.dispatch(actions.messageBar.showInfo(notification)),
     setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),

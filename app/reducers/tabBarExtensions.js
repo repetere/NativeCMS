@@ -19,10 +19,13 @@ console.log('tabExtensions initialState',initialState)
 const tabBarExtensionsReducer = (state = initialState, action) => {
   switch (action.type) {
   case constants.tabBarExtensions.SET_EXTENSIONS_ACTION:
-    var arrayOfTabExtensions = action.payload.arrayOfTabExtensions;
-    return Object.assign(state, {
-      current: arrayOfTabExtensions.splice(4, 0, EXTENSIONS.more).slice(0, 5),
-    });
+    let arrayOfTabExtensions = action.payload.arrayOfTabExtensions;
+    arrayOfTabExtensions.splice(4, 0, EXTENSIONS.more);
+    console.log('updated ', { arrayOfTabExtensions });  
+    return {
+      all: EXTENSIONS.standard.concat(),
+      current: arrayOfTabExtensions.splice(0,5),
+    };
   default:
     return state;
   }
