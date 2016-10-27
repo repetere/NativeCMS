@@ -10,7 +10,7 @@ import { Button, PricingCard, } from 'react-native-elements';
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import SortableListView from 'react-native-sortable-listview';
 import styles from '../../components/Styles/shared';
-import colorStyles from '../../components/Styles/colors';
+import layoutStyles from '../../components/Styles/layout';
 
 let data = {
   hello: { text: 'world', },
@@ -69,7 +69,8 @@ class More extends Component {
           icon={{ name: 'battery-full',  type: 'foundation', }}
           title="Battery Full" />
         <SortableListView
-          style={{flex: 1}}
+          style={{flex: 1, alignSelf:'stretch'}}
+          contentContainerStyle={[layoutStyles.positionRelative,  ]}
           data={data}
           order={order}
           onRowMoved={e => {
