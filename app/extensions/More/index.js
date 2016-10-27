@@ -5,104 +5,140 @@
  */
 //TO DO: https://github.com/clh161/react-native-easy-grid-view
 import React, { Component, } from 'react';
-import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, TouchableHighlight, } from 'react-native';
+import { StyleSheet, Text, View, ListView, ScrollView, Image, Platform, TouchableHighlight, TouchableOpacity, } from 'react-native';
 import { Button, PricingCard, } from 'react-native-elements';
 import PopupDialog, { SlideAnimation } from 'react-native-popup-dialog';
 import SortableListView from 'react-native-sortable-listview';
 import styles from '../../components/Styles/shared';
 import layoutStyles from '../../components/Styles/layout';
+import Icons from '../../components/Icons';
+import { HR, H1, H2, GRID_ITEM, RESPONSIVE_GRID, RESPONSIVE_TWO_COLUMN, getGridMarginStyle, } from '../../components/LayoutElements';
+import capitalize from 'capitalize';
 
-let data = {
-  hello: { text: 'world', },
-  how: { text: 'are you', },
-  test: { text: 123, },
-  this: { text: 'is', },
-  a: { text: 'a', },
-  real: { text: 'real', },
-  drag: { text: 'drag and drop', },
-  bb: { text: 'bb', },
-  cc: { text: 'cc', },
-  dd: { text: 'dd', },
-  ee: { text: 'ee', },
-  ff: { text: 'ff', },
-  gg: { text: 'gg', },
-  hh: { text: 'hh', },
-  ii: { text: 'ii', },
-  jj: { text: 'jj', },
-  kk: { text: 'kk', },
-};
+const moreRowStyle = StyleSheet.create({
+  touchWrapper: {
+    padding: 15, backgroundColor: 'white', borderBottomWidth: StyleSheet.hairlineWidth || 1, borderColor: 'lightgrey',
+  },
+  rowContainer: {
+    flexDirection: 'row', flex: 1, alignItems:'center', 
+  },
+  tabIconContainer: { height: 60, width: 50, marginRight: 10, justifyContent: 'center', },
+  textContainer: { justifyContent: 'center', flex: 1, },
+  reorderContainer: { height: 60, width: 70, marginLeft: 10, justifyContent: 'center', alignItems:'flex-end' },
+});
 
-let order = Object.keys(data); //Array of keys
 
 class RowComponent extends Component{
   render() {
+    // console.log(this.props.tabsOrder.indexOf(this.props.rowID))
+    let tabIcon = (<View style={moreRowStyle.tabIconContainer}>
+      <Icons name={this.props.data.icon.initial} size={40} style={[]} />
+    </View>);
+    let tabText = (<Text style={moreRowStyle.textContainer}>{capitalize(this.props.data.title || this.props.data.name)}</Text>);
+    let tabReorder = (Platform.OS === 'web') ? (
+      <View style={{ flexDirection:'row', }}>
+        <TouchableOpacity style={{ marginRight:10, }} onPress={() => {
+          this.props.moveTabUp(this.props.tabsOrder.indexOf(this.props.rowID));
+        } }>
+          <Icons name="ios-arrow-dropup-outline" size={30} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          this.props.moveTabDown(this.props.tabsOrder.indexOf(this.props.rowID));
+        } }>
+          <Icons name="ios-arrow-dropdown-outline" size={30} />
+        </TouchableOpacity>  
+    </View>) : (<Icons name="ios-reorder-outline" size={30} />);
     // console.log('RowComponent this.props', this.props);
-    return (<TouchableHighlight underlayColor={'#eee'} style={{ padding: 25, backgroundColor: "#F8F8F8", borderBottomWidth: 1, borderColor: '#eee' }} {...this.props.sortHandlers}>
-      <Text>{this.props.data.name}</Text>
+    return (Platform.OS === 'web') ? (<View style={moreRowStyle.touchWrapper}>
+      <View style={moreRowStyle.rowContainer}>
+        {tabIcon}  
+        {tabText}  
+        <View style={moreRowStyle.reorderContainer}>
+          {tabReorder}
+        </View>
+      </View>
+    </View>) : (
+    <TouchableHighlight
+      underlayColor={'#eee'}
+      style={moreRowStyle.touchWrapper} {...this.props.sortHandlers}>
+        <View style={moreRowStyle.rowContainer}>
+          {tabIcon}  
+          {tabText}  
+          <View style={moreRowStyle.reorderContainer}>
+            {tabReorder}
+          </View>
+        </View>
     </TouchableHighlight>);
   }
 }
 
 class More extends Component {
-  constructor(){
-    super(...arguments);
-    this.state = {
-      // ranattr:'ok',
-    };
-  }
-  
-  componentWillMount() {
-    data = {};
-    order = [];
+  constructor(props){
+    super(props);
+    let data = {};
+    let order = [];
     this.props.tabBarExtensions.all.forEach(tab => {
       data[ tab.name ] = tab;
       order.push(tab.name);
     });
+    this.state = {
+      data,
+      order,
+    };
   }
-  componentWillReceiveProps (nextProps) {
-    data = {};
-    order = [];
+  componentWillReceiveProps(nextProps) {
+    // console.log('MORE componentWillReceiveProps ', { nextProps });
+    let data = {};
+    let order = [];
     nextProps.tabBarExtensions.all.forEach(tab => {
       data[ tab.name ] = tab;
       order.push(tab.name);
     });
+    this.setState({
+      data,
+      order,
+    });
   }
-  
-  
+  moveTabDown(tabIndex) {
+    if (tabIndex + 1 !== this.state.order.length) {
+      this.state.order.splice(tabIndex+1, 0, this.state.order.splice(tabIndex, 1)[ 0 ]);
+      let newArrayOfTabExtensions = this.state.order.map(o => this.state.data[ o ]);
+      // console.log('new order', { order, newArrayOfTabExtensions, });
+      this.props.setTabExtensions(newArrayOfTabExtensions);
+      this.forceUpdate();
+    }
+  }
+  moveTabUp(tabIndex) {
+    if (tabIndex > 0) {
+      this.state.order.splice(tabIndex-1, 0, this.state.order.splice(tabIndex, 1)[ 0 ]);
+      let newArrayOfTabExtensions = this.state.order.map(o => this.state.data[ o ]);
+      // console.log('new order', { order, newArrayOfTabExtensions, });
+      this.props.setTabExtensions(newArrayOfTabExtensions);
+      this.forceUpdate();
+    }
+  }
   render() {
-
-    console.log('this.props.tabBarExtensions', this.props.tabBarExtensions);
+    // console.log('this.props.tabBarExtensions', this.props.tabBarExtensions);
     return (
-      <View style={ styles.container }>
-        <Text style={ styles.heading }>In the apps app</Text>		
-        <Button
-          small
-          iconRight
-          icon={{ name: 'code', }}
-          title="Code" />
-        <Button
-          small
-          iconRight
-          icon={{ name: 'share-apple',  type: 'evilicon', }}
-          title="Share Apple" />
-        <Button
-          small
-          iconRight
-          icon={{ name: 'battery-full',  type: 'foundation', }}
-          title="Battery Full" />
+      <View style={[ styles.stretchBox, styles.statusBarPadding, styles.tabBarPadding, ]}>
+        <H1 style={{
+          borderBottomWidth: 0, padding: 10,
+          paddingBottom: 10,
+          marginBottom: 0, borderBottomColor: 'transparent',
+        }}>More Tabs</H1>  
         <SortableListView
-          style={{flex: 1, alignSelf:'stretch'}}
+          style={{ flex: 1, alignSelf:'stretch', borderTopWidth: StyleSheet.hairlineWidth || 1, borderTopColor:'lightgrey', }}
           contentContainerStyle={(Platform.OS==='web')?layoutStyles.positionRelative:undefined}
-          data={data}
-          order={order}
+          data={this.state.data}
+          order={this.state.order}
           onRowMoved={e => {
-            order.splice(e.to, 0, order.splice(e.from, 1)[ 0 ]);
-            let newArrayOfTabExtensions = order.map(o => data[ o ]);
+            this.state.order.splice(e.to, 0, this.state.order.splice(e.from, 1)[ 0 ]);
+            let newArrayOfTabExtensions = this.state.order.map(o => this.state.data[ o ]);
             // console.log('new order', { order, newArrayOfTabExtensions, });
             this.props.setTabExtensions(newArrayOfTabExtensions);
-            this.forceUpdate();
+            // this.forceUpdate();
           }}
-          renderRow={(row, sectionID, rowID)  => <RowComponent sectionID={sectionID} rowID={rowID} data={row} />}
+          renderRow={(row, sectionID, rowID)  => <RowComponent sectionID={sectionID} rowID={rowID} data={row} moveTabDown={this.moveTabDown.bind(this)} moveTabUp={this.moveTabUp.bind(this)} tabsOrder={this.state.order} />}
         />
       </View>
     );

@@ -58,6 +58,13 @@
       "selected":"ios-switch-outline",
       "initial":"ios-switch-outline"
     }
+  },{
+    "name":"home",
+    "path":"/",
+    "icon":{
+      "selected":"ios-home-outline",
+      "initial":"ios-home-outline"
+    }
   }],
   "more":{
     "name":"more",

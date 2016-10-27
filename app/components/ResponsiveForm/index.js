@@ -550,7 +550,7 @@ function getFormDataTable(options) {
   </GRID_ITEM>);
 }
 
-class SimpleButton extends Component{
+export class SimpleButton extends Component{
   render() {
     return (<TouchableOpacity onPress={this.props.onPress}>
       <View style={[ { borderRadius: 5, backgroundColor:'lightslategrey', padding:10, margin:10, justifyContent:'center', alignSelf:'stretch', alignItems:'center', flex:0 }, this.props.style, ]}>

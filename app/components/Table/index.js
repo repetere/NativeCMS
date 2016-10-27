@@ -179,7 +179,7 @@ class Table extends Component {
                 paddingRight: 10, 
                 right:15,
                 // top: 10,
-                height:25
+                height:25,
               }} onPress={action.onPress.bind(this, data, renderData, sectionId, rowId)}>
                 <Icons name={action.icon.name} size={22} style={[layoutStyles.listItemIcon,action.icon.style]} />
               </TouchableOpacity>
