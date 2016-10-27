@@ -36,6 +36,7 @@ let order = Object.keys(data); //Array of keys
 
 class RowComponent extends Component{
   render() {
+    // console.log('RowComponent this.props', this.props);
     return (<TouchableHighlight underlayColor={'#eee'} style={{ padding: 25, backgroundColor: "#F8F8F8", borderBottomWidth: 1, borderColor: '#eee' }} {...this.props.sortHandlers}>
       <Text>{this.props.data.text}</Text>
     </TouchableHighlight>);
@@ -50,6 +51,7 @@ class More extends Component {
     };
   }
   render() {
+    console.log('this.props.tabBarExtensions', this.props.tabBarExtensions);
     return (
       <View style={ styles.container }>
         <Text style={ styles.heading }>In the apps app</Text>		
@@ -70,14 +72,14 @@ class More extends Component {
           title="Battery Full" />
         <SortableListView
           style={{flex: 1, alignSelf:'stretch'}}
-          contentContainerStyle={[layoutStyles.positionRelative,  ]}
+          contentContainerStyle={(Platform.OS==='web')?layoutStyles.positionRelative:undefined}
           data={data}
           order={order}
           onRowMoved={e => {
             order.splice(e.to, 0, order.splice(e.from, 1)[0]);
             this.forceUpdate();
           }}
-          renderRow={row => <RowComponent data={row} />}
+          renderRow={(row, sectionID, rowID)  => <RowComponent sectionID={sectionID} rowID={rowID} data={row} />}
         />
       </View>
     );

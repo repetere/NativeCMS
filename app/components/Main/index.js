@@ -360,7 +360,7 @@ class MainApp extends Component{
       </View>
       {(this.state.user.isLoggedIn===true)? (<Tabs
         style={styles.tabBar}>
-        {this.state.tabBarExtensions.map((ext) => {
+        {this.state.tabBarExtensions.current.map((ext) => {
           return (<TabIcon
             {...ext}
             key={ext.name}
