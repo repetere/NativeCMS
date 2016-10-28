@@ -15,6 +15,7 @@ var PROD = 'production';
 var DEV = 'development';
 let isProd = NODE_ENV === 'production';
 
+
 var config = {
   paths: {
     src: path.join(ROOT_PATH, '.'),
@@ -55,7 +56,8 @@ module.exports = {
   headers: { "X-Custom-Header": "yes" },
 
   output: {
-    path: path.join(__dirname, '../../public/web/output'),
+    path: path.join(__dirname, './output'),
+    // path: path.join(__dirname, '../../public/web/output'),
     filename: 'bundle.js',
   },
   plugins: [
