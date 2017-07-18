@@ -102,7 +102,7 @@ class Table extends Component {
     this.state = {
       pages: this.props.pages || 1,
       rows: (this.props.rows)? ds.cloneWithRows(this.props.rows) : ds.cloneWithRows([ this.getBlankHeader() ]),
-      rowscount: (this.props.rows && this.props.rows.length>3) ? this.props.rows.length : 10,
+      rowscount: (this.props.rows && this.props.rows.length>0) ? this.props.rows.length : 10,
       totalcount: this.props.totalcount || 1,
     };
   }
@@ -128,7 +128,7 @@ class Table extends Component {
           enableEmptySections={true}
           renderRow={this.renderRow.bind(this, this.getRenderRowData) }
           renderHeader={this.renderHeader.bind(this) }
-          initialListSize={(Platform.OS==='web')?this.state.rowscount:20}
+          initialListSize={(Platform.OS==='web')?this.state.rowscount||20:undefined}
           >
         </ListView>
       </View>
@@ -171,7 +171,7 @@ class Table extends Component {
     }
     if (this.props.rowActions && this.props.rowActions.length > 0) {
       actionsComponent = (
-        <View  style={[layoutStyles.listItemIconWrapper,{marginRight:20,}]}>
+        <View  style={[layoutStyles.listItemIconWrapper, { marginRight:20, }]}>
           {this.props.rowActions.map((action, i) => {
             return (
               <TouchableOpacity key={i} style={{

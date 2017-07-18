@@ -82,10 +82,10 @@ const styles = StyleSheet.create(Object.assign({
     flexDirection: 'row',
     alignItems: 'flex-start',
     padding:5, 
-    minHeight:30,
+    minHeight:50,
     borderBottomColor: 'lightgrey',
     borderBottomWidth: StyleSheet.hairlineWidth || 1,
-    alignSelf: 'stretch',
+    alignSelf:'center',
   },
   listText: {
     fontSize: 14,
@@ -130,8 +130,10 @@ const styles = StyleSheet.create(Object.assign({
     alignSelf: 'center',
   },
   tableHeaderContainer:{
-    // minHeight:30,
-    // height: 30,
+    // marginBottom: 5,
+    minHeight:30,
+    height: 30,
+
     maxHeight: 30,
     justifyContent:'center',
     backgroundColor: 'whitesmoke',

@@ -15,6 +15,10 @@ import ResourceDetailCompose from './ResourceDetailCompose';
 import ParserDetail from './ParserDetail';
 import ParserDetailEdit from './ParserDetailEdit';
 import ParserDetailCompose from './ParserDetailCompose';
+import moment from 'moment';
+import numeral from 'numeral';
+import capitalize from 'capitalize';
+import pluralize from 'pluralize';
 import SegmentDetailGenerator from './SegmentDetailGenerator';
 import SegmentDetailEditGenerator from './SegmentDetailEditGenerator';
 import SegmentDetailComposeGenerator from './SegmentDetailComposeGenerator';
@@ -70,6 +74,10 @@ class Pipelines extends Component {
             group: getGroupFromEntityName('segment', 'pipeline', { constants, }),
             list: getListFromEntityName('segment', 'pipeline', { constants, }),
             detail: getDetailFromEntityName('segment', 'pipeline', {
+              detailComponent: EngineDetail,
+              createModalComponent: LoadingView,
+              editModalComponent: LoadingView,
+
               detailComponent: SegmentDetailGenerator({
                 getSegmentRulesetRulesTable,
               }),
