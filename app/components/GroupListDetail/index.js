@@ -6,6 +6,7 @@ import styles from '../Styles/shared';
 import layoutStyles from '../Styles/layout';
 import colorStyles from '../Styles/colors';
 import LoadingView from '../LoadingIndicator/LoadingView';
+import { onLayoutUpdate, setLayoutHandler } from '../../util/dimension';
 import EmptyDisplay from '../EmptyDisplay';
 import ConfirmModal from './ConfirmModal';
 import MenuBar, { ActionBar, } from '../MenuBar';
@@ -55,6 +56,7 @@ function getListStateFromProps(props) {
   if (typeof props.dataError !== 'undefined') {
     returnProps.dataError = props.dataError;
     returnProps.dataLoaded = props.dataLoaded;
+    returnProps.dataTimestamp = props.dataTimestamp;
 
   }
   return returnProps;
@@ -111,18 +113,21 @@ function getRefreshData() {
 
 function getDataForLists(config, options = {}) {
   // console.log('getDataForLists CALLDED this.props',this.props,'this.state',this.state,{config})
-  let queryString = '?'+querystring.stringify(Object.assign({}, options.query, {
-    format: 'json',
-  }));
   let stateData = {
     dataError: false,
     dataLoaded: false,
+    dataTimestamp: new Date(),
   };
   let stateDataProp = {
     isRefreshing: false,
   };
   let selectedGroupListProp = this.props[ config.componentPropsName ].entities[ this.state.GroupListDetailStateData.selectedGroup ];
+  let querystringPrefix = (selectedGroupListProp.list.fetchUrl.indexOf('?')!==-1) ? '&' : '?';
+  let queryString = querystringPrefix+querystring.stringify(Object.assign({}, options.query, {
+    format: 'json',
+  }));
   // request(this.props.GroupListDetail.list.fetchUrl, {
+  // console.log('selectedGroupListProp.list.fetchUrl+queryString',selectedGroupListProp.list.fetchUrl+queryString)
   return new Promise((resolve, reject) => {
     request(selectedGroupListProp.list.fetchUrl+queryString, {
       method: 'GET',
@@ -133,7 +138,7 @@ function getDataForLists(config, options = {}) {
       },
     })
     .then(responseData => {
-      // console.log({responseData})
+      // console.log({responseData},'config.componentDataName',config.componentDataName,'selectedGroupListProp[config.componentDataName]',selectedGroupListProp[config.componentDataName])
       stateData.isRefreshing = false;
       stateData.dataLoaded = true;
       stateData.dataError = false;
@@ -161,6 +166,8 @@ function getDataForLists(config, options = {}) {
         GroupListDetailStateData: Object.assign(this.state.GroupListDetailStateData, stateDataProp),
       });
       reject(error);
+      this.props.handleErrorNotification({ message:'Could not update '+pluralize(stateData.selectedGroup)+'. '+error, }, error);
+
     });
   });
 }
@@ -227,8 +234,10 @@ class Group extends Component{
         backgroundColor:'whitesmoke',
       },
         ]}  >
-        <MenuBar {...groupMenuBarProps}/>
-        {this.getGroups()}
+        <MenuBar {...groupMenuBarProps} />
+        <ScrollView style={styles.scrollViewStandardContainer} contentContainerStyle={styles.scrollViewStandardContentContainer} >
+          {this.getGroups()}
+        </ScrollView>
       </Animatable.View>
     );  
     return loadedDataView;     
@@ -297,9 +306,9 @@ class GroupList extends Component{
     // console.log('GroupList RENDER this.state', this.state);
     // console.log('GROUP LIST ReNDerRRRR this.state',this.state,'this.props',this.props)
     let loadingView = (<LoadingView/>);
-    let errorView = (<LoadingView/>);
-
+    // let errorView = (<LoadingView/>);
     if (this.props.GroupListDetail.list) {
+      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
       let groupListMenuBar = this.props.GroupListDetail.list.menuBar;
       groupListMenuBar.leftItem = {
         textIcon: {
@@ -314,15 +323,58 @@ class GroupList extends Component{
         },
         label: capitalize(pluralize(this.props.GroupListDetail.groupTitle)),
       };
-      let emptyView = (<EmptyDisplay message={'No ' + capitalize(pluralize(this.props.GroupListDetail.list.componentProps.title + ' found'))} />);
+      let actionBarProps = {
+        menuBarContentWrapperStyle: {
+          height: 40,
+          paddingTop: 0,
+          borderBottomWidth:0,
+          borderTopWidth:1,
+          borderTopColor: 'darkgray',
+        },
+        actions: [ {
+          // itemType: 'text',
+          // label:'filter',
+          icon: {
+            icontype: 'Ionicons',
+            name: 'md-funnel', //ios-settings-outline
+          },
+          itemType: 'icon',
+          title: `Filter ${capitalize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          description: `filter new ${pluralize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          type: 'modal',
+          modalOptions: {
+            component: emptyView,
+            ref: `filter_${this.props.GroupListDetail.list.componentProps.entityName}_modal`,
+            style: { /* margin: 30, width:500, */ },
+          },
+        }, {
+          itemType: 'text',
+          label: (this.state.dataTimestamp)? 'Updated '+moment(this.state.dataTimestamp).calendar():'Refresh data',
+          onPress: getRefreshData.bind(this),
+        }, {
+          icon: {
+            icontype: 'Ionicons',
+            name: 'ios-create-outline', //ios-settings-outline
+          },
+          itemType: 'icon',
+          title: `Create ${capitalize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          description: `create new ${pluralize(this.props.GroupListDetail.list.componentProps.entityName)}`,
+          type: 'modal',
+          modalOptions: {
+            component: this.props.GroupListDetail.list.componentProps.createModalComponent,
+            ref:`create_${this.props.GroupListDetail.list.componentProps.entityName}_modal`,
+            style: { /* margin: 30, width:500, */ },
+          },
+        }],
+      };
 
       let useLoadingView = ((typeof this.props.GroupListDetailStateData.listData === 'object' && this.props.GroupListDetailStateData.listData.dataError === false && this.props.GroupListDetailStateData.listData.dataLoaded === false) || (this.state.dataLoaded === false && this.state.dataError === false));
-      // console.log({ useLoadingView });
+      let webListFix = (Platform.OS === 'web') ? { display:'flex', paddingBottom:60, } : {};
       let loadedDataView = (
-        <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder
+        <View class="scrollContainerViewFix" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder, webListFix
         ]}  >
           <MenuBar {...groupListMenuBar} />
-          <View style={styles.stretchBox}>
+          <View class="scrollContainerViewFix" style={[ styles.stretchBox, (Platform.OS === 'web') ? [ styles.scrollViewStandardContainer, { paddingBottom: 60, flex: 1, }]:{}]}>
             <SearchBar
               lightTheme
               onChangeText={(data) => {
@@ -340,7 +392,7 @@ class GroupList extends Component{
             {(!useLoadingView && this.state.rowscount > 0) ? (
               <ListView
                 style={[ styles.flexBox, ]}
-                contentContainerStyle={layoutStyles.positionRelative}
+                contentContainerStyle={[layoutStyles.positionRelative,  ]}
                 enableEmptySections={true}
                 dataSource={this.state.rows}
                 renderRow={this.renderRow.bind(this, this.getRenderRowData) }
@@ -360,13 +412,14 @@ class GroupList extends Component{
               </ListView>
             ) : null}
           </View>
+            <ActionBar {...actionBarProps} {...this.props} />
         </View>
         );
    
       return loadedDataView;     
     } else {
       let emptyView = (
-        <View style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,
+        <View class="scrollContainerViewFix" style={[ styles.scrollViewStandardContainer, layoutStyles.menuBarSpaceAndBorder,
         ]}  >
           <MenuBar />
           <EmptyDisplay message=" " />
@@ -424,7 +477,7 @@ function closeModal(name) {
 }
 
 function generateModals(actions, props) {
-  // console.log('generateModals', { actions });
+  // console.log('generateModals', { actions, props });
   let { width, height, } = Dimensions.get('window');
   // console.log('Dimensions',{ width, height, })
   let modals = actions.map((action, i) => {
@@ -448,15 +501,6 @@ function generateModals(actions, props) {
       closeExtensionModal: closeModal.bind(this, modalOptions.ref),
     });
 
-    // // console.log('modalOptions.ref', modalOptions.ref,"modalOptions.ref.search(new RegExp('create_', 'i'))",modalOptions.ref.search(new RegExp('create_', 'i')));    
-    // if (modalOptions.ref.search(new RegExp('create_', 'i'))!==-1) {
-    //   // modalOptions.passProps
-    //   modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = false;
-    //   // console.log('create modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData );
-    // } else {
-    //   modalOptions.passProps.GroupListDetailStateData.detailData.composeMode = true;
-    //   // console.log('edit or delete modalOptions.passProps', modalOptions.passProps, 'modalOptions.passProps.GroupListDetailStateData.detailData.detailData', modalOptions.passProps.GroupListDetailStateData.detailData.detailData);
-    // }
     modalOptions.style = Object.assign({
       justifyContent: 'center',
       alignItems: 'center',
@@ -467,7 +511,6 @@ function generateModals(actions, props) {
     
     let ModalOptionComponent = modalOptions.component;
     let ModelContent = (modalOptions.component) ? (<ModalOptionComponent {...modalOptions.passProps}/>):null;
-
 
     // modalOptions.deleteConfirm
     if (modalOptions.component===false){
@@ -584,7 +627,7 @@ class MultiColumn extends Component{
     let loadedDataView = (
       <ScrollView style={[styles.scrollViewHorizontal,styles.stretchBox]} contentContainerStyle={layoutStyles.groupListDetailScrollContainer} alwaysBounceHorizontal={false} horizontal={true}>
         {(this.props.GroupListDetail.options.useGroups) ? <Group style={layoutStyles.multiColumnWidthContainer} {...this.props} /> : null}
-        <View style={layoutStyles.multiColumnWidthContainer}>
+        <View style={layoutStyles.multiColumnWidthContainer} onLayout={this.props.onLayout}>
           <GroupList  {...this.props} {...this.state.modals}/>
         </View>  
         <GroupDetail {...this.props} {...this.state.modals}/>
@@ -595,17 +638,17 @@ class MultiColumn extends Component{
   }
 }
 
-class GroupListDetail extends Component{
+class GroupListDetail extends Component {
   constructor(props) {
     super(props);
     // console.log('GroupListDetail props', props);
     this.state = {
       GroupListDetailStateData: {
-        groupData:(props.GroupListDetailStateData && props.GroupListDetailStateData.groupData)?props.GroupListDetailStateData.groupData:{},
-        listData:(props.GroupListDetailStateData && props.GroupListDetailStateData.listData)?props.GroupListDetailStateData.listData:{},
+        groupData: (props.GroupListDetailStateData && props.GroupListDetailStateData.groupData) ? props.GroupListDetailStateData.groupData : {},
+        listData: (props.GroupListDetailStateData && props.GroupListDetailStateData.listData) ? props.GroupListDetailStateData.listData : {},
         detailData: (props.GroupListDetailStateData && props.GroupListDetailStateData.detailData) ? props.GroupListDetailStateData.detailData : {},
-        selectedGroup: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.selectedGroup!=='undefined') ?props.GroupListDetailStateData.selectedGroup : {},
-        showGroupSidebar: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.showGroupSidebar!=='undefined') ?props.GroupListDetailStateData.showGroupSidebar : true,
+        selectedGroup: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.selectedGroup !== 'undefined') ? props.GroupListDetailStateData.selectedGroup : {},
+        showGroupSidebar: (props.GroupListDetailStateData && typeof props.GroupListDetailStateData.showGroupSidebar !== 'undefined') ? props.GroupListDetailStateData.showGroupSidebar : true,
       },
     };
   }
@@ -625,7 +668,7 @@ class GroupListDetail extends Component{
   }
   setDetailData(data) {
     // console.log('SET DETAIL DATA', { data });
-    let mergedDetailData = Object.assign({}, this.state.GroupListDetailStateData.detailData, this.props.GroupListDetail.entities[this.state.GroupListDetailStateData.selectedGroup].detail, data);
+    let mergedDetailData = Object.assign({}, this.state.GroupListDetailStateData.detailData, this.props.GroupListDetail.entities[ this.state.GroupListDetailStateData.selectedGroup ].detail, data);
     let GroupListDetailStateData = Object.assign(this.state.GroupListDetailStateData, { detailData: mergedDetailData, });
     // console.log('SET DETAIL ',{GroupListDetailStateData})
     this.setState({
@@ -635,7 +678,7 @@ class GroupListDetail extends Component{
   setSelectedGroup(groupName) {
     // console.log('setSelectedGroup', { groupName, });
     this.setState({
-      GroupListDetailStateData: Object.assign({},this.state.GroupListDetailStateData, {
+      GroupListDetailStateData: Object.assign({}, this.state.GroupListDetailStateData, {
         selectedGroup: groupName,
         listData: {
           dataLoaded: false,
@@ -664,7 +707,7 @@ class GroupListDetail extends Component{
     this.setState(newState);
   }
   updateListDetailFromCompose(data) {
-    console.log('new detail data', { data },this.state.GroupListDetailStateData);
+    // console.log('new detail data', { data },this.state.GroupListDetailStateData);
     let stateData = {
       dataLoaded: true,
       dataError: false,
@@ -690,7 +733,7 @@ class GroupListDetail extends Component{
     });
   }
   removeListDetailFromCompose(data) {
-    console.log('new detail data', { data, }, this.state.GroupListDetailStateData);
+    // console.log('new detail data', { data, }, this.state.GroupListDetailStateData);
     let stateData = {
       dataLoaded: true,
       dataError: false,
@@ -739,6 +782,9 @@ class GroupListDetail extends Component{
       ),
     });
   }
+  componentDidMount() {
+    setLayoutHandler.bind(this);
+  }
   render() {
     // console.log('this.state',this.state);
     // console.log('GroupDetail REDNER this.state', this.state,Dimensions.get('window'));
@@ -765,8 +811,8 @@ class GroupListDetail extends Component{
     let passProps = Object.assign({}, this.props, GLDpassProps, this.state);
     // console.log('GROUPLISTDETAILLLLLLLLLL ',{passProps})
     let dataView = (width > 600) ?
-      (<MultiColumn  {...passProps} {...getDataFunctions}/>)
-      : (<SingleColumn {...passProps}  {...getDataFunctions}/>);
+      (<MultiColumn  onLayout={onLayoutUpdate.bind(this)}  {...passProps} {...getDataFunctions}/>)
+      : (<SingleColumn  onLayout={onLayoutUpdate.bind(this)} {...passProps}  {...getDataFunctions}/>);
     return dataView;     
   }
 }
@@ -789,18 +835,22 @@ export function getListFromEntityName(entityName, groupName, options) {
   return {
     fetchUrl: constants[pluralize(groupName)].all.BASE_URL + constants[pluralize(groupName)][pluralize(entityName)].GET_INDEX,
     listProps: {
-      pagesProp:`${entityName}pages`, //enginepages,
-      dataProp: pluralize(entityName), //'engines',
-      countProp: `${pluralize(entityName)}count`,//'enginescount',
+      pagesProp:`${options.listPropsEntityName || entityName}pages`, //enginepages,
+      dataProp: pluralize(options.listPropsEntityName || entityName), //'engines',
+      countProp: `${pluralize(options.listPropsEntityName || entityName)}count`,//'enginescount',
     },
     componentProps: {
       title: capitalize(entityName), //'Engine',
+      create_modal_ref: `create_${entityName}_modal`,
+      createModalComponent: options.createModalComponent,
+      entityName,
+      groupName,
     },
     detailLoad: {
       method: 'passProps',
     },
     menuBar: {
-      title: capitalize(entityName), //'Engine',
+      title: capitalize(options.display_title || entityName), //'Engine',
       // rightItem: {
       //   icon: {
       //     icontype: 'Ionicons',
@@ -852,7 +902,7 @@ export function getDetailFromEntityName(entityName, groupName, options) {
     }, {
       icon: {
         icontype: 'Ionicons',
-        name: 'ios-create-outline',
+        name: 'ios-settings-outline',
       },
       itemType: 'icon',
       title: `Edit ${capitalize(entityName)}`, //'Edit Engine',
@@ -867,7 +917,7 @@ export function getDetailFromEntityName(entityName, groupName, options) {
     }, {
       icon: {
         icontype: 'Ionicons',
-        name: 'ios-add-circle-outline',
+        name: 'ios-create-outline',
       },
       itemType: 'icon',
       title: `Create ${capitalize(entityName)}`,
@@ -878,7 +928,21 @@ export function getDetailFromEntityName(entityName, groupName, options) {
         ref:`create_${entityName}_modal`,
         style: { /* margin: 30, width:500, */ },
       },
-    }, ],
+    }, {
+      icon: {
+        icontype: 'Ionicons',
+        name: 'md-funnel', //ios-settings-outline
+      },
+      itemType: 'icon',
+      title: `Filter ${capitalize(entityName)}`,
+      description: `filter new ${pluralize(entityName)}`,
+      type: 'modal',
+      modalOptions: {
+        component: options.createModalComponent,
+        ref: `filter_${entityName}_modal`,
+        style: { /* margin: 30, width:500, */ },
+      },
+    }],
   };
 }
 

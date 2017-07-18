@@ -56,6 +56,9 @@ const styles = StyleSheet.create(Object.assign({
   statusBarPadding: {
     paddingTop:20,
   },
+  tabBarPadding: {
+    paddingBottom:60,
+  },
   appContainer: {
     flex: 1,
     paddingTop:20,

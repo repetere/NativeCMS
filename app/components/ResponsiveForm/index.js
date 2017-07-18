@@ -85,6 +85,7 @@ function getFormTextInputArea(options) {
       style={{ minHeight: (formElement.type==='textarea')?80:40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, backgroundColor:'white', }} 
       multiline={(formElement.type==='textarea')?true:false}
       onChangeText={onChangeText}
+      autoCapitalize="none"
       value={initialValue} />
   </GRID_ITEM>);
 }
@@ -224,7 +225,7 @@ function renderFormDataListItem(options, dataItem, sectionId, rowId) {
   // console.log('renderFormDataListItem', { options, });
   return (
     <TouchableOpacity key={rowId} onPress={() => {
-      console.log('multi',options.multi)
+      // console.log('multi',options.multi)
       options.onPress({
         value: dataItem,
         attribute: options.attribute,
@@ -322,6 +323,7 @@ function getFormDatalist(options) {
       style={{ minHeight: 40, borderColor: 'lightgrey', padding:5, borderWidth: 1, fontSize:16,  borderRadius:3, }} 
       multiline={(formElement.type==='textarea')?true:false}
       onChangeText={updateListSearchData}
+      autoCapitalize="none"
       // value={formElement.value || getPropertyAttribute({
       //   property: this.state, element: formElement,
       // })}
@@ -548,7 +550,7 @@ function getFormDataTable(options) {
   </GRID_ITEM>);
 }
 
-class SimpleButton extends Component{
+export class SimpleButton extends Component{
   render() {
     return (<TouchableOpacity onPress={this.props.onPress}>
       <View style={[ { borderRadius: 5, backgroundColor:'lightslategrey', padding:10, margin:10, justifyContent:'center', alignSelf:'stretch', alignItems:'center', flex:0 }, this.props.style, ]}>

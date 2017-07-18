@@ -133,6 +133,7 @@ const styles = StyleSheet.create(Object.assign({
     // marginBottom: 5,
     minHeight:30,
     height: 30,
+
     maxHeight: 30,
     justifyContent:'center',
     backgroundColor: 'whitesmoke',

@@ -7,20 +7,20 @@
       "initial":"ios-git-network-outline"
     }
   },{
-    "name":"credit-engines",
-    "path":"/credit-engines",
-    "title":"Credit Engines",
+    "name":"models",
+    "path":"/models",
+    "title":"Models",
     "icon":{
-      "selected":"md-list",
-      "initial":"md-list"
+      "selected":"ios-barcode-outline",
+      "initial":"ios-barcode-outline"
     }
   },{
-    "name":"credit",
-    "path":"/credit",
-    "title":"Credit Parser",
+    "name":"operations",
+    "path":"/operations",
+    "title":"Operations",
     "icon":{
-      "selected":"logo-snapchat",
-      "initial":"logo-snapchat"
+      "selected":"ios-list-box-outline",
+      "initial":"ios-list-box-outline"
     }
   },{
     "name":"profile",
@@ -37,12 +37,33 @@
       "initial":"ios-settings-outline"
     }
   },{
-    "name":"csv output",
-    "path":"/csv",
+    "name":"data",
+    "path":"/data",
     "icon":{
-      "selected":"flash",
-      "initial":"flash",
-      "type":"FontAwesome"
+      "selected":"ios-podium-outline",
+      "initial":"ios-podium-outline",
+      "type":"Ionicons"
+    }
+  },{
+    "name":"stats",
+    "path":"/stats",
+    "icon":{
+      "selected":"ios-stats-outline",
+      "initial":"ios-stats-outline"
+    }
+  },{
+    "name":"modeler",
+    "path":"/modeler",
+    "icon":{
+      "selected":"ios-switch-outline",
+      "initial":"ios-switch-outline"
+    }
+  },{
+    "name":"home",
+    "path":"/",
+    "icon":{
+      "selected":"ios-home-outline",
+      "initial":"ios-home-outline"
     }
   }],
   "more":{

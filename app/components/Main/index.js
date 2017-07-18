@@ -4,7 +4,7 @@
  * @flow
  */
 import React, { Component, PropTypes, } from 'react';
-import { View, Platform, AsyncStorage, Navigator, } from 'react-native';
+import { View, Platform, AsyncStorage, Navigator, Text, } from 'react-native';
 import { Router, Route, /*browserHistory, hashHistory, createMemoryHistory,*/ } from 'react-router';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Tabs from 'react-native-tabs';
@@ -24,10 +24,12 @@ import actions from '../../actions';
 import constants from '../../constants';
 import { historySettings, getHistory, } from '../../routers/history';
 import { getComponentFromRouterLocation, getTabFromLocation, getRouteExtensionFromLocation, } from '../../util/location';
+import { onLayoutUpdate, setLayoutHandler } from '../../util/dimension';
 import pathToRegexp from 'path-to-regexp';
 import { Area, AreaList, scene, Side, SceneStatus, } from 'scene-router';
 import { MessageBarManager, MessageBar, } from '../MessageBar';
-
+import moment from 'moment';
+import debounce from 'debounce';
 const history = getHistory(historySettings, AppConfigSettings, store);
 // const LoadingIndicators = (Platform.OS === 'web') ? ActivityIndicatorIOS : ActivityIndicator;
 const defaultExtensionRoute = AppConfigSettings.defaultExtensionRoute || '/';
@@ -50,7 +52,7 @@ class MainApp extends Component{
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log('MAIN componentWillReceiveProps',{nextProps,initialRouteChange,})
+    // console.log('MAIN componentWillReceiveProps', { nextProps, });
     if (nextProps.user.isLoggedIn !== true && (this.getCurrentScenePath() !== '/login' || this.state.location.pathname !== '/login')) {
       this.onChangeExtension.call(this, '/login', {
         initialLoad: 'recievedPropLogin',
@@ -69,7 +71,7 @@ class MainApp extends Component{
       });
     }
     else if (initialRouteChange===false && Platform.OS ==='web' && nextProps.user.isLoggedIn === true && this.getCurrentScenePath() !== nextProps.location.pathname) {
-      console.log('HANDLE BROWSER NAV')
+      // console.log('HANDLE BROWSER NAV')
       initialRouteChange = true;
       this.onChangeExtension(nextProps.location.pathname, {
         initialLoad: 'recievedPropLogin',
@@ -114,16 +116,20 @@ class MainApp extends Component{
     // }   
   }
   componentDidMount() {
+    setLayoutHandler.call(this);
     // console.log('componentDidMount this.props', this.props);
     Promise.all([
       AsyncStorage.getItem(constants.jwt_token.TOKEN_NAME),
       AsyncStorage.getItem(constants.jwt_token.TOKEN_DATA),
       AsyncStorage.getItem(constants.jwt_token.PROFILE_JSON),
+      AsyncStorage.getItem(constants.async_token.TABBAR_TOKEN),
     ])
       .then((results) => {
         let jwt_token = results[ 0 ];
         let jwt_token_data = JSON.parse(results[ 1 ]);
         let jwt_user_profile = JSON.parse(results[ 2 ]);
+        let appTabs = (results[ 3 ]) ? JSON.parse(results[ 3 ]) : false;
+        console.log('main apptabs',{ appTabs });
         if (jwt_token_data && jwt_user_profile) {
           let url = AppLoginSettings.login.url;
           let response = {};
@@ -133,7 +139,20 @@ class MainApp extends Component{
             timeout: jwt_token_data.timeout,
             user: jwt_user_profile,
           };
-          this.props.saveUserProfile(url, response, json);
+          let currentTime = new Date();
+          
+          if (moment(jwt_token_data.expires).isBefore(currentTime)) {
+            let expiredTokenError = new Error(`Access Token Expired ${moment(jwt_token_data.expires).format('LLLL')}`);
+            setTimeout(() => {
+              this.handleErrorNotification({ message: 'Access Token Expired' + expiredTokenError, }, expiredTokenError);
+            }, 1000);
+            throw expiredTokenError;
+          } else {
+            this.props.saveUserProfile(url, response, json);
+            if (appTabs) {
+              this.props.setTabExtensions(appTabs);
+            }
+          }
         } else if(jwt_token) {
           this.props.getUserProfile(jwt_token);
         }
@@ -150,14 +169,13 @@ class MainApp extends Component{
         this.props.logoutUser();
       });
     setImmediate(() => {
-      MessageBarManager.hideAlert();
+      // MessageBarManager.hideAlert();
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
-      MessageBarManager.hideAlert();
+      // MessageBarManager.hideAlert();
     });
-      
   }
   componentWillUnmount() {
-  // Remove the alert located on this master page from the manager
+    // Remove the alert located on this master page from the manager
     setImmediate(() => {
       MessageBarManager.hideAlert();
       MessageBarManager.unregisterMessageBar();
@@ -167,7 +185,7 @@ class MainApp extends Component{
     this.onChangeExtension(el.props.path, options);
   }
   onChangeExtension(path, options = {}) {
-    console.log('onChangeExtension',{path},{options})
+    // console.log('onChangeExtension',{path},{options})
     let pageLocation = this.props.location.pathname;
     if (pageLocation !== defaultExtensionRoute) {
       this.previousRoute = { path:pageLocation, };
@@ -210,7 +228,7 @@ class MainApp extends Component{
     // window.appnav = this.refs.AppNavigator;
     if (!MessageBarManager.getRegisteredMessageBar()) {
       MessageBarManager.registerMessageBar(this.refs.AlertNotification);
-      MessageBarManager.hideAlert();
+      // MessageBarManager.hideAlert();
       window.MessageBarManager = MessageBarManager;
     }
     /*
@@ -320,19 +338,24 @@ class MainApp extends Component{
   }
   render() {
     // console.log(
-    //   'RENDER getRouteExtensionFromLocation(this.props.location.pathname)',
-    //   getRouteExtensionFromLocation(this.props.location.pathname),
-    //   'this.props.location.pathname',
-    //   this.props.location.pathname,
-    //   // 'this.props', this.props //,
+    //   'MAIN RENDER',
+    // //   'RENDER getRouteExtensionFromLocation(this.props.location.pathname)',
+    // //   getRouteExtensionFromLocation(this.props.location.pathname),
+    // //   'this.props.location.pathname',
+    // //   this.props.location.pathname,
+    // //   // 'this.props', this.props //,
     //   'this.state', this.state//,
     // );
 
     // console.log('this.state.user.isLoggedIn', this.state.user.isLoggedIn);
     let initialPath = (this.state.location) ? this.state.location.pathname : '/';
 
-    return (<View style={[ styles.container, { backgroundColor: 'white' }]}>
-      {/*<CurrentApp {...this.state}  />*/}
+    return (<View
+      onLayout={onLayoutUpdate.bind(this)}
+      style={[ styles.container, { backgroundColor: 'white' }]}
+      >
+      {/*<CurrentApp {...this.state}  />
+      <Text style={{ backgroundColor:'darkgray', color:'white', padding:20, position:'absolute', top:20, left:20, zIndex:1000}}>{JSON.stringify(this.state.page.layout,null,2)}</Text>*/}
       <View style={styles.stretchContainer}>
         <Area
           ref="AppNavigator"
@@ -343,7 +366,7 @@ class MainApp extends Component{
       </View>
       {(this.state.user.isLoggedIn===true)? (<Tabs
         style={styles.tabBar}>
-        {this.state.tabBarExtensions.map((ext) => {
+        {this.state.tabBarExtensions.current.map((ext) => {
           return (<TabIcon
             {...ext}
             key={ext.name}
@@ -379,7 +402,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initialAppLoaded:()=>store.dispatch(actions.pages.initialAppLoaded()),
     onChangePage:(location) => store.dispatch(actions.pages.changePage(location)),
+    setAppDimensions:(layout) => store.dispatch(actions.pages.setAppDimensions(layout)),
     requestData: (url, options, responseFormatter) => store.dispatch(actions.fetchData.request(url, options, responseFormatter)),
+    setTabExtensions: (arrayOfTabExtensions)=>store.dispatch(actions.tabBarExtension.setTabExtensions(arrayOfTabExtensions)),
     showError: (notification) => store.dispatch(actions.messageBar.showError(notification)),
     showInfo: (notification) => store.dispatch(actions.messageBar.showInfo(notification)),
     setLoginStatus: (loggedIn) => store.dispatch(actions.user.setLoginStatus(loggedIn)),

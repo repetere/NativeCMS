@@ -96,7 +96,7 @@ class Table extends Component {
   constructor(props){
     super(props);
     let ds = getDataSource();
-    console.log('Table', { props });
+    // console.log('Table', { props });
     this.getBlankHeader = props.getBlankHeader || getBlankDefaultHeader;
     this.getRenderRowData = props.getRenderRowData || getDefaultRenderRowData;
     this.state = {
@@ -179,7 +179,7 @@ class Table extends Component {
                 paddingRight: 10, 
                 right:15,
                 // top: 10,
-                height:25
+                height:25,
               }} onPress={action.onPress.bind(this, data, renderData, sectionId, rowId)}>
                 <Icons name={action.icon.name} size={22} style={[layoutStyles.listItemIcon,action.icon.style]} />
               </TouchableOpacity>

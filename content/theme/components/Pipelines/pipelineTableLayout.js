@@ -52,6 +52,7 @@ export function getSegmentConditionsHeader() {
     value: 'n/a',
     minimum: 'n/a',
     maximum: 'n/a',
+    condition_group_id: 'n/a',
   };
 }
 export function getSegmentConditionsRenderRowData(data) {
@@ -92,6 +93,12 @@ export function getSegmentConditionsRenderRowData(data) {
       },
       heading: 'Maximum',
       label: data.state_property_attribute_value_maximum,
+    }, {
+      style: {
+        width: 100,
+      },
+      heading: 'Condition Group',
+      label: data.condition_group_id,
     }],
     action: {
       icon: {
@@ -222,3 +229,117 @@ export function getResourceVariableTable(variables) {
         >
       </Table>);
 }
+
+export function getSegmentRulesetRulesHeader() {
+  return {
+    function_name: 'n/a',
+    default_state: 'n/a',
+  };
+}
+export function getSegmentRulesetRulesRenderRowData(data) {
+  return {
+    columns: [{
+      style: {
+        width:200,
+      },
+      heading: 'Function',
+      label: data.function_name,
+    }, {
+      style: {
+        width: 400,
+      },
+      usePRE: true,
+      useJSON:true,
+      heading: 'Default State',
+      label: data.default_state,
+    }],
+    action: {
+      icon: {
+        name:'ios-arrow-forward',
+      },
+    },
+  };
+}
+export function getSegmentRulesetRulesTable(rules) {
+  return (<Table
+        name="segment-rules-table"
+        pages={1}
+        rows={rules}
+        totalcount={rules.length}
+        getBlankHeader={getSegmentRulesetRulesHeader}
+        getRenderRowData={getSegmentRulesetRulesRenderRowData}
+        noImage={true}
+        noAction={true}
+        {...this.props}
+        >
+      </Table>);
+}
+
+export var newSegmentConditionItems = [
+  {
+    type: 'select',
+    label: 'Operation',
+    name: 'condition_operation',
+    // value: 'ECS',
+    options: [ {
+      label: 'Please select',
+      value: '',
+    }, {
+      label: 'AND',
+      value: 'AND',
+    }, {
+      label: 'OR',
+      value: 'OR',
+    }, ],
+  }, {
+    type: 'text',
+    label: 'State',
+    name: 'state_property_attribute',
+  }, {
+    type: 'select',
+    label: 'Test',
+    name: 'condition_test',
+    // value: 'ECS',
+    options: [ {
+      label: 'Please select',
+      value: '',
+    }, {
+      label: 'CAP',
+      value: 'CAP',
+    }, {
+      label: 'FLOOR',
+      value: 'FLOOR',
+    }, {
+      label: 'RANGE',
+      value: 'RANGE',
+    }, {
+      label: 'EQUAL',
+      value: 'EQUAL',
+    }, {
+      label: 'NOT EQUAL',
+      value: 'NOT EQUAL',
+    }, {
+      label: 'IN',
+      value: 'IN',
+    }, {
+      label: 'NOT IN',
+      value: 'NOT IN',
+    }, ],
+  }, {
+    type: 'text',
+    label: 'Value',
+    name: 'state_property_attribute_value_comparison',
+  }, {
+    type: 'text',
+    label: 'Minimum',
+    name: 'state_property_attribute_value_minimum',
+  }, {
+    type: 'text',
+    label: 'Maximum',
+    name: 'state_property_attribute_value_maximum',
+  }, {
+    type: 'text',
+    label: 'Condition Group',
+    name: 'condition_group_id',
+  },
+];
